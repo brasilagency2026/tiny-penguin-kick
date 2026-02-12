@@ -5,13 +5,29 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette, Music, CreditCard, Shirt, Plus, Trash2 } from 'lucide-react';
+import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette, Music, CreditCard, Shirt, Plus, Trash2, Utensils, Star, Camera, GlassWater, Church } from 'lucide-react';
 
 interface InvitationFormProps {
   onSubmit: (data: any) => void;
   onChange: (data: any) => void;
   loading: boolean;
 }
+
+const ICONS = [
+  { id: 'heart', icon: <Heart size={14} />, label: 'Coração' },
+  { id: 'church', icon: <Church size={14} />, label: 'Cerimônia' },
+  { id: 'utensils', icon: <Utensils size={14} />, label: 'Jantar' },
+  { id: 'music', icon: <Music size={14} />, label: 'Festa' },
+  { id: 'star', icon: <Star size={14} />, label: 'Destaque' },
+  { id: 'camera', icon: <Camera size={14} />, label: 'Fotos' },
+  { id: 'glass', icon: <GlassWater size={14} />, label: 'Brinde' },
+];
+
+const MUSIC_PRESETS = [
+  { name: 'Romântico (Piano)', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+  { name: 'Clássico (Violino)', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
+  { name: 'Festa (Animado)', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
+];
 
 const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) => {
   const [formData, setFormData] = useState({
@@ -30,9 +46,9 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
     cor: '#7c3aed',
     tema: 'classic',
     timeline: [
-      { time: '19:00', title: 'Cerimônia' },
-      { time: '20:30', title: 'Jantar' },
-      { time: '22:00', title: 'Festa' }
+      { time: '19:00', title: 'Cerimônia', icon: 'church' },
+      { time: '20:30', title: 'Jantar', icon: 'utensils' },
+      { time: '22:00', title: 'Festa', icon: 'music' }
     ]
   });
 
@@ -57,7 +73,7 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
   const addTimelineItem = () => {
     setFormData({
       ...formData,
-      timeline: [...formData.timeline, { time: '', title: '' }]
+      timeline: [...formData.timeline, { time: '', title: '', icon: 'star' }]
     });
   };
 
@@ -113,10 +129,6 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
                 <Input id="endereco" name="endereco" placeholder="Rua, Número, Bairro, Cidade" onChange={handleChange} />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="link_maps">Link do Google Maps (Opcional)</Label>
-              <Input id="link_maps" name="link_maps" placeholder="https://goo.gl/maps/..." onChange={handleChange} />
-            </div>
           </div>
 
           {/* Timeline Editor */}
@@ -132,7 +144,7 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
             <div className="space-y-3">
               {formData.timeline.map((item, index) => (
                 <div key={index} className="flex gap-3 items-end animate-in fade-in slide-in-from-top-2">
-                  <div className="w-24">
+                  <div className="w-20">
                     <Label className="text-[10px] uppercase">Hora</Label>
                     <Input 
                       value={item.time} 
@@ -148,6 +160,21 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
                       onChange={(e) => handleTimelineChange(index, 'title', e.target.value)} 
                     />
                   </div>
+                  <div className="w-24">
+                    <Label className="text-[10px] uppercase">Ícone</Label>
+                    <Select value={item.icon} onValueChange={(v) => handleTimelineChange(index, 'icon', v)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ICONS.map(i => (
+                          <SelectItem key={i.id} value={i.id}>
+                            <div className="flex items-center gap-2">{i.icon} {i.label}</div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <Button 
                     type="button" 
                     variant="ghost" 
@@ -162,10 +189,10 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
             </div>
           </div>
 
-          {/* Style & Customization */}
+          {/* Style & Music */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-              <Palette className="text-primary" size={20} /> Estilo e Cores
+              <Palette className="text-primary" size={20} /> Estilo e Música
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -182,10 +209,26 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="cor">Cor do Tema</Label>
-                <Input id="cor" name="cor" type="color" className="h-10 w-full cursor-pointer" defaultValue="#7c3aed" onChange={handleChange} />
+                <Label htmlFor="musica_url">Música de Fundo</Label>
+                <Select onValueChange={(v) => handleSelectChange('musica_url', v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Escolha uma música" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MUSIC_PRESETS.map(m => (
+                      <SelectItem key={m.url} value={m.url}>{m.name}</SelectItem>
+                    ))}
+                    <SelectItem value="custom">Link Personalizado (MP3)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
+            {formData.musica_url === 'custom' && (
+              <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                <Label htmlFor="custom_music">Link da Música (URL MP3)</Label>
+                <Input id="custom_music" name="musica_url" placeholder="https://exemplo.com/musica.mp3" onChange={handleChange} />
+              </div>
+            )}
           </div>
 
           {/* Extra Info */}

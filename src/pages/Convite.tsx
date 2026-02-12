@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Convite } from '@/types/convite';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy, ExternalLink, Shirt, Star } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy, ExternalLink, Shirt, Star, Church, Utensils, Camera, GlassWater } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -15,6 +15,16 @@ import { cn } from '@/lib/utils';
 import Countdown from '@/components/Countdown';
 import RSVPForm from '@/components/RSVPForm';
 import { showSuccess } from '@/utils/toast';
+
+const ICON_MAP: Record<string, any> = {
+  heart: <Heart size={16} />,
+  church: <Church size={16} />,
+  utensils: <Utensils size={16} />,
+  music: <Music size={16} />,
+  star: <Star size={16} />,
+  camera: <Camera size={16} />,
+  glass: <GlassWater size={16} />,
+};
 
 const ConvitePage = () => {
   const { slug } = useParams();
@@ -33,7 +43,6 @@ const ConvitePage = () => {
 
       if (data) {
         setConvite(data);
-        // Increment views
         await supabase.rpc('increment_views', { row_id: data.id });
       }
       setLoading(false);
@@ -198,7 +207,7 @@ const ConvitePage = () => {
               {timeline.map((item: any, i: number) => (
                 <div key={i} className="relative pl-12">
                   <div className="absolute left-0 top-1 w-10 h-10 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center z-10" style={{ color: primaryColor }}>
-                    {i === 0 ? <Heart size={16} /> : i === timeline.length - 1 ? <Music size={16} /> : <Star size={16} />}
+                    {ICON_MAP[item.icon] || <Star size={16} />}
                   </div>
                   <div>
                     <p className="text-xs font-bold text-slate-400">{item.time}</p>
@@ -267,24 +276,6 @@ const ConvitePage = () => {
               </DialogContent>
             </Dialog>
           )}
-
-          <div className="col-span-2 grid grid-cols-2 gap-4">
-            <PDFDownloadLink document={<InvitationPDF convite={convite} />} fileName={`convite-${convite.slug}.pdf`}>
-              {({ loading }) => (
-                <Button variant="ghost" className="w-full h-12 rounded-xl gap-2 text-slate-500" disabled={loading}>
-                  <Download size={18} /> {loading ? 'Gerando...' : 'Baixar PDF'}
-                </Button>
-              )}
-            </PDFDownloadLink>
-            
-            <Button 
-              variant="ghost" 
-              className="w-full h-12 rounded-xl gap-2 text-slate-500"
-              onClick={() => navigator.share({ title: convite.nome_evento, url: window.location.href })}
-            >
-              <Share2 size={18} /> Compartilhar
-            </Button>
-          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Phone, Gift, Calendar, Clock, Heart, Sparkles, Flower2, Star, Utensils, Music, Camera } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Heart, Sparkles, Flower2, Star, Utensils, Music, Camera, Church, GlassWater } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -10,17 +10,23 @@ interface Props {
   data: any;
 }
 
+const ICON_MAP: Record<string, any> = {
+  heart: <Heart size={20} />,
+  church: <Church size={20} />,
+  utensils: <Utensils size={20} />,
+  music: <Music size={20} />,
+  star: <Star size={20} />,
+  camera: <Camera size={20} />,
+  glass: <GlassWater size={20} />,
+};
+
 const ConvitePreview = ({ data }: Props) => {
   const primaryColor = data.cor || '#7c3aed';
   const isModern = data.tema === 'modern';
   const isRomantic = data.tema === 'romantic';
   const isClassic = data.tema === 'classic' || !data.tema;
 
-  const timeline = data.timeline || [
-    { time: '19:00', title: 'Cerimônia' },
-    { time: '20:30', title: 'Jantar' },
-    { time: '22:00', title: 'Festa' }
-  ];
+  const timeline = data.timeline || [];
 
   return (
     <div className={cn(
@@ -62,11 +68,12 @@ const ConvitePreview = ({ data }: Props) => {
         className={cn(
           "relative h-[360px] flex items-center justify-center text-center px-6 overflow-hidden transition-all duration-500",
           isModern ? "bg-white border-b-8" : "",
-          isRomantic ? "rounded-b-[5rem]" : ""
+          isRomantic ? "rounded-b-[5rem]" : "",
+          isClassic ? "border-b-4 border-double" : ""
         )}
         style={{ 
           backgroundColor: !isModern ? `${primaryColor}15` : undefined,
-          borderColor: isModern ? primaryColor : undefined
+          borderColor: isModern || isClassic ? primaryColor : undefined
         }}
       >
         <div className="z-10 space-y-6">
@@ -81,7 +88,8 @@ const ConvitePreview = ({ data }: Props) => {
           <h1 className={cn(
             "leading-tight transition-all duration-500",
             isModern ? "text-7xl font-black tracking-tighter uppercase italic" : "text-5xl font-serif",
-            isRomantic ? "text-rose-600 font-cursive italic" : ""
+            isRomantic ? "text-rose-600 font-cursive italic" : "",
+            isClassic ? "tracking-widest uppercase" : ""
           )} style={{ color: isModern || isRomantic ? undefined : primaryColor }}>
             {data.nome_evento || "Nome do Evento"}
           </h1>
@@ -138,41 +146,43 @@ const ConvitePreview = ({ data }: Props) => {
       </div>
 
       {/* Timeline Section */}
-      <div className="mt-16 px-8 space-y-10">
-        <div className="text-center">
-          <h3 className={cn(
-            "text-xs font-bold uppercase tracking-[0.3em]",
-            isModern ? "text-slate-900" : "text-slate-400"
-          )}>Cronograma</h3>
-          <div className="h-1 w-16 bg-slate-100 mx-auto mt-3 rounded-full" style={{ backgroundColor: isModern ? primaryColor : undefined }}></div>
-        </div>
-        
-        <div className="space-y-10 relative before:absolute before:left-[23px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
-          {timeline.map((item: any, i: number) => (
-            <motion.div 
-              key={i} 
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative pl-16"
-            >
-              <div 
-                className="absolute left-0 top-0 w-12 h-12 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center z-10 shadow-sm" 
-                style={{ color: primaryColor, borderColor: isModern ? primaryColor : undefined }}
+      {timeline.length > 0 && (
+        <div className="mt-16 px-8 space-y-10">
+          <div className="text-center">
+            <h3 className={cn(
+              "text-xs font-bold uppercase tracking-[0.3em]",
+              isModern ? "text-slate-900" : "text-slate-400"
+            )}>Cronograma</h3>
+            <div className="h-1 w-16 bg-slate-100 mx-auto mt-3 rounded-full" style={{ backgroundColor: isModern ? primaryColor : undefined }}></div>
+          </div>
+          
+          <div className="space-y-10 relative before:absolute before:left-[23px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
+            {timeline.map((item: any, i: number) => (
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="relative pl-16"
               >
-                {i === 0 ? <Heart size={20} /> : i === timeline.length - 1 ? <Music size={20} /> : <Star size={20} />}
-              </div>
-              <div className="pt-1">
-                <p className="text-xs font-bold text-slate-400 font-mono">{item.time}</p>
-                <p className={cn(
-                  "text-xl font-bold",
-                  isModern ? "uppercase tracking-tight" : ""
-                )}>{item.title}</p>
-              </div>
-            </motion.div>
-          ))}
+                <div 
+                  className="absolute left-0 top-0 w-12 h-12 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center z-10 shadow-sm" 
+                  style={{ color: primaryColor, borderColor: isModern ? primaryColor : undefined }}
+                >
+                  {ICON_MAP[item.icon] || <Star size={20} />}
+                </div>
+                <div className="pt-1">
+                  <p className="text-xs font-bold text-slate-400 font-mono">{item.time}</p>
+                  <p className={cn(
+                    "text-xl font-bold",
+                    isModern ? "uppercase tracking-tight" : ""
+                  )}>{item.title}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
