@@ -33,6 +33,7 @@ const ConvitePage = () => {
 
       if (data) {
         setConvite(data);
+        // Increment views
         await supabase.rpc('increment_views', { row_id: data.id });
       }
       setLoading(false);
@@ -105,6 +106,7 @@ END:VCALENDAR`;
         </>
       )}
 
+      {/* Hero Section */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -128,6 +130,7 @@ END:VCALENDAR`;
         </div>
       </motion.div>
 
+      {/* Main Content */}
       <div className="max-w-lg mx-auto px-6 -mt-10 relative z-20">
         <div className={cn(
           "bg-white p-8 space-y-8",
@@ -177,6 +180,7 @@ END:VCALENDAR`;
               </div>
             )}
 
+            {/* Dress Code Section */}
             {convite.dress_code && (
               <div className="flex items-center space-x-4">
                 <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
@@ -191,6 +195,7 @@ END:VCALENDAR`;
           </div>
         </div>
 
+        {/* Action Buttons */}
         <div className="mt-8 grid grid-cols-2 gap-4">
           <Dialog>
             <DialogTrigger asChild>
@@ -218,6 +223,7 @@ END:VCALENDAR`;
             <MapPin className="mr-2 h-5 w-5" /> Localização
           </Button>
 
+          {/* Gift Section */}
           {convite.pix_key && (
             <Dialog>
               <DialogTrigger asChild>
@@ -260,6 +266,7 @@ END:VCALENDAR`;
           )}
         </div>
 
+        {/* Footer Actions */}
         <div className="mt-12 flex justify-center space-x-6">
           <Dialog>
             <DialogTrigger asChild>
