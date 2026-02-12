@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Convite } from '@/types/convite';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -64,6 +64,14 @@ const ConvitePage = () => {
   const primaryColor = convite.cor || '#7c3aed';
   const isModern = convite.tema === 'modern';
   const isRomantic = convite.tema === 'romantic';
+
+  // Helper to extract Google Maps Embed URL or use a placeholder
+  const getMapEmbedUrl = (url: string) => {
+    if (!url) return null;
+    if (url.includes('google.com/maps/embed')) return url;
+    // Simple heuristic to try and convert a regular link to embed (limited)
+    return null; 
+  };
 
   return (
     <div className={cn(
@@ -140,14 +148,34 @@ const ConvitePage = () => {
             )}
 
             {convite.endereco && (
-              <div className="flex items-center space-x-4">
-                <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
-                  <MapPin size={24} />
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
+                    <MapPin size={24} />
+                  </div>
+                  <div>
+                    <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Local</p>
+                    <p className="text-lg font-medium">{convite.endereco}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Local</p>
-                  <p className="text-lg font-medium">{convite.endereco}</p>
-                </div>
+                
+                {convite.link_maps && (
+                  <div className="rounded-2xl overflow-hidden border border-slate-100 h-48 bg-slate-50 relative group">
+                    <div className="absolute inset-0 flex items-center justify-center bg-slate-900/5 group-hover:bg-slate-900/10 transition-colors cursor-pointer" onClick={() => window.open(convite.link_maps, '_blank')}>
+                      <div className="bg-white p-3 rounded-full shadow-lg flex items-center gap-2 text-sm font-bold">
+                        <ExternalLink size={16} /> Ver no Google Maps
+                      </div>
+                    </div>
+                    <img 
+                      src={`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(convite.endereco)}&zoom=15&size=600x300&key=YOUR_API_KEY_HERE`} 
+                      alt="Mapa"
+                      className="w-full h-full object-cover opacity-50"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=600";
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>

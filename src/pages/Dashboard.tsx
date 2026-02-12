@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Users, Ticket, Eye, Lock, TrendingUp, Calendar as CalendarIcon, ArrowUpRight, Plus, Copy, UserCheck, Trash2 } from 'lucide-react';
+import { Loader2, Users, Ticket, Eye, Lock, TrendingUp, Calendar as CalendarIcon, ArrowUpRight, Plus, Copy, UserCheck, Trash2, Download } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { showSuccess, showError } from '@/utils/toast';
@@ -67,6 +67,33 @@ const Dashboard = () => {
       .order('created_at', { ascending: false });
     
     if (data) setGuests(data);
+  };
+
+  const exportToCSV = (nomeEvento: string) => {
+    if (guests.length === 0) return;
+    
+    const headers = ["Nome", "Adultos", "Crianças", "Data de Confirmação"];
+    const rows = guests.map(g => [
+      g.nome,
+      g.adultos,
+      g.criancas,
+      new Date(g.created_at).toLocaleDateString()
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(r => r.join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `convidados-${nomeEvento.toLowerCase().replace(/\s+/g, '-')}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const deleteConvite = async (id: string) => {
@@ -230,9 +257,14 @@ const Dashboard = () => {
                         </div>
                       </DialogTrigger>
                       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                        <DialogHeader>
-                          <DialogTitle className="text-2xl font-serif">{c.nome_evento}</DialogTitle>
-                          <DialogDescription>Lista de convidados confirmados</DialogDescription>
+                        <DialogHeader className="flex flex-row items-center justify-between">
+                          <div>
+                            <DialogTitle className="text-2xl font-serif">{c.nome_evento}</DialogTitle>
+                            <DialogDescription>Lista de convidados confirmados</DialogDescription>
+                          </div>
+                          <Button variant="outline" size="sm" className="gap-2 rounded-xl" onClick={() => exportToCSV(c.nome_evento)}>
+                            <Download size={16} /> Exportar CSV
+                          </Button>
                         </DialogHeader>
                         <div className="mt-6 space-y-4">
                           <div className="grid grid-cols-3 gap-4 mb-6">
