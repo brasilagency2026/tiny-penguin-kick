@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Users, Ticket, Eye, Lock, TrendingUp, Calendar as CalendarIcon, ArrowUpRight, Plus, Copy, UserCheck, Trash2, Download } from 'lucide-react';
+import { Loader2, Users, Ticket, Eye, Lock, TrendingUp, Calendar as CalendarIcon, ArrowUpRight, Plus, Copy, UserCheck, Trash2, Download, ExternalLink } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { showSuccess, showError } from '@/utils/toast';
@@ -106,6 +106,12 @@ const Dashboard = () => {
         fetchData();
       }
     }
+  };
+
+  const copyConviteLink = (slug: string) => {
+    const url = `${window.location.origin}/convite/${slug}`;
+    navigator.clipboard.writeText(url);
+    showSuccess("Link do convite copiado!");
   };
 
   const generateManualToken = async () => {
@@ -319,17 +325,31 @@ const Dashboard = () => {
                         </div>
                       </DialogContent>
                     </Dialog>
-                    <div className="flex items-center gap-2">
-                      <div className="text-right mr-2">
-                        <p className="text-sm font-bold text-primary flex items-center justify-end">
-                          {c.visualizacoes} <Eye className="h-3 w-3 ml-1 opacity-50" />
-                        </p>
-                      </div>
+                    <div className="flex items-center gap-1">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-slate-400 hover:text-primary"
+                        onClick={() => copyConviteLink(c.slug)}
+                        title="Copiar Link"
+                      >
+                        <Copy size={14} />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-slate-400 hover:text-primary"
+                        onClick={() => window.open(`/convite/${c.slug}`, '_blank')}
+                        title="Visualizar"
+                      >
+                        <ExternalLink size={14} />
+                      </Button>
                       <Button 
                         variant="ghost" 
                         size="icon" 
                         className="h-8 w-8 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={() => deleteConvite(c.id)}
+                        title="Excluir"
                       >
                         <Trash2 size={14} />
                       </Button>

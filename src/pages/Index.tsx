@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
-import { Heart, Sparkles, Smartphone, Send, Check, HelpCircle, ShoppingBag, Wand2, Share2 } from 'lucide-react';
+import { Heart, Sparkles, Smartphone, Send, Check, HelpCircle, ShoppingBag, Wand2, Share2, MapPin, Music, CreditCard, Download, QrCode } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const Index = () => {
@@ -12,10 +12,10 @@ const Index = () => {
         <div className="text-2xl font-serif font-bold text-primary">ConvitePro</div>
         <div className="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
           <a href="#como-funciona" className="hover:text-primary transition-colors">Como Funciona</a>
+          <a href="#funcionalidades" className="hover:text-primary transition-colors">Funcionalidades</a>
           <a href="#precos" className="hover:text-primary transition-colors">Preços</a>
-          <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
         </div>
-        <Button variant="outline" className="rounded-full px-6">Entrar</Button>
+        <Button variant="outline" className="rounded-full px-6" onClick={() => window.location.href = '/dashboard'}>Painel Admin</Button>
       </nav>
 
       {/* Hero */}
@@ -26,6 +26,9 @@ const Index = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
+            <div className="inline-flex items-center gap-2 bg-primary/5 text-primary px-4 py-2 rounded-full text-sm font-bold mb-6">
+              <Sparkles size={16} /> O Convite Digital #1 do Brasil
+            </div>
             <h1 className="text-6xl md:text-8xl font-serif leading-tight mb-8">
               Convites <span className="text-primary italic">Digitais</span> que encantam.
             </h1>
@@ -65,6 +68,34 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Features Grid */}
+      <section id="funcionalidades" className="py-24 bg-white px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl font-serif mb-4">Tudo o que você precisa</h2>
+            <p className="text-slate-500">Funcionalidades pensadas para facilitar a vida dos noivos e convidados.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { icon: <MapPin />, title: "Localização", desc: "Link direto para o Google Maps." },
+              { icon: <Music />, title: "Música", desc: "Sua trilha sonora favorita ao fundo." },
+              { icon: <CreditCard />, title: "Pix Presente", desc: "Receba presentes direto na sua conta." },
+              { icon: <Smartphone />, title: "RSVP Digital", desc: "Confirmação de presença em tempo real." },
+              { icon: <Download />, title: "Download PDF", desc: "Versão para impressão inclusa." },
+              { icon: <QrCode />, title: "QR Code", desc: "Acesso rápido via câmera do celular." },
+              { icon: <Send />, title: "WhatsApp", desc: "Compartilhamento fácil e rápido." },
+              { icon: <Heart />, title: "Temas", desc: "Estilos que combinam com seu evento." }
+            ].map((feat, i) => (
+              <div key={i} className="p-6 rounded-3xl border border-slate-100 hover:border-primary/20 hover:bg-primary/5 transition-all group">
+                <div className="text-primary mb-4 group-hover:scale-110 transition-transform">{feat.icon}</div>
+                <h3 className="font-bold mb-2">{feat.title}</h3>
+                <p className="text-sm text-slate-500">{feat.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How it Works */}
       <section id="como-funciona" className="py-24 bg-slate-50 px-8">
         <div className="max-w-7xl mx-auto">
@@ -94,38 +125,31 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="precos" className="py-24 bg-white px-8">
+      {/* Testimonials */}
+      <section className="py-24 bg-white px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl font-serif mb-4">Preço Único e Justo</h2>
-            <p className="text-slate-500">Tudo o que você precisa para o seu evento.</p>
-          </div>
-          <div className="max-w-md mx-auto bg-slate-50 rounded-[3rem] p-12 border-2 border-primary/10 relative overflow-hidden">
-            <div className="absolute top-0 right-0 bg-primary text-white px-6 py-2 rounded-bl-3xl text-sm font-bold">
-              OFERTA
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-4xl font-serif mb-6">O que dizem nossos clientes</h2>
+              <div className="space-y-8">
+                {[
+                  { name: "Juliana & Ricardo", text: "O convite ficou maravilhoso! Todos os convidados elogiaram a facilidade de confirmar presença." },
+                  { name: "Ana Paula", text: "Melhor investimento que fizemos. O suporte é incrível e o sistema de Pix facilitou muito os presentes." }
+                ].map((t, i) => (
+                  <div key={i} className="bg-slate-50 p-8 rounded-3xl relative">
+                    <p className="text-lg italic text-slate-600 mb-4">"{t.text}"</p>
+                    <p className="font-bold text-primary">— {t.name}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="text-center mb-8">
-              <span className="text-slate-500 line-through text-lg">R$ 49,90</span>
-              <div className="text-5xl font-bold text-primary mt-2">R$ 29,90</div>
-              <p className="text-slate-400 mt-2">Pagamento único</p>
+            <div className="bg-primary rounded-[3rem] p-12 text-white text-center">
+              <h3 className="text-3xl font-serif mb-6">Pronto para começar?</h3>
+              <p className="mb-10 opacity-90">Junte-se a mais de 5.000 casais que transformaram seus convites em experiências digitais.</p>
+              <Button size="lg" variant="secondary" className="rounded-full h-14 px-10 text-lg font-bold w-full">
+                Garantir meu Convite
+              </Button>
             </div>
-            <ul className="space-y-4 mb-10">
-              {[
-                "Link exclusivo e vitalício",
-                "Confirmação via WhatsApp",
-                "Localização Google Maps",
-                "Lista de Presentes",
-                "Contagem Regressiva",
-                "Download em PDF",
-                "QR Code incluso"
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-slate-600">
-                  <Check className="text-green-500 h-5 w-5" /> {item}
-                </li>
-              ))}
-            </ul>
-            <Button className="w-full h-14 rounded-full text-lg font-bold">Comprar Agora</Button>
           </div>
         </div>
       </section>
