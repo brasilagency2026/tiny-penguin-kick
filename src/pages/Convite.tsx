@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Convite } from '@/types/convite';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -36,6 +36,16 @@ const ConvitePage = () => {
 
     fetchConvite();
   }, [slug]);
+
+  const addToCalendar = () => {
+    if (!convite) return;
+    const title = encodeURIComponent(convite.nome_evento);
+    const details = encodeURIComponent(convite.frase || '');
+    const location = encodeURIComponent(convite.endereco || '');
+    const date = convite.data_evento.replace(/-/g, '');
+    const googleUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${date}/${date}`;
+    window.open(googleUrl, '_blank');
+  };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
   if (!convite) return <div className="min-h-screen flex items-center justify-center">Convite não encontrado.</div>;
@@ -79,16 +89,21 @@ const ConvitePage = () => {
         )}>
           <Countdown targetDate={convite.data_evento} color={primaryColor} />
 
-          <div className="flex items-center space-x-4">
-            <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
-              <Calendar size={24} />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
+                <Calendar size={24} />
+              </div>
+              <div>
+                <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Data</p>
+                <p className="text-lg font-medium">
+                  {format(new Date(convite.data_evento), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Data</p>
-              <p className="text-lg font-medium">
-                {format(new Date(convite.data_evento), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-              </p>
-            </div>
+            <Button variant="ghost" size="icon" className="rounded-full" onClick={addToCalendar}>
+              <CalendarPlus className="h-6 w-6 text-slate-400 hover:text-primary transition-colors" />
+            </Button>
           </div>
 
           {convite.horario && (
