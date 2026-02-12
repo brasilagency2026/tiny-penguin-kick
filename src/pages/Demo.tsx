@@ -43,7 +43,7 @@ const DEMO_DATA: Record<string, any> = {
     tema: "modern",
     cor: "#0f172a",
     pix_key: "000.000.000-00",
-    musica_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    musica_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
     timeline: [
       { time: '17:30', title: 'Welcome Drinks', icon: 'glass' },
       { time: '18:30', title: 'Troca de Votos', icon: 'heart' },
@@ -88,13 +88,18 @@ const Demo = () => {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
+      // Forçar o carregamento antes de tocar para evitar erros de buffer
+      audioRef.current.load();
       const playPromise = audioRef.current.play();
+      
       if (playPromise !== undefined) {
         playPromise
-          .then(() => setIsPlaying(true))
+          .then(() => {
+            setIsPlaying(true);
+          })
           .catch(err => {
             console.error("Erro ao tocar áudio:", err);
-            showError("Clique novamente para ativar o som.");
+            showError("Erro ao carregar som. Tente clicar novamente.");
           });
       }
     }
@@ -130,13 +135,12 @@ const Demo = () => {
         <div className="relative border-[12px] border-slate-900 rounded-[3.5rem] overflow-hidden shadow-2xl bg-white min-h-[800px]">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-50"></div>
           
-          {/* Music Player */}
+          {/* Music Player - Removido crossOrigin para evitar problemas de CORS */}
           <audio 
             ref={audioRef} 
             src={data.musica_url} 
             loop 
             preload="auto"
-            crossOrigin="anonymous"
           />
           
           <div className="absolute bottom-6 left-6 z-40 flex flex-col items-center gap-2">
