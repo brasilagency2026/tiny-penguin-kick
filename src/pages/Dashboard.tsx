@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Users, Ticket, Eye, Lock, TrendingUp, Calendar as CalendarIcon, Plus, Copy, Trash2, Download, ExternalLink, PieChart as PieChartIcon } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Users, Ticket, Eye, Lock, TrendingUp, Calendar as CalendarIcon, Plus, Copy, Trash2, Download, ExternalLink, PieChart as PieChartIcon, Activity, UserPlus, CheckCircle2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { showSuccess, showError } from '@/utils/toast';
@@ -12,6 +13,7 @@ import { showSuccess, showError } from '@/utils/toast';
 const Dashboard = () => {
   const [stats, setStats] = useState({ tokens: 0, convites: 0, views: 0, totalGuests: 0 });
   const [recentConvites, setRecentConvites] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
   const [chartData, setChartData] = useState<any[]>([]);
   const [rsvpData, setRsvpData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,11 +37,17 @@ const Dashboard = () => {
       .select('*')
       .order('created_at', { ascending: false });
     
-    const { data: allPresencas } = await supabase.from('presencas').select('adultos, criancas');
+    const { data: allPresencas } = await supabase
+      .from('presencas')
+      .select('*, convites(nome_evento)')
+      .order('created_at', { ascending: false })
+      .limit(10);
+    
+    const { data: presencasStats } = await supabase.from('presencas').select('adultos, criancas');
     
     const totalViews = convites?.reduce((acc, curr) => acc + (curr.visualizacoes || 0), 0) || 0;
-    const totalAdults = allPresencas?.reduce((acc, curr) => acc + (curr.adultos || 0), 0) || 0;
-    const totalChildren = allPresencas?.reduce((acc, curr) => acc + (curr.criancas || 0), 0) || 0;
+    const totalAdults = presencasStats?.reduce((acc, curr) => acc + (curr.adultos || 0), 0) || 0;
+    const totalChildren = presencasStats?.reduce((acc, curr) => acc + (curr.criancas || 0), 0) || 0;
 
     setStats({ 
       tokens: tokenCount || 0, 
@@ -54,6 +62,7 @@ const Dashboard = () => {
     ]);
 
     setRecentConvites(convites || []);
+    setActivities(allPresencas || []);
 
     const chartDataFormatted = convites?.slice(0, 7).map(c => ({
       name: c.nome_evento.length > 10 ? c.nome_evento.substring(0, 10) + '...' : c.nome_evento,
@@ -151,7 +160,7 @@ const Dashboard = () => {
             { title: 'Vendas', value: stats.tokens, icon: <Ticket />, color: 'text-primary' },
             { title: 'Convites', value: stats.convites, icon: <Users />, color: 'text-blue-500' },
             { title: 'Views', value: stats.views.toLocaleString(), icon: <Eye />, color: 'text-purple-500' },
-            { title: 'Convidados', value: stats.totalGuests, icon: <UserCheck className="h-5 w-5" />, color: 'text-green-500' }
+            { title: 'Convidados', value: stats.totalGuests, icon: <CheckCircle2 className="h-5 w-5" />, color: 'text-green-500' }
           ].map((stat, i) => (
             <Card key={i} className="border-none shadow-sm rounded-2xl overflow-hidden">
               <CardHeader className="flex flex-row items-center justify-between pb-2 bg-white">
@@ -187,26 +196,33 @@ const Dashboard = () => {
           </Card>
 
           <Card className="border-none shadow-sm rounded-2xl overflow-hidden">
-            <CardHeader className="bg-white border-b border-slate-50">
-              <CardTitle className="text-lg font-serif">Perfil dos Convidados</CardTitle>
-              <CardDescription>Adultos vs Crianças</CardDescription>
+            <CardHeader className="bg-white border-b border-slate-50 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-serif">Atividade Recente</CardTitle>
+                <CardDescription>Últimas confirmações</CardDescription>
+              </div>
+              <Activity className="text-slate-300 h-5 w-5" />
             </CardHeader>
-            <CardContent className="pt-6 bg-white h-[350px] flex flex-col items-center justify-center">
-              <ResponsiveContainer width="100%" height="80%">
-                <PieChart>
-                  <Pie data={rsvpData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                    {rsvpData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="flex gap-6 mt-4">
-                {rsvpData.map((d, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: d.color }}></div>
-                    <span className="text-xs font-bold text-slate-500 uppercase">{d.name}: {d.value}</span>
-                  </div>
-                ))}
+            <CardContent className="p-0 bg-white max-h-[350px] overflow-y-auto">
+              <div className="divide-y divide-slate-50">
+                {activities.length === 0 ? (
+                  <div className="p-8 text-center text-slate-400 italic text-sm">Nenhuma atividade recente.</div>
+                ) : (
+                  activities.map((act, i) => (
+                    <div key={i} className="p-4 flex items-start gap-3 hover:bg-slate-50 transition-colors">
+                      <div className="bg-green-50 p-2 rounded-full">
+                        <UserPlus className="h-4 w-4 text-green-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-slate-700">{act.nome} confirmou presença</p>
+                        <p className="text-xs text-slate-400">Evento: {act.convites?.nome_evento}</p>
+                        <p className="text-[10px] text-slate-300 mt-1 uppercase font-bold">
+                          {new Date(act.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
