@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette, Music, CreditCard, Shirt, Plus, Trash2, Utensils, Star, Camera, GlassWater, Church } from 'lucide-react';
+import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette, Music, CreditCard, Shirt, Plus, Trash2, Utensils, Star, Camera, GlassWater, Church, Image as ImageIcon } from 'lucide-react';
 
 interface InvitationFormProps {
   onSubmit: (data: any) => void;
@@ -41,6 +41,7 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
     link_presentes: '',
     pix_key: '',
     musica_url: '',
+    foto_url: '',
     contato: '',
     dress_code: '',
     cor: '#7c3aed',
@@ -111,6 +112,23 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
                 <Label htmlFor="data_evento">Data do Evento</Label>
                 <Input id="data_evento" name="data_evento" type="date" required onChange={handleChange} />
               </div>
+            </div>
+          </div>
+
+          {/* Photo Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
+              <ImageIcon className="text-primary" size={20} /> Foto de Capa
+            </h3>
+            <div className="space-y-2">
+              <Label htmlFor="foto_url">Link da Foto (URL)</Label>
+              <Input 
+                id="foto_url" 
+                name="foto_url" 
+                placeholder="https://images.unsplash.com/photo-..." 
+                onChange={handleChange} 
+              />
+              <p className="text-[10px] text-slate-400 italic">Dica: Use uma foto vertical para melhor resultado.</p>
             </div>
           </div>
 

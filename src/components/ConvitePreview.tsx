@@ -63,10 +63,10 @@ const ConvitePreview = ({ data }: Props) => {
         </div>
       )}
 
-      {/* Header */}
+      {/* Header / Photo Section */}
       <div 
         className={cn(
-          "relative h-[360px] flex items-center justify-center text-center px-6 overflow-hidden transition-all duration-500",
+          "relative h-[420px] flex items-center justify-center text-center px-6 overflow-hidden transition-all duration-500",
           isModern ? "bg-white border-b-8" : "",
           isRomantic ? "rounded-b-[5rem]" : "",
           isClassic ? "border-b-4 border-double" : ""
@@ -76,6 +76,17 @@ const ConvitePreview = ({ data }: Props) => {
           borderColor: isModern || isClassic ? primaryColor : undefined
         }}
       >
+        {data.foto_url && (
+          <div className="absolute inset-0 z-0">
+            <img 
+              src={data.foto_url} 
+              alt="Capa" 
+              className="w-full h-full object-cover opacity-40"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
+          </div>
+        )}
+
         <div className="z-10 space-y-6">
           {isRomantic && (
             <motion.div
@@ -86,7 +97,7 @@ const ConvitePreview = ({ data }: Props) => {
             </motion.div>
           )}
           <h1 className={cn(
-            "leading-tight transition-all duration-500",
+            "leading-tight transition-all duration-500 drop-shadow-sm",
             isModern ? "text-7xl font-black tracking-tighter uppercase italic" : "text-5xl font-serif",
             isRomantic ? "text-rose-600 font-cursive italic" : "",
             isClassic ? "tracking-widest uppercase" : ""
@@ -94,13 +105,26 @@ const ConvitePreview = ({ data }: Props) => {
             {data.nome_evento || "Nome do Evento"}
           </h1>
           <p className={cn(
-            "text-sm italic max-w-[240px] mx-auto",
-            isModern ? "font-mono uppercase tracking-widest text-slate-400" : "text-slate-50"
+            "text-sm italic max-w-[240px] mx-auto font-medium",
+            isModern ? "font-mono uppercase tracking-widest text-slate-400" : "text-slate-600"
           )}>
             {data.frase ? `"${data.frase}"` : "Sua frase especial aparecerá aqui..."}
           </p>
         </div>
       </div>
+
+      {/* Main Photo (Romantic Style) */}
+      {isRomantic && data.foto_url && (
+        <div className="px-8 -mt-20 relative z-30 mb-10">
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="aspect-[4/5] rounded-[4rem] overflow-hidden border-8 border-white shadow-2xl rotate-2"
+          >
+            <img src={data.foto_url} className="w-full h-full object-cover" alt="Casal" />
+          </motion.div>
+        </div>
+      )}
 
       {/* Main Info Card */}
       <div className="px-4 -mt-16 relative z-20">

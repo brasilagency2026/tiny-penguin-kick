@@ -11,6 +11,7 @@ export interface Convite {
   link_presentes?: string;
   pix_key?: string;
   musica_url?: string;
+  foto_url?: string;
   contato?: string;
   tema?: string;
   cor?: string;
