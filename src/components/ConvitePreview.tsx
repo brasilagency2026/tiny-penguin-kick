@@ -95,7 +95,7 @@ const ConvitePreview = ({ data }: Props) => {
           </h1>
           <p className={cn(
             "text-sm italic max-w-[240px] mx-auto",
-            isModern ? "font-mono uppercase tracking-widest text-slate-400" : "text-slate-500"
+            isModern ? "font-mono uppercase tracking-widest text-slate-400" : "text-slate-50"
           )}>
             {data.frase ? `"${data.frase}"` : "Sua frase especial aparecerá aqui..."}
           </p>
