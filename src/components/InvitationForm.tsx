@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette, Music, CreditCard } from 'lucide-react';
+import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette, Music, CreditCard, Shirt } from 'lucide-react';
 
 interface InvitationFormProps {
   onSubmit: (data: any) => void;
@@ -26,6 +26,7 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
     pix_key: '',
     musica_url: '',
     contato: '',
+    dress_code: '',
     cor: '#7c3aed',
     tema: 'classic'
   });
@@ -99,6 +100,23 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
             <div className="relative">
               <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input id="endereco" name="endereco" placeholder="Rua, Número, Bairro, Cidade" className="pl-10" onChange={handleChange} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="link_presentes">Link da Lista de Presentes</Label>
+              <div className="relative">
+                <Gift className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input id="link_presentes" name="link_presentes" placeholder="https://lista.com/..." className="pl-10" onChange={handleChange} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="dress_code">Dress Code (Traje)</Label>
+              <div className="relative">
+                <Shirt className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input id="dress_code" name="dress_code" placeholder="Ex: Esporte Fino" className="pl-10" onChange={handleChange} />
+              </div>
             </div>
           </div>
 

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Convite } from '@/types/convite';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy, ExternalLink } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy, ExternalLink, Shirt } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -176,6 +176,18 @@ END:VCALENDAR`;
                 </div>
               </div>
             )}
+
+            {convite.dress_code && (
+              <div className="flex items-center space-x-4">
+                <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
+                  <Shirt size={24} />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Dress Code</p>
+                  <p className="text-lg font-medium">{convite.dress_code}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -220,9 +232,12 @@ END:VCALENDAR`;
                 <DialogHeader>
                   <DialogTitle className="text-2xl font-serif">Presente em Pix</DialogTitle>
                 </DialogHeader>
-                <div className="py-6 space-y-4">
+                <div className="py-6 space-y-4 flex flex-col items-center">
                   <p className="text-slate-500">Sua presença é nosso maior presente, mas se desejar nos agraciar:</p>
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-200 font-mono text-sm break-all">
+                  <div className="p-4 bg-white rounded-2xl border-2 border-slate-100">
+                    <QRCodeSVG value={convite.pix_key} size={180} />
+                  </div>
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-200 font-mono text-sm break-all w-full">
                     {convite.pix_key}
                   </div>
                   <Button onClick={copyPix} className="w-full gap-2 h-12 rounded-xl">
@@ -231,6 +246,17 @@ END:VCALENDAR`;
                 </div>
               </DialogContent>
             </Dialog>
+          )}
+
+          {convite.link_presentes && (
+            <Button 
+              variant="outline"
+              className={cn("h-16 text-lg font-semibold col-span-2 border-2", isModern ? "rounded-none" : "rounded-2xl")}
+              style={{ borderColor: primaryColor, color: primaryColor }}
+              onClick={() => window.open(convite.link_presentes, '_blank')}
+            >
+              <Gift className="mr-2 h-5 w-5" /> Lista de Presentes
+            </Button>
           )}
         </div>
 
