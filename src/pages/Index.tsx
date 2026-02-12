@@ -3,8 +3,11 @@ import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { Heart, Sparkles, Smartphone, Send, Check, HelpCircle, ShoppingBag, Wand2, Share2, MapPin, Music, CreditCard, Download, QrCode, ArrowRight } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-white overflow-hidden">
       {/* Navbar */}
@@ -15,7 +18,7 @@ const Index = () => {
           <a href="#funcionalidades" className="hover:text-primary transition-colors">Funcionalidades</a>
           <a href="#demo" className="hover:text-primary transition-colors">Demonstração</a>
         </div>
-        <Button variant="outline" className="rounded-full px-6" onClick={() => window.location.href = '/dashboard'}>Painel Admin</Button>
+        <Button variant="outline" className="rounded-full px-6" onClick={() => navigate('/dashboard')}>Painel Admin</Button>
       </nav>
 
       {/* Hero */}
@@ -77,9 +80,9 @@ const Index = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "Clássico", desc: "Elegância atemporal com fontes serifadas e detalhes dourados.", img: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=400", color: "bg-amber-50" },
-              { title: "Moderno", desc: "Minimalismo contemporâneo com tipografia bold e cores sólidas.", img: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=400", color: "bg-slate-900 text-white" },
-              { title: "Romântico", desc: "Delicadeza floral com tons pastéis e animações suaves.", img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=400", color: "bg-rose-50" }
+              { id: "classic", title: "Clássico", desc: "Elegância atemporal com fontes serifadas e detalhes dourados.", img: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=400", color: "bg-amber-50" },
+              { id: "modern", title: "Moderno", desc: "Minimalismo contemporâneo com tipografia bold e cores sólidas.", img: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=400", color: "bg-slate-900 text-white" },
+              { id: "romantic", title: "Romântico", desc: "Delicadeza floral com tons pastéis e animações suaves.", img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=400", color: "bg-rose-50" }
             ].map((demo, i) => (
               <motion.div 
                 key={i}
@@ -90,7 +93,13 @@ const Index = () => {
                 <div className="p-8">
                   <h3 className="text-2xl font-serif mb-3">{demo.title}</h3>
                   <p className="text-slate-500 text-sm mb-6 leading-relaxed">{demo.desc}</p>
-                  <Button variant="outline" className="w-full rounded-xl">Ver Exemplo</Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full rounded-xl"
+                    onClick={() => navigate(`/demo/${demo.id}`)}
+                  >
+                    Ver Exemplo
+                  </Button>
                 </div>
               </motion.div>
             ))}
