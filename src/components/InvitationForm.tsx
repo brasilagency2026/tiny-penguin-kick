@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -9,10 +9,11 @@ import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette } from 'lucide-rea
 
 interface InvitationFormProps {
   onSubmit: (data: any) => void;
+  onChange: (data: any) => void;
   loading: boolean;
 }
 
-const InvitationForm = ({ onSubmit, loading }: InvitationFormProps) => {
+const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) => {
   const [formData, setFormData] = useState({
     nome_evento: '',
     frase: '',
@@ -26,6 +27,11 @@ const InvitationForm = ({ onSubmit, loading }: InvitationFormProps) => {
     cor: '#7c3aed',
     tema: 'classic'
   });
+
+  // Notify parent of changes for live preview
+  useEffect(() => {
+    onChange(formData);
+  }, [formData, onChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
