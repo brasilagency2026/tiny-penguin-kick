@@ -50,13 +50,9 @@ const ConvitePreview = ({ data }: Props) => {
 
         <div className="z-10 space-y-6">
           {isRomantic && (
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="flex justify-center gap-2"
-            >
+            <div className="flex justify-center gap-2">
               <Heart className="animate-pulse" style={{ color: primaryColor }} size={28} />
-            </motion.div>
+            </div>
           )}
           
           <h1 className={cn(
