@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { 
   ArrowLeft, Smartphone, Monitor, Sparkles, Music, Volume2, 
   CheckSquare, MapPin, CreditCard, Copy, CalendarPlus, 
-  MessageCircle, Heart, Download 
+  MessageCircle, Heart, Download, VolumeX
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import RSVPForm from '@/components/RSVPForm';
@@ -23,7 +23,7 @@ const DEMO_DATA: Record<string, any> = {
     tema: "classic",
     cor: "#7c3aed",
     pix_key: "helenaegabriel@email.com",
-    musica_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    musica_url: "https://cdn.pixabay.com/audio/2022/08/05/audio_5450c53a4c.mp3",
     timeline: [
       { time: '19:00', title: 'Cerimônia Religiosa', icon: 'church' },
       { time: '20:30', title: 'Recepção e Jantar', icon: 'utensils' },
@@ -43,7 +43,7 @@ const DEMO_DATA: Record<string, any> = {
     tema: "modern",
     cor: "#0f172a",
     pix_key: "000.000.000-00",
-    musica_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+    musica_url: "https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a7305a.mp3",
     timeline: [
       { time: '17:30', title: 'Welcome Drinks', icon: 'glass' },
       { time: '18:30', title: 'Troca de Votos', icon: 'heart' },
@@ -63,7 +63,7 @@ const DEMO_DATA: Record<string, any> = {
     cor: "#db2777",
     foto_url: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=800",
     pix_key: "sophiaelucas@love.com",
-    musica_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    musica_url: "https://cdn.pixabay.com/audio/2022/01/26/audio_d0c6ff1101.mp3",
     timeline: [
       { time: '16:00', title: 'Cerimônia no Jardim', icon: 'heart' },
       { time: '18:00', title: 'Coquetel ao Pôr do Sol', icon: 'glass' },
@@ -83,8 +83,11 @@ const Demo = () => {
 
   const toggleMusic = () => {
     if (!audioRef.current) return;
-    if (isPlaying) audioRef.current.pause();
-    else audioRef.current.play();
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play().catch(err => console.error("Erro ao tocar áudio:", err));
+    }
     setIsPlaying(!isPlaying);
   };
 
@@ -118,15 +121,25 @@ const Demo = () => {
         <div className="relative border-[12px] border-slate-900 rounded-[3.5rem] overflow-hidden shadow-2xl bg-white min-h-[800px]">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-50"></div>
           
-          {/* Music Player Mock */}
+          {/* Music Player */}
           <audio ref={audioRef} src={data.musica_url} loop />
-          <Button 
-            onClick={toggleMusic}
-            className="absolute bottom-6 left-6 z-40 rounded-full w-12 h-12 shadow-xl"
-            style={{ backgroundColor: data.cor }}
-          >
-            {isPlaying ? <Volume2 size={20} /> : <Music size={20} />}
-          </Button>
+          <div className="absolute bottom-6 left-6 z-40 flex flex-col items-center gap-2">
+            <motion.div
+              animate={!isPlaying ? { scale: [1, 1.1, 1] } : {}}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <Button 
+                onClick={toggleMusic}
+                className="rounded-full w-14 h-14 shadow-2xl border-4 border-white"
+                style={{ backgroundColor: data.cor }}
+              >
+                {isPlaying ? <Volume2 size={24} /> : <Music size={24} />}
+              </Button>
+            </motion.div>
+            <span className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tighter shadow-sm border border-slate-100">
+              {isPlaying ? "Tocando" : "Clique p/ ouvir"}
+            </span>
+          </div>
 
           <ConvitePreview data={data} />
 
