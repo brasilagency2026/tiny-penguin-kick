@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
-  const [selectedConvite, setSelectedConvite] = useState<any>(null);
   const [guests, setGuests] = useState<any[]>([]);
 
   const handleLogin = (e: React.FormEvent) => {
@@ -60,13 +60,25 @@ const Dashboard = () => {
   }, [isAuthenticated]);
 
   const fetchGuests = async (conviteId: string) => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('presencas')
       .select('*')
       .eq('convite_id', conviteId)
       .order('created_at', { ascending: false });
     
     if (data) setGuests(data);
+  };
+
+  const deleteConvite = async (id: string) => {
+    if (confirm("Tem certeza que deseja excluir este convite?")) {
+      const { error } = await supabase.from('convites').delete().eq('id', id);
+      if (error) {
+        showError("Erro ao excluir");
+      } else {
+        showSuccess("Convite excluído");
+        fetchData();
+      }
+    }
   };
 
   const generateManualToken = async () => {
@@ -197,15 +209,15 @@ const Dashboard = () => {
           <Card className="border-none shadow-sm rounded-2xl overflow-hidden">
             <CardHeader className="bg-white border-b border-slate-50">
               <CardTitle className="text-lg font-serif">Todos os Convites</CardTitle>
-              <CardDescription>Clique para ver a lista de convidados</CardDescription>
+              <CardDescription>Gerencie e veja convidados</CardDescription>
             </CardHeader>
             <CardContent className="p-0 bg-white">
               <div className="divide-y divide-slate-50 max-h-[400px] overflow-y-auto">
                 {recentConvites.map((c) => (
-                  <Dialog key={c.id} onOpenChange={(open) => open && fetchGuests(c.id)}>
-                    <DialogTrigger asChild>
-                      <div className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer">
-                        <div className="flex items-center gap-3">
+                  <div key={c.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors group">
+                    <Dialog onOpenChange={(open) => open && fetchGuests(c.id)}>
+                      <DialogTrigger asChild>
+                        <div className="flex items-center gap-3 cursor-pointer flex-1">
                           <div className="bg-slate-100 p-2 rounded-lg">
                             <CalendarIcon className="h-4 w-4 text-slate-500" />
                           </div>
@@ -216,76 +228,81 @@ const Dashboard = () => {
                             </p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm font-bold text-primary flex items-center">
-                            {c.visualizacoes} <Eye className="h-3 w-3 ml-1 opacity-50" />
-                          </p>
-                          <Badge variant="outline" className="text-[9px] h-4 px-1 bg-green-50 text-green-600 border-green-100">Ativo</Badge>
-                        </div>
-                      </div>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle className="text-2xl font-serif">{c.nome_evento}</DialogTitle>
-                        <DialogDescription>Lista de convidados confirmados</DialogDescription>
-                      </DialogHeader>
-                      <div className="mt-6 space-y-4">
-                        <div className="grid grid-cols-3 gap-4 mb-6">
-                          <div className="bg-slate-50 p-4 rounded-2xl text-center">
-                            <p className="text-xs text-slate-400 font-bold uppercase">Total Convidados</p>
-                            <p className="text-2xl font-bold text-primary">
-                              {guests.reduce((acc, g) => acc + g.adultos + g.criancas, 0)}
-                            </p>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle className="text-2xl font-serif">{c.nome_evento}</DialogTitle>
+                          <DialogDescription>Lista de convidados confirmados</DialogDescription>
+                        </DialogHeader>
+                        <div className="mt-6 space-y-4">
+                          <div className="grid grid-cols-3 gap-4 mb-6">
+                            <div className="bg-slate-50 p-4 rounded-2xl text-center">
+                              <p className="text-xs text-slate-400 font-bold uppercase">Total</p>
+                              <p className="text-2xl font-bold text-primary">
+                                {guests.reduce((acc, g) => acc + g.adultos + g.criancas, 0)}
+                              </p>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-2xl text-center">
+                              <p className="text-xs text-slate-400 font-bold uppercase">Adultos</p>
+                              <p className="text-2xl font-bold text-slate-700">
+                                {guests.reduce((acc, g) => acc + g.adultos, 0)}
+                              </p>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-2xl text-center">
+                              <p className="text-xs text-slate-400 font-bold uppercase">Crianças</p>
+                              <p className="text-2xl font-bold text-slate-700">
+                                {guests.reduce((acc, g) => acc + g.criancas, 0)}
+                              </p>
+                            </div>
                           </div>
-                          <div className="bg-slate-50 p-4 rounded-2xl text-center">
-                            <p className="text-xs text-slate-400 font-bold uppercase">Adultos</p>
-                            <p className="text-2xl font-bold text-slate-700">
-                              {guests.reduce((acc, g) => acc + g.adultos, 0)}
-                            </p>
-                          </div>
-                          <div className="bg-slate-50 p-4 rounded-2xl text-center">
-                            <p className="text-xs text-slate-400 font-bold uppercase">Crianças</p>
-                            <p className="text-2xl font-bold text-slate-700">
-                              {guests.reduce((acc, g) => acc + g.criancas, 0)}
-                            </p>
-                          </div>
-                        </div>
 
-                        <div className="border rounded-2xl overflow-hidden">
-                          <Table>
-                            <TableHeader className="bg-slate-50">
-                              <TableRow>
-                                <TableHead>Nome</TableHead>
-                                <TableHead className="text-center">Adultos</TableHead>
-                                <TableHead className="text-center">Crianças</TableHead>
-                                <TableHead className="text-right">Data</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {guests.length === 0 ? (
+                          <div className="border rounded-2xl overflow-hidden">
+                            <Table>
+                              <TableHeader className="bg-slate-50">
                                 <TableRow>
-                                  <TableCell colSpan={4} className="text-center py-8 text-slate-400 italic">
-                                    Nenhuma confirmação ainda.
-                                  </TableCell>
+                                  <TableHead>Nome</TableHead>
+                                  <TableHead className="text-center">Adultos</TableHead>
+                                  <TableHead className="text-center">Crianças</TableHead>
                                 </TableRow>
-                              ) : (
-                                guests.map((guest) => (
-                                  <TableRow key={guest.id}>
-                                    <TableCell className="font-medium">{guest.nome}</TableCell>
-                                    <TableCell className="text-center">{guest.adultos}</TableCell>
-                                    <TableCell className="text-center">{guest.criancas}</TableCell>
-                                    <TableCell className="text-right text-xs text-slate-400">
-                                      {new Date(guest.created_at).toLocaleDateString()}
+                              </TableHeader>
+                              <TableBody>
+                                {guests.length === 0 ? (
+                                  <TableRow>
+                                    <TableCell colSpan={3} className="text-center py-8 text-slate-400 italic">
+                                      Nenhuma confirmação ainda.
                                     </TableCell>
                                   </TableRow>
-                                ))
-                              )}
-                            </TableBody>
-                          </Table>
+                                ) : (
+                                  guests.map((guest) => (
+                                    <TableRow key={guest.id}>
+                                      <TableCell className="font-medium">{guest.nome}</TableCell>
+                                      <TableCell className="text-center">{guest.adultos}</TableCell>
+                                      <TableCell className="text-center">{guest.criancas}</TableCell>
+                                    </TableRow>
+                                  ))
+                                )}
+                              </TableBody>
+                            </Table>
+                          </div>
                         </div>
+                      </DialogContent>
+                    </Dialog>
+                    <div className="flex items-center gap-2">
+                      <div className="text-right mr-2">
+                        <p className="text-sm font-bold text-primary flex items-center justify-end">
+                          {c.visualizacoes} <Eye className="h-3 w-3 ml-1 opacity-50" />
+                        </p>
                       </div>
-                    </DialogContent>
-                  </Dialog>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => deleteConvite(c.id)}
+                      >
+                        <Trash2 size={14} />
+                      </Button>
+                    </div>
+                  </div>
                 ))}
               </div>
             </CardContent>

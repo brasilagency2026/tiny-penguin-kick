@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Convite } from '@/types/convite';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { QRCodeSVG } from 'qrcode.react';
@@ -14,11 +14,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { cn } from '@/lib/utils';
 import Countdown from '@/components/Countdown';
 import RSVPForm from '@/components/RSVPForm';
+import { showSuccess } from '@/utils/toast';
 
 const ConvitePage = () => {
   const { slug } = useParams();
   const [convite, setConvite] = useState<Convite | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const fetchConvite = async () => {
@@ -38,14 +41,21 @@ const ConvitePage = () => {
     fetchConvite();
   }, [slug]);
 
-  const addToCalendar = () => {
-    if (!convite) return;
-    const title = encodeURIComponent(convite.nome_evento);
-    const details = encodeURIComponent(convite.frase || '');
-    const location = encodeURIComponent(convite.endereco || '');
-    const date = convite.data_evento.replace(/-/g, '');
-    const googleUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${date}/${date}`;
-    window.open(googleUrl, '_blank');
+  const toggleMusic = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const copyPix = () => {
+    if (convite?.pix_key) {
+      navigator.clipboard.writeText(convite.pix_key);
+      showSuccess("Chave Pix copiada!");
+    }
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
@@ -60,6 +70,20 @@ const ConvitePage = () => {
       "min-h-screen font-sans text-slate-800 pb-20",
       isModern ? "bg-slate-50" : "bg-white"
     )}>
+      {/* Music Player */}
+      {convite.musica_url && (
+        <>
+          <audio ref={audioRef} src={convite.musica_url} loop />
+          <Button 
+            onClick={toggleMusic}
+            className="fixed bottom-6 right-6 z-50 rounded-full w-14 h-14 shadow-2xl animate-bounce"
+            style={{ backgroundColor: primaryColor }}
+          >
+            {isPlaying ? <Volume2 /> : <Music />}
+          </Button>
+        </>
+      )}
+
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -90,7 +114,7 @@ const ConvitePage = () => {
         )}>
           <Countdown targetDate={convite.data_evento} color={primaryColor} />
 
-          <div className="flex items-center justify-between">
+          <div className="space-y-6">
             <div className="flex items-center space-x-4">
               <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
                 <Calendar size={24} />
@@ -102,34 +126,31 @@ const ConvitePage = () => {
                 </p>
               </div>
             </div>
-            <Button variant="ghost" size="icon" className="rounded-full" onClick={addToCalendar}>
-              <CalendarPlus className="h-6 w-6 text-slate-400 hover:text-primary transition-colors" />
-            </Button>
+
+            {convite.horario && (
+              <div className="flex items-center space-x-4">
+                <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
+                  <Clock size={24} />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Horário</p>
+                  <p className="text-lg font-medium">{convite.horario}</p>
+                </div>
+              </div>
+            )}
+
+            {convite.endereco && (
+              <div className="flex items-center space-x-4">
+                <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
+                  <MapPin size={24} />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Local</p>
+                  <p className="text-lg font-medium">{convite.endereco}</p>
+                </div>
+              </div>
+            )}
           </div>
-
-          {convite.horario && (
-            <div className="flex items-center space-x-4">
-              <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
-                <Clock size={24} />
-              </div>
-              <div>
-                <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Horário</p>
-                <p className="text-lg font-medium">{convite.horario}</p>
-              </div>
-            </div>
-          )}
-
-          {convite.endereco && (
-            <div className="flex items-center space-x-4">
-              <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
-                <MapPin size={24} />
-              </div>
-              <div>
-                <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Local</p>
-                <p className="text-lg font-medium">{convite.endereco}</p>
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="mt-8 grid grid-cols-2 gap-4">
@@ -159,14 +180,31 @@ const ConvitePage = () => {
             <MapPin className="mr-2 h-5 w-5" /> Localização
           </Button>
 
-          {convite.link_presentes && (
-            <Button 
-              variant="secondary"
-              className={cn("h-16 text-lg font-semibold col-span-2 shadow-md", isModern ? "rounded-none" : "rounded-2xl")}
-              onClick={() => window.open(convite.link_presentes, '_blank')}
-            >
-              <Gift className="mr-2 h-5 w-5" /> Lista de Presentes
-            </Button>
+          {convite.pix_key && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="secondary"
+                  className={cn("h-16 text-lg font-semibold col-span-2 shadow-md", isModern ? "rounded-none" : "rounded-2xl")}
+                >
+                  <CreditCard className="mr-2 h-5 w-5" /> Presentear com Pix
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md text-center">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-serif">Presente em Pix</DialogTitle>
+                </DialogHeader>
+                <div className="py-6 space-y-4">
+                  <p className="text-slate-500">Sua presença é nosso maior presente, mas se desejar nos agraciar:</p>
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-200 font-mono text-sm break-all">
+                    {convite.pix_key}
+                  </div>
+                  <Button onClick={copyPix} className="w-full gap-2 h-12 rounded-xl">
+                    <Copy size={18} /> Copiar Chave Pix
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           )}
         </div>
 

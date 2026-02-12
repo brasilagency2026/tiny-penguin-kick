@@ -9,6 +9,8 @@ export interface Convite {
   link_maps?: string;
   link_whatsapp?: string;
   link_presentes?: string;
+  pix_key?: string;
+  musica_url?: string;
   contato?: string;
   tema?: string;
   cor?: string;
@@ -22,4 +24,8 @@ export interface AcessoML {
   token: string;
   usado: boolean;
   payment_id?: string;
+  convite_id?: string;
+  comprador_email?: string;
+  comprador_id?: string;
+  created_at?: string;
 }
