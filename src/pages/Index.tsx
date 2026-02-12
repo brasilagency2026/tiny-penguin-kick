@@ -33,7 +33,7 @@ const Index = () => {
               Convites <span className="text-primary italic">Digitais</span> que encantam.
             </h1>
             <p className="text-xl text-slate-600 mb-10 max-w-lg leading-relaxed">
-              Transforme seu evento em uma experiência inesquecível desde o primeiro clique. Prático, elegante e totalmente interativo.
+              Transforme seu evento em uma expérience inesquecível desde o primeiro clique. Prático, elegante e totalmente interativo.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="rounded-full h-14 px-10 text-lg font-semibold shadow-xl shadow-primary/20">
@@ -140,7 +140,7 @@ const Index = () => {
               { icon: <Share2 className="h-10 w-10" />, title: "3. Compartilhe", desc: "Gere seu link exclusivo e envie para todos os seus convidados via WhatsApp." }
             ].map((step, i) => (
               <motion.div 
-                key={i}
+                key={i} 
                 whileHover={{ y: -10 }}
                 className="bg-white p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/50 text-center"
               >

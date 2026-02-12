@@ -276,6 +276,16 @@ const ConvitePage = () => {
               </DialogContent>
             </Dialog>
           )}
+
+          <div className="col-span-2 pt-4">
+            <PDFDownloadLink document={<InvitationPDF convite={convite} />} fileName={`convite-${convite.slug}.pdf`}>
+              {({ loading }) => (
+                <Button variant="ghost" className="w-full gap-2 text-slate-400 hover:text-primary">
+                  <Download size={18} /> {loading ? 'Gerando PDF...' : 'Baixar Versão em PDF'}
+                </Button>
+              )}
+            </PDFDownloadLink>
+          </div>
         </div>
       </div>
     </div>
