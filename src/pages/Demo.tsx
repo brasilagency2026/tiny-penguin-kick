@@ -10,7 +10,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import RSVPForm from '@/components/RSVPForm';
 import { QRCodeSVG } from 'qrcode.react';
-import { showSuccess } from '@/utils/toast';
+import { showSuccess, showError } from '@/utils/toast';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DEMO_DATA: Record<string, any> = {
@@ -23,7 +23,7 @@ const DEMO_DATA: Record<string, any> = {
     tema: "classic",
     cor: "#7c3aed",
     pix_key: "helenaegabriel@email.com",
-    musica_url: "https://cdn.pixabay.com/audio/2022/08/05/audio_5450c53a4c.mp3",
+    musica_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     timeline: [
       { time: '19:00', title: 'Cerimônia Religiosa', icon: 'church' },
       { time: '20:30', title: 'Recepção e Jantar', icon: 'utensils' },
@@ -43,7 +43,7 @@ const DEMO_DATA: Record<string, any> = {
     tema: "modern",
     cor: "#0f172a",
     pix_key: "000.000.000-00",
-    musica_url: "https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a7305a.mp3",
+    musica_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
     timeline: [
       { time: '17:30', title: 'Welcome Drinks', icon: 'glass' },
       { time: '18:30', title: 'Troca de Votos', icon: 'heart' },
@@ -63,7 +63,7 @@ const DEMO_DATA: Record<string, any> = {
     cor: "#db2777",
     foto_url: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=800",
     pix_key: "sophiaelucas@love.com",
-    musica_url: "https://cdn.pixabay.com/audio/2022/01/26/audio_d0c6ff1101.mp3",
+    musica_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
     timeline: [
       { time: '16:00', title: 'Cerimônia no Jardim', icon: 'heart' },
       { time: '18:00', title: 'Coquetel ao Pôr do Sol', icon: 'glass' },
@@ -83,12 +83,21 @@ const Demo = () => {
 
   const toggleMusic = () => {
     if (!audioRef.current) return;
+    
     if (isPlaying) {
       audioRef.current.pause();
+      setIsPlaying(false);
     } else {
-      audioRef.current.play().catch(err => console.error("Erro ao tocar áudio:", err));
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlaying(true))
+          .catch(err => {
+            console.error("Erro ao tocar áudio:", err);
+            showError("Clique novamente para ativar o som.");
+          });
+      }
     }
-    setIsPlaying(!isPlaying);
   };
 
   const copyPix = () => {
@@ -122,7 +131,14 @@ const Demo = () => {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-50"></div>
           
           {/* Music Player */}
-          <audio ref={audioRef} src={data.musica_url} loop />
+          <audio 
+            ref={audioRef} 
+            src={data.musica_url} 
+            loop 
+            preload="auto"
+            crossOrigin="anonymous"
+          />
+          
           <div className="absolute bottom-6 left-6 z-40 flex flex-col items-center gap-2">
             <motion.div
               animate={!isPlaying ? { scale: [1, 1.1, 1] } : {}}
