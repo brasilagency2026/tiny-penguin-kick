@@ -58,20 +58,33 @@ const ConvitePage = () => {
     }
   };
 
+  const addToCalendar = () => {
+    if (!convite) return;
+    const startDate = new Date(convite.data_evento).toISOString().replace(/-|:|\.\d+/g, '');
+    const endDate = new Date(new Date(convite.data_evento).getTime() + 4 * 60 * 60 * 1000).toISOString().replace(/-|:|\.\d+/g, '');
+    const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART:${startDate}
+DTEND:${endDate}
+SUMMARY:${convite.nome_evento}
+DESCRIPTION:${convite.frase || ''}
+LOCATION:${convite.endereco || ''}
+END:VEVENT
+END:VCALENDAR`;
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.setAttribute('download', 'evento.ics');
+    link.click();
+  };
+
   if (loading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
   if (!convite) return <div className="min-h-screen flex items-center justify-center">Convite não encontrado.</div>;
 
   const primaryColor = convite.cor || '#7c3aed';
   const isModern = convite.tema === 'modern';
   const isRomantic = convite.tema === 'romantic';
-
-  // Helper to extract Google Maps Embed URL or use a placeholder
-  const getMapEmbedUrl = (url: string) => {
-    if (!url) return null;
-    if (url.includes('google.com/maps/embed')) return url;
-    // Simple heuristic to try and convert a regular link to embed (limited)
-    return null; 
-  };
 
   return (
     <div className={cn(
@@ -123,16 +136,21 @@ const ConvitePage = () => {
           <Countdown targetDate={convite.data_evento} color={primaryColor} />
 
           <div className="space-y-6">
-            <div className="flex items-center space-x-4">
-              <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
-                <Calendar size={24} />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
+                  <Calendar size={24} />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Data</p>
+                  <p className="text-lg font-medium">
+                    {format(new Date(convite.data_evento), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Data</p>
-                <p className="text-lg font-medium">
-                  {format(new Date(convite.data_evento), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                </p>
-              </div>
+              <Button variant="ghost" size="icon" onClick={addToCalendar} title="Adicionar ao Calendário">
+                <CalendarPlus className="h-6 w-6 text-slate-400" />
+              </Button>
             </div>
 
             {convite.horario && (
@@ -148,34 +166,14 @@ const ConvitePage = () => {
             )}
 
             {convite.endereco && (
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
-                    <MapPin size={24} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Local</p>
-                    <p className="text-lg font-medium">{convite.endereco}</p>
-                  </div>
+              <div className="flex items-center space-x-4">
+                <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
+                  <MapPin size={24} />
                 </div>
-                
-                {convite.link_maps && (
-                  <div className="rounded-2xl overflow-hidden border border-slate-100 h-48 bg-slate-50 relative group">
-                    <div className="absolute inset-0 flex items-center justify-center bg-slate-900/5 group-hover:bg-slate-900/10 transition-colors cursor-pointer" onClick={() => window.open(convite.link_maps, '_blank')}>
-                      <div className="bg-white p-3 rounded-full shadow-lg flex items-center gap-2 text-sm font-bold">
-                        <ExternalLink size={16} /> Ver no Google Maps
-                      </div>
-                    </div>
-                    <img 
-                      src={`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(convite.endereco)}&zoom=15&size=600x300&key=YOUR_API_KEY_HERE`} 
-                      alt="Mapa"
-                      className="w-full h-full object-cover opacity-50"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=600";
-                      }}
-                    />
-                  </div>
-                )}
+                <div>
+                  <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Local</p>
+                  <p className="text-lg font-medium">{convite.endereco}</p>
+                </div>
               </div>
             )}
           </div>
