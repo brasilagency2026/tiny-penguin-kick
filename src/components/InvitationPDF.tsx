@@ -183,12 +183,6 @@ export const InvitationPDF = ({ convite }: Props) => {
                 <Text style={styles.value}>{convite.dress_code}</Text>
               </View>
             )}
-            {convite.pix_key && (
-              <View style={styles.infoBox}>
-                <Text style={styles.label}>Presente (Pix)</Text>
-                <Text style={styles.value}>Chave disponível</Text>
-              </View>
-            )}
           </View>
 
           {/* Timeline */}
@@ -213,12 +207,6 @@ export const InvitationPDF = ({ convite }: Props) => {
             {convite.endereco && (
               <Link style={styles.buttonOutline} src={mapsUrl}>
                 <Text style={styles.buttonTextOutline}>VER LOCALIZAÇÃO NO MAPA</Text>
-              </Link>
-            )}
-
-            {convite.pix_key && (
-              <Link style={styles.buttonOutline} src={fullUrl}>
-                <Text style={styles.buttonTextOutline}>ENVIAR PRESENTE (PIX)</Text>
               </Link>
             )}
           </View>
