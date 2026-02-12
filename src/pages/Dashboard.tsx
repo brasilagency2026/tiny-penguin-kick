@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Users, Ticket, Eye, Lock, TrendingUp, Calendar as CalendarIcon, Plus, Copy, Trash2, Download, ExternalLink, PieChart as PieChartIcon, Activity, UserPlus, CheckCircle2 } from 'lucide-react';
+import { Loader2, Users, Ticket, Eye, Lock, TrendingUp, Calendar as CalendarIcon, Plus, Copy, Trash2, Download, ExternalLink, PieChart as PieChartIcon, Activity, UserPlus, CheckCircle2, Share2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { showSuccess, showError } from '@/utils/toast';
@@ -15,7 +15,6 @@ const Dashboard = () => {
   const [recentConvites, setRecentConvites] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
   const [chartData, setChartData] = useState<any[]>([]);
-  const [rsvpData, setRsvpData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
@@ -56,11 +55,6 @@ const Dashboard = () => {
       totalGuests: totalAdults + totalChildren
     });
 
-    setRsvpData([
-      { name: 'Adultos', value: totalAdults, color: '#7c3aed' },
-      { name: 'Crianças', value: totalChildren, color: '#a78bfa' }
-    ]);
-
     setRecentConvites(convites || []);
     setActivities(allPresencas || []);
 
@@ -87,6 +81,12 @@ const Dashboard = () => {
       .order('created_at', { ascending: false });
     
     if (data) setGuests(data);
+  };
+
+  const copyLink = (slug: string) => {
+    const url = `${window.location.origin}/convite/${slug}`;
+    navigator.clipboard.writeText(url);
+    showSuccess("Link do convite copiado!");
   };
 
   const exportToCSV = (nomeEvento: string) => {
@@ -251,6 +251,7 @@ const Dashboard = () => {
                       <Badge variant="secondary" className="bg-slate-100 text-slate-600">{c.visualizacoes || 0}</Badge>
                     </TableCell>
                     <TableCell className="text-right pr-6 space-x-2">
+                      <Button variant="ghost" size="icon" onClick={() => copyLink(c.slug)} title="Copiar Link"><Copy size={16} /></Button>
                       <Dialog onOpenChange={(open) => open && fetchGuests(c.id)}>
                         <DialogTrigger asChild>
                           <Button variant="ghost" size="sm" className="rounded-lg gap-2">

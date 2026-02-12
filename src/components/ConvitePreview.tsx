@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import Countdown from './Countdown';
+import { motion } from 'framer-motion';
 
 interface Props {
   data: any;
@@ -23,16 +24,45 @@ const ConvitePreview = ({ data }: Props) => {
 
   return (
     <div className={cn(
-      "min-h-full font-sans text-slate-800 pb-10 transition-all duration-500",
+      "min-h-full font-sans text-slate-800 pb-10 transition-all duration-500 relative overflow-hidden",
       isModern ? "bg-slate-50" : "bg-white",
       isRomantic ? "bg-rose-50/30" : ""
     )}>
+      {/* Decorative Elements for Romantic Theme */}
+      {isRomantic && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ 
+                opacity: [0, 0.5, 0], 
+                y: -200,
+                x: Math.sin(i) * 50 
+              }}
+              transition={{ 
+                duration: 5 + i, 
+                repeat: Infinity, 
+                delay: i * 2 
+              }}
+              className="absolute text-rose-200"
+              style={{ 
+                left: `${15 + i * 15}%`, 
+                bottom: '-10%' 
+              }}
+            >
+              <Heart size={24 + i * 4} fill="currentColor" />
+            </motion.div>
+          ))}
+        </div>
+      )}
+
       {/* Header */}
       <div 
         className={cn(
           "relative h-[360px] flex items-center justify-center text-center px-6 overflow-hidden transition-all duration-500",
-          isModern ? "bg-white border-b-4" : "",
-          isRomantic ? "rounded-b-[4rem]" : ""
+          isModern ? "bg-white border-b-8" : "",
+          isRomantic ? "rounded-b-[5rem]" : ""
         )}
         style={{ 
           backgroundColor: !isModern ? `${primaryColor}15` : undefined,
@@ -40,48 +70,64 @@ const ConvitePreview = ({ data }: Props) => {
         }}
       >
         <div className="z-10 space-y-6">
-          {isRomantic && <Heart className="mx-auto animate-pulse text-rose-400" size={28} />}
+          {isRomantic && (
+            <motion.div
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <Heart className="mx-auto text-rose-400" size={32} fill="currentColor" />
+            </motion.div>
+          )}
           <h1 className={cn(
             "leading-tight transition-all duration-500",
-            isModern ? "text-6xl font-black tracking-tighter uppercase italic" : "text-4xl font-serif",
-            isRomantic ? "text-rose-600 font-cursive" : ""
+            isModern ? "text-7xl font-black tracking-tighter uppercase italic" : "text-5xl font-serif",
+            isRomantic ? "text-rose-600 font-cursive italic" : ""
           )} style={{ color: isModern || isRomantic ? undefined : primaryColor }}>
             {data.nome_evento || "Nome do Evento"}
           </h1>
-          <p className="text-sm italic text-slate-500 max-w-[240px] mx-auto">
+          <p className={cn(
+            "text-sm italic max-w-[240px] mx-auto",
+            isModern ? "font-mono uppercase tracking-widest text-slate-400" : "text-slate-500"
+          )}>
             {data.frase ? `"${data.frase}"` : "Sua frase especial aparecerá aqui..."}
           </p>
         </div>
       </div>
 
-      {/* Main Info */}
-      <div className="px-4 -mt-12 relative z-20">
+      {/* Main Info Card */}
+      <div className="px-4 -mt-16 relative z-20">
         <div className={cn(
           "bg-white p-8 space-y-8 transition-all duration-500",
-          isModern ? "rounded-none shadow-none border-x-4 border-b-4" : "rounded-[2.5rem] shadow-2xl shadow-slate-200"
+          isModern ? "rounded-none shadow-none border-x-8 border-b-8" : "rounded-[3rem] shadow-2xl shadow-slate-200"
         )} style={{ borderColor: isModern ? primaryColor : undefined }}>
           
           {data.data_evento && (
             <>
               <Countdown targetDate={data.data_evento} color={primaryColor} />
-              <div className="space-y-6 pt-2">
+              <div className="space-y-6 pt-4">
                 <div className="flex items-center space-x-5">
-                  <div className={cn("p-3", isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50")} style={{ color: isModern ? undefined : primaryColor }}>
-                    <Calendar size={22} />
+                  <div className={cn(
+                    "p-4 transition-all",
+                    isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50"
+                  )} style={{ color: isModern ? undefined : primaryColor }}>
+                    <Calendar size={24} />
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-400 uppercase font-bold tracking-[0.2em]">Data</p>
-                    <p className="text-base font-bold">{format(new Date(data.data_evento), "dd 'de' MMMM", { locale: ptBR })}</p>
+                    <p className="text-[10px] text-slate-400 uppercase font-bold tracking-[0.2em]">Data do Evento</p>
+                    <p className="text-lg font-bold">{format(new Date(data.data_evento), "dd 'de' MMMM", { locale: ptBR })}</p>
                   </div>
                 </div>
                 {data.horario && (
                   <div className="flex items-center space-x-5">
-                    <div className={cn("p-3", isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50")} style={{ color: isModern ? undefined : primaryColor }}>
-                      <Clock size={22} />
+                    <div className={cn(
+                      "p-4 transition-all",
+                      isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50"
+                    )} style={{ color: isModern ? undefined : primaryColor }}>
+                      <Clock size={24} />
                     </div>
                     <div>
                       <p className="text-[10px] text-slate-400 uppercase font-bold tracking-[0.2em]">Horário</p>
-                      <p className="text-base font-bold">{data.horario}</p>
+                      <p className="text-lg font-bold">{data.horario}</p>
                     </div>
                   </div>
                 )}
@@ -92,23 +138,38 @@ const ConvitePreview = ({ data }: Props) => {
       </div>
 
       {/* Timeline Section */}
-      <div className="mt-12 px-8 space-y-8">
+      <div className="mt-16 px-8 space-y-10">
         <div className="text-center">
-          <h3 className="text-lg font-bold uppercase tracking-widest text-slate-400">Cronograma</h3>
-          <div className="h-1 w-12 bg-slate-100 mx-auto mt-2"></div>
+          <h3 className={cn(
+            "text-xs font-bold uppercase tracking-[0.3em]",
+            isModern ? "text-slate-900" : "text-slate-400"
+          )}>Cronograma</h3>
+          <div className="h-1 w-16 bg-slate-100 mx-auto mt-3 rounded-full" style={{ backgroundColor: isModern ? primaryColor : undefined }}></div>
         </div>
         
-        <div className="space-y-8 relative before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
+        <div className="space-y-10 relative before:absolute before:left-[23px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
           {timeline.map((item: any, i: number) => (
-            <div key={i} className="relative pl-12">
-              <div className="absolute left-0 top-1 w-10 h-10 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center z-10" style={{ color: primaryColor }}>
-                {i === 0 ? <Heart size={16} /> : i === timeline.length - 1 ? <Music size={16} /> : <Star size={16} />}
+            <motion.div 
+              key={i} 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="relative pl-16"
+            >
+              <div 
+                className="absolute left-0 top-0 w-12 h-12 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center z-10 shadow-sm" 
+                style={{ color: primaryColor, borderColor: isModern ? primaryColor : undefined }}
+              >
+                {i === 0 ? <Heart size={20} /> : i === timeline.length - 1 ? <Music size={20} /> : <Star size={20} />}
               </div>
-              <div>
-                <p className="text-xs font-bold text-slate-400">{item.time}</p>
-                <p className="text-base font-bold">{item.title}</p>
+              <div className="pt-1">
+                <p className="text-xs font-bold text-slate-400 font-mono">{item.time}</p>
+                <p className={cn(
+                  "text-xl font-bold",
+                  isModern ? "uppercase tracking-tight" : ""
+                )}>{item.title}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
