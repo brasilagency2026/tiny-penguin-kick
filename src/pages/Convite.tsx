@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Convite } from '@/types/convite';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -13,6 +13,7 @@ import { InvitationPDF } from '@/components/InvitationPDF';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from '@/lib/utils';
 import Countdown from '@/components/Countdown';
+import RSVPForm from '@/components/RSVPForm';
 
 const ConvitePage = () => {
   const { slug } = useParams();
@@ -132,13 +133,22 @@ const ConvitePage = () => {
         </div>
 
         <div className="mt-8 grid grid-cols-2 gap-4">
-          <Button 
-            className={cn("h-16 text-lg font-semibold shadow-lg", isModern ? "rounded-none" : "rounded-2xl")}
-            style={{ backgroundColor: primaryColor }}
-            onClick={() => window.open(`https://wa.me/${convite.contato}?text=Olá! Confirmo minha presença no evento: ${convite.nome_evento}`, '_blank')}
-          >
-            <Phone className="mr-2 h-5 w-5" /> Confirmar
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button 
+                className={cn("h-16 text-lg font-semibold shadow-lg", isModern ? "rounded-none" : "rounded-2xl")}
+                style={{ backgroundColor: primaryColor }}
+              >
+                <CheckSquare className="mr-2 h-5 w-5" /> Confirmar
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-serif text-center">Confirmar Presença</DialogTitle>
+              </DialogHeader>
+              <RSVPForm conviteId={convite.id!} primaryColor={primaryColor} />
+            </DialogContent>
+          </Dialog>
           
           <Button 
             variant="outline"
