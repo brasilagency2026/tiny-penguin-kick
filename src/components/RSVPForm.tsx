@@ -3,8 +3,9 @@ import { supabase } from '@/lib/supabase';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { showSuccess, showError } from '@/utils/toast';
-import { Users, UserPlus, CheckCircle2, Sparkles } from 'lucide-react';
+import { Users, UserPlus, CheckCircle2, Sparkles, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface Props {
@@ -18,7 +19,8 @@ const RSVPForm = ({ conviteId, primaryColor }: Props) => {
   const [formData, setFormData] = useState({
     nome: '',
     adultos: 1,
-    criancas: 0
+    criancas: 0,
+    mensagem: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -118,6 +120,20 @@ const RSVPForm = ({ conviteId, primaryColor }: Props) => {
               onChange={(e) => setFormData({ ...formData, criancas: parseInt(e.target.value) })}
             />
           </div>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="mensagem">Deixe um recado (Opcional)</Label>
+        <div className="relative">
+          <MessageSquare className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
+          <Textarea 
+            id="mensagem" 
+            placeholder="Escreva uma mensagem carinhosa..."
+            className="pl-10 min-h-[100px] rounded-xl resize-none"
+            value={formData.mensagem}
+            onChange={(e) => setFormData({ ...formData, mensagem: e.target.value })}
+          />
         </div>
       </div>
 

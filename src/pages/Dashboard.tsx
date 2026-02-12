@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Users, Ticket, Eye, Lock, Plus, Copy, Trash2, Download, ExternalLink, Activity, UserPlus, CheckCircle2, ShoppingBag, PieChart as PieChartIcon } from 'lucide-react';
+import { Loader2, Users, Ticket, Eye, Lock, Plus, Copy, Trash2, Download, ExternalLink, Activity, UserPlus, CheckCircle2, ShoppingBag, PieChart as PieChartIcon, MessageSquare } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { showSuccess, showError } from '@/utils/toast';
@@ -127,8 +127,8 @@ const Dashboard = () => {
 
   const exportToCSV = (nomeEvento: string) => {
     if (guests.length === 0) return;
-    const headers = ["Nome", "Adultos", "Crianças", "Data"];
-    const rows = guests.map(g => [g.nome, g.adultos, g.criancas, new Date(g.created_at).toLocaleDateString()]);
+    const headers = ["Nome", "Adultos", "Crianças", "Mensagem", "Data"];
+    const rows = guests.map(g => [g.nome, g.adultos, g.criancas, g.mensagem || '', new Date(g.created_at).toLocaleDateString()]);
     const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
@@ -291,6 +291,12 @@ const Dashboard = () => {
                               <Badge variant="outline" className="text-[10px] px-1.5 py-0">{act.adultos} Adultos</Badge>
                               {act.criancas > 0 && <Badge variant="outline" className="text-[10px] px-1.5 py-0">{act.criancas} Crianças</Badge>}
                             </div>
+                            {act.mensagem && (
+                              <div className="mt-2 p-2 bg-slate-50 rounded-lg border border-slate-100 flex gap-2 items-start">
+                                <MessageSquare size={12} className="text-slate-400 mt-1 shrink-0" />
+                                <p className="text-[10px] text-slate-500 italic line-clamp-2">{act.mensagem}</p>
+                              </div>
+                            )}
                             <p className="text-[10px] text-slate-300 mt-2 uppercase font-bold">
                               {new Date(act.created_at).toLocaleDateString()} às {new Date(act.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </p>
@@ -332,7 +338,7 @@ const Dashboard = () => {
                                 <Users size={14} /> Convidados
                               </Button>
                             </DialogTrigger>
-                            <DialogContent className="max-w-2xl">
+                            <DialogContent className="max-w-3xl">
                               <DialogHeader className="flex flex-row items-center justify-between">
                                 <DialogTitle className="text-2xl font-serif">{c.nome_evento}</DialogTitle>
                                 <Button variant="outline" size="sm" onClick={() => exportToCSV(c.nome_evento)} className="gap-2">
@@ -342,11 +348,23 @@ const Dashboard = () => {
                               <div className="mt-4 border rounded-xl overflow-hidden">
                                 <Table>
                                   <TableHeader className="bg-slate-50">
-                                    <TableRow><TableHead>Nome</TableHead><TableHead className="text-center">Adultos</TableHead><TableHead className="text-center">Crianças</TableHead></TableRow>
+                                    <TableRow>
+                                      <TableHead>Nome</TableHead>
+                                      <TableHead className="text-center">Adultos</TableHead>
+                                      <TableHead className="text-center">Crianças</TableHead>
+                                      <TableHead>Mensagem</TableHead>
+                                    </TableRow>
                                   </TableHeader>
                                   <TableBody>
                                     {guests.map((g) => (
-                                      <TableRow key={g.id}><TableCell className="font-medium">{g.nome}</TableCell><TableCell className="text-center">{g.adultos}</TableCell><TableCell className="text-center">{g.criancas}</TableCell></TableRow>
+                                      <TableRow key={g.id}>
+                                        <TableCell className="font-medium">{g.nome}</TableCell>
+                                        <TableCell className="text-center">{g.adultos}</TableCell>
+                                        <TableCell className="text-center">{g.criancas}</TableCell>
+                                        <TableCell className="text-xs text-slate-500 italic max-w-[200px] truncate" title={g.mensagem}>
+                                          {g.mensagem || '-'}
+                                        </TableCell>
+                                      </TableRow>
                                     ))}
                                   </TableBody>
                                 </Table>

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Convite } from '@/types/convite';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy, ExternalLink, Shirt, Star, Church, Utensils, Camera, GlassWater } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy, ExternalLink, Shirt, Star, Church, Utensils, Camera, GlassWater, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -29,6 +29,7 @@ const ICON_MAP: Record<string, any> = {
 const ConvitePage = () => {
   const { slug } = useParams();
   const [convite, setConvite] = useState<any | null>(null);
+  const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -44,6 +45,16 @@ const ConvitePage = () => {
       if (data) {
         setConvite(data);
         await supabase.rpc('increment_views', { row_id: data.id });
+        
+        // Fetch messages
+        const { data: msgData } = await supabase
+          .from('presencas')
+          .select('nome, mensagem, created_at')
+          .eq('convite_id', data.id)
+          .not('mensagem', 'is', null)
+          .order('created_at', { ascending: false });
+        
+        if (msgData) setMessages(msgData);
       }
       setLoading(false);
     };
@@ -214,6 +225,31 @@ const ConvitePage = () => {
                     <p className="text-base font-bold">{item.title}</p>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Wall of Messages */}
+        {messages.length > 0 && (
+          <div className="mt-16 space-y-8">
+            <div className="text-center">
+              <h3 className="text-lg font-bold uppercase tracking-widest text-slate-400">Mural de Recados</h3>
+              <div className="h-1 w-12 bg-slate-100 mx-auto mt-2"></div>
+            </div>
+            <div className="grid grid-cols-1 gap-4">
+              {messages.map((msg, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  className="bg-white p-6 rounded-2xl shadow-sm border border-slate-50 relative"
+                >
+                  <MessageCircle className="absolute top-4 right-4 text-slate-100 h-8 w-8" />
+                  <p className="text-slate-600 italic mb-4">"{msg.mensagem}"</p>
+                  <p className="text-sm font-bold text-slate-800">— {msg.nome}</p>
+                </motion.div>
               ))}
             </div>
           </div>
