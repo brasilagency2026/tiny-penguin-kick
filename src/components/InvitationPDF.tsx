@@ -7,7 +7,7 @@ import { ptBR } from 'date-fns/locale';
 const styles = StyleSheet.create({
   page: {
     padding: 0,
-    backgroundColor: '#f5f3ff', // Fundo lilás pastel suave
+    backgroundColor: '#ddd6fe', // Lilás pastel mais pronunciado (Violet 200)
   },
   container: {
     margin: 'auto',
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     padding: 40,
     marginTop: 40,
     marginBottom: 40,
-    border: '1pt solid #e9d5ff',
+    border: '1pt solid #c4b5fd',
   },
   header: {
     alignItems: 'center',
