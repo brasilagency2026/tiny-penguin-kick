@@ -79,7 +79,7 @@ const Index = () => {
             {[
               { title: "Clássico", desc: "Elegância atemporal com fontes serifadas e detalhes dourados.", img: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=400", color: "bg-amber-50" },
               { title: "Moderno", desc: "Minimalismo contemporâneo com tipografia bold e cores sólidas.", img: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=400", color: "bg-slate-900 text-white" },
-              { title: "Romântico", desc: "Delicadeza floral com tons pastéis e animações suaves.", img: "https://images.unsplash.com/photo-1522673607200-1648832cee98?auto=format&fit=crop&q=80&w=400", color: "bg-rose-50" }
+              { title: "Romântico", desc: "Delicadeza floral com tons pastéis e animações suaves.", img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=400", color: "bg-rose-50" }
             ].map((demo, i) => (
               <motion.div 
                 key={i}
