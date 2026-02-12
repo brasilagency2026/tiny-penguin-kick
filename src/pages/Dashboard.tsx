@@ -167,7 +167,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="pb-10">
             <form onSubmit={handleLogin} className="space-y-4">
-              <Input type="password" placeholder="Senha mestre" value={password} className="h-12 rounded-xl" onChange={(e) => setPassword(e.target.value)} />
+              <input type="password" placeholder="Senha mestre" value={password} className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20" onChange={(e) => setPassword(e.target.value)} />
               <Button type="submit" className="w-full h-12 rounded-xl text-lg font-bold">Entrar no Painel</Button>
             </form>
           </CardContent>
