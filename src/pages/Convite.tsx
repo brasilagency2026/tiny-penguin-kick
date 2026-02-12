@@ -12,6 +12,7 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import { InvitationPDF } from '@/components/InvitationPDF';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from '@/lib/utils';
+import Countdown from '@/components/Countdown';
 
 const ConvitePage = () => {
   const { slug } = useParams();
@@ -48,7 +49,6 @@ const ConvitePage = () => {
       "min-h-screen font-sans text-slate-800 pb-20",
       isModern ? "bg-slate-50" : "bg-white"
     )}>
-      {/* Hero Section */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -72,12 +72,13 @@ const ConvitePage = () => {
         </div>
       </motion.div>
 
-      {/* Details Section */}
       <div className="max-w-lg mx-auto px-6 -mt-10 relative z-20">
         <div className={cn(
           "bg-white p-8 space-y-8",
           isModern ? "rounded-none shadow-none border" : "rounded-3xl shadow-2xl"
         )}>
+          <Countdown targetDate={convite.data_evento} color={primaryColor} />
+
           <div className="flex items-center space-x-4">
             <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
               <Calendar size={24} />
@@ -115,7 +116,6 @@ const ConvitePage = () => {
           )}
         </div>
 
-        {/* Action Buttons */}
         <div className="mt-8 grid grid-cols-2 gap-4">
           <Button 
             className={cn("h-16 text-lg font-semibold shadow-lg", isModern ? "rounded-none" : "rounded-2xl")}
@@ -145,7 +145,6 @@ const ConvitePage = () => {
           )}
         </div>
 
-        {/* Share & Download */}
         <div className="mt-12 flex justify-center space-x-6">
           <Dialog>
             <DialogTrigger asChild>

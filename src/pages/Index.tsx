@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
-import { Heart, Sparkles, Smartphone, Send } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Heart, Sparkles, Smartphone, Send, Check, HelpCircle } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const Index = () => {
   return (
@@ -12,8 +12,8 @@ const Index = () => {
         <div className="text-2xl font-serif font-bold text-primary">ConvitePro</div>
         <div className="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
           <a href="#como-funciona" className="hover:text-primary transition-colors">Como Funciona</a>
-          <a href="#modelos" className="hover:text-primary transition-colors">Modelos</a>
           <a href="#precos" className="hover:text-primary transition-colors">Preços</a>
+          <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
         </div>
         <Button variant="outline" className="rounded-full px-6">Entrar</Button>
       </nav>
@@ -55,7 +55,6 @@ const Index = () => {
                 className="rounded-[2.5rem] w-full h-[600px] object-cover"
               />
             </div>
-            {/* Floating elements */}
             <div className="absolute -top-10 -right-10 bg-white p-6 rounded-3xl shadow-xl z-20 animate-bounce">
               <Heart className="text-red-400 h-8 w-8" />
             </div>
@@ -66,28 +65,69 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features */}
-      <section id="como-funciona" className="py-24 bg-slate-50 px-8">
+      {/* Pricing */}
+      <section id="precos" className="py-24 bg-white px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-            <h2 className="text-4xl font-serif mb-4">Simples, Rápido e Automático</h2>
-            <p className="text-slate-500">O fluxo perfeito para o seu grande dia.</p>
+            <h2 className="text-4xl font-serif mb-4">Preço Único e Justo</h2>
+            <p className="text-slate-500">Tudo o que você precisa para o seu evento.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {[
-              { icon: <Send />, title: "Compre no ML", desc: "Adquira seu convite através do Mercado Livre com total segurança." },
-              { icon: <Smartphone />, title: "Receba o Link", desc: "Após a aprovação, você recebe um link automático para criar seu convite." },
-              { icon: <Sparkles />, title: "Personalize", desc: "Escolha cores, fotos e informações. Seu convite fica pronto na hora!" }
-            ].map((item, i) => (
-              <div key={i} className="bg-white p-10 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
-                <div className="bg-primary/10 w-16 h-16 rounded-2xl flex items-center justify-center text-primary mb-6">
-                  {item.icon}
-                </div>
-                <h3 className="text-xl font-bold mb-4">{item.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+          <div className="max-w-md mx-auto bg-slate-50 rounded-[3rem] p-12 border-2 border-primary/10 relative overflow-hidden">
+            <div className="absolute top-0 right-0 bg-primary text-white px-6 py-2 rounded-bl-3xl text-sm font-bold">
+              OFERTA
+            </div>
+            <div className="text-center mb-8">
+              <span className="text-slate-500 line-through text-lg">R$ 49,90</span>
+              <div className="text-5xl font-bold text-primary mt-2">R$ 29,90</div>
+              <p className="text-slate-400 mt-2">Pagamento único</p>
+            </div>
+            <ul className="space-y-4 mb-10">
+              {[
+                "Link exclusivo e vitalício",
+                "Confirmação via WhatsApp",
+                "Localização Google Maps",
+                "Lista de Presentes",
+                "Contagem Regressiva",
+                "Download em PDF",
+                "QR Code incluso"
+              ].map((item, i) => (
+                <li key={i} className="flex items-center gap-3 text-slate-600">
+                  <Check className="text-green-500 h-5 w-5" /> {item}
+                </li>
+              ))}
+            </ul>
+            <Button className="w-full h-14 rounded-full text-lg font-bold">Comprar Agora</Button>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="py-24 bg-slate-50 px-8">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-16">
+            <HelpCircle className="mx-auto h-12 w-12 text-primary mb-4" />
+            <h2 className="text-4xl font-serif mb-4">Dúvidas Frequentes</h2>
+          </div>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1">
+              <AccordionTrigger>Como recebo meu convite?</AccordionTrigger>
+              <AccordionContent>
+                Após a compra no Mercado Livre, você receberá automaticamente um link via chat para criar seu convite em nossa plataforma.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>Posso alterar os dados depois de pronto?</AccordionTrigger>
+              <AccordionContent>
+                Sim! O link de criação permite que você edite as informações sempre que precisar.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+              <AccordionTrigger>O convite expira?</AccordionTrigger>
+              <AccordionContent>
+                Não. Seu convite ficará online por tempo indeterminado, servindo como uma recordação digital do seu grande dia.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       </section>
     </div>
