@@ -58,6 +58,19 @@ const ConvitePage = () => {
     }
   };
 
+  const addToCalendar = () => {
+    const eventDate = new Date(convite.data_evento);
+    const title = encodeURIComponent(convite.nome_evento);
+    const details = encodeURIComponent(convite.frase || '');
+    const location = encodeURIComponent(convite.endereco || '');
+    
+    const startDate = eventDate.toISOString().replace(/-|:|\.\d+/g, '');
+    const endDate = new Date(eventDate.getTime() + 4 * 60 * 60 * 1000).toISOString().replace(/-|:|\.\d+/g, '');
+    
+    const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate}/${endDate}&details=${details}&location=${location}`;
+    window.open(googleUrl, '_blank');
+  };
+
   if (loading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
   if (!convite) return <div className="min-h-screen flex items-center justify-center">Convite não encontrado.</div>;
 
@@ -118,16 +131,21 @@ const ConvitePage = () => {
           <Countdown targetDate={convite.data_evento} color={primaryColor} />
 
           <div className="space-y-6">
-            <div className="flex items-center space-x-4">
-              <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
-                <Calendar size={24} />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
+                  <Calendar size={24} />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Data</p>
+                  <p className="text-lg font-medium">
+                    {format(new Date(convite.data_evento), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Data</p>
-                <p className="text-lg font-medium">
-                  {format(new Date(convite.data_evento), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                </p>
-              </div>
+              <Button variant="ghost" size="icon" onClick={addToCalendar} title="Adicionar ao Calendário">
+                <CalendarPlus className="h-5 w-5" style={{ color: primaryColor }} />
+              </Button>
             </div>
 
             {convite.horario && (
