@@ -15,6 +15,12 @@ const ConvitePreview = ({ data }: Props) => {
   const isRomantic = data.tema === 'romantic';
   const isClassic = data.tema === 'classic' || !data.tema;
 
+  const timeline = data.timeline || [
+    { time: '19:00', title: 'Cerimônia' },
+    { time: '20:30', title: 'Jantar' },
+    { time: '22:00', title: 'Festa' }
+  ];
+
   return (
     <div className={cn(
       "min-h-full font-sans text-slate-800 pb-10 transition-all duration-500",
@@ -93,14 +99,10 @@ const ConvitePreview = ({ data }: Props) => {
         </div>
         
         <div className="space-y-8 relative before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
-          {[
-            { time: data.horario || '19:00', title: 'Cerimônia', icon: <Heart size={16} /> },
-            { time: '20:30', title: 'Jantar', icon: <Utensils size={16} /> },
-            { time: '22:00', title: 'Festa', icon: <Music size={16} /> }
-          ].map((item, i) => (
+          {timeline.map((item: any, i: number) => (
             <div key={i} className="relative pl-12">
               <div className="absolute left-0 top-1 w-10 h-10 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center z-10" style={{ color: primaryColor }}>
-                {item.icon}
+                {i === 0 ? <Heart size={16} /> : i === timeline.length - 1 ? <Music size={16} /> : <Star size={16} />}
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-400">{item.time}</p>

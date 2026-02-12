@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Convite } from '@/types/convite';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy, ExternalLink, Shirt } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy, ExternalLink, Shirt, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -18,7 +18,7 @@ import { showSuccess } from '@/utils/toast';
 
 const ConvitePage = () => {
   const { slug } = useParams();
-  const [convite, setConvite] = useState<Convite | null>(null);
+  const [convite, setConvite] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -33,7 +33,6 @@ const ConvitePage = () => {
 
       if (data) {
         setConvite(data);
-        // Increment views
         await supabase.rpc('increment_views', { row_id: data.id });
       }
       setLoading(false);
@@ -59,33 +58,13 @@ const ConvitePage = () => {
     }
   };
 
-  const addToCalendar = () => {
-    if (!convite) return;
-    const startDate = new Date(convite.data_evento).toISOString().replace(/-|:|\.\d+/g, '');
-    const endDate = new Date(new Date(convite.data_evento).getTime() + 4 * 60 * 60 * 1000).toISOString().replace(/-|:|\.\d+/g, '');
-    const icsContent = `BEGIN:VCALENDAR
-VERSION:2.0
-BEGIN:VEVENT
-DTSTART:${startDate}
-DTEND:${endDate}
-SUMMARY:${convite.nome_evento}
-DESCRIPTION:${convite.frase || ''}
-LOCATION:${convite.endereco || ''}
-END:VEVENT
-END:VCALENDAR`;
-    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.setAttribute('download', 'evento.ics');
-    link.click();
-  };
-
   if (loading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
   if (!convite) return <div className="min-h-screen flex items-center justify-center">Convite não encontrado.</div>;
 
   const primaryColor = convite.cor || '#7c3aed';
   const isModern = convite.tema === 'modern';
   const isRomantic = convite.tema === 'romantic';
+  const timeline = convite.timeline || [];
 
   return (
     <div className={cn(
@@ -139,21 +118,16 @@ END:VCALENDAR`;
           <Countdown targetDate={convite.data_evento} color={primaryColor} />
 
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
-                  <Calendar size={24} />
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Data</p>
-                  <p className="text-lg font-medium">
-                    {format(new Date(convite.data_evento), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                  </p>
-                </div>
+            <div className="flex items-center space-x-4">
+              <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
+                <Calendar size={24} />
               </div>
-              <Button variant="ghost" size="icon" onClick={addToCalendar} title="Adicionar ao Calendário">
-                <CalendarPlus className="h-6 w-6 text-slate-400" />
-              </Button>
+              <div>
+                <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Data</p>
+                <p className="text-lg font-medium">
+                  {format(new Date(convite.data_evento), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                </p>
+              </div>
             </div>
 
             {convite.horario && (
@@ -179,24 +153,34 @@ END:VCALENDAR`;
                 </div>
               </div>
             )}
-
-            {/* Dress Code Section */}
-            {convite.dress_code && (
-              <div className="flex items-center space-x-4">
-                <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
-                  <Shirt size={24} />
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Dress Code</p>
-                  <p className="text-lg font-medium">{convite.dress_code}</p>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
+        {/* Timeline Section */}
+        {timeline.length > 0 && (
+          <div className="mt-12 space-y-8">
+            <div className="text-center">
+              <h3 className="text-lg font-bold uppercase tracking-widest text-slate-400">Cronograma</h3>
+              <div className="h-1 w-12 bg-slate-100 mx-auto mt-2"></div>
+            </div>
+            <div className="space-y-8 relative before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
+              {timeline.map((item: any, i: number) => (
+                <div key={i} className="relative pl-12">
+                  <div className="absolute left-0 top-1 w-10 h-10 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center z-10" style={{ color: primaryColor }}>
+                    {i === 0 ? <Heart size={16} /> : i === timeline.length - 1 ? <Music size={16} /> : <Star size={16} />}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-400">{item.time}</p>
+                    <p className="text-base font-bold">{item.title}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Action Buttons */}
-        <div className="mt-8 grid grid-cols-2 gap-4">
+        <div className="mt-12 grid grid-cols-2 gap-4">
           <Dialog>
             <DialogTrigger asChild>
               <Button 
@@ -218,12 +202,11 @@ END:VCALENDAR`;
             variant="outline"
             className={cn("h-16 text-lg font-semibold border-2 shadow-lg", isModern ? "rounded-none" : "rounded-2xl")}
             style={{ borderColor: primaryColor, color: primaryColor }}
-            onClick={() => window.open(convite.link_maps, '_blank')}
+            onClick={() => window.open(convite.link_maps || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(convite.endereco)}`, '_blank')}
           >
             <MapPin className="mr-2 h-5 w-5" /> Localização
           </Button>
 
-          {/* Gift Section */}
           {convite.pix_key && (
             <Dialog>
               <DialogTrigger asChild>
@@ -253,51 +236,6 @@ END:VCALENDAR`;
               </DialogContent>
             </Dialog>
           )}
-
-          {convite.link_presentes && (
-            <Button 
-              variant="outline"
-              className={cn("h-16 text-lg font-semibold col-span-2 border-2", isModern ? "rounded-none" : "rounded-2xl")}
-              style={{ borderColor: primaryColor, color: primaryColor }}
-              onClick={() => window.open(convite.link_presentes, '_blank')}
-            >
-              <Gift className="mr-2 h-5 w-5" /> Lista de Presentes
-            </Button>
-          )}
-        </div>
-
-        {/* Footer Actions */}
-        <div className="mt-12 flex justify-center space-x-6">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="ghost" className="flex flex-col h-auto py-4 space-y-2">
-                <QrCode size={24} />
-                <span className="text-xs">QR Code</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md flex flex-col items-center">
-              <DialogHeader>
-                <DialogTitle>QR Code do Convite</DialogTitle>
-              </DialogHeader>
-              <div className="p-4 bg-white rounded-xl">
-                <QRCodeSVG value={window.location.href} size={200} />
-              </div>
-            </DialogContent>
-          </Dialog>
-
-          <PDFDownloadLink document={<InvitationPDF convite={convite} />} fileName={`convite-${convite.slug}.pdf`}>
-            {({ loading }) => (
-              <Button variant="ghost" className="flex flex-col h-auto py-4 space-y-2" disabled={loading}>
-                <Download size={24} />
-                <span className="text-xs">{loading ? 'Gerando...' : 'Baixar PDF'}</span>
-              </Button>
-            )}
-          </PDFDownloadLink>
-
-          <Button variant="ghost" className="flex flex-col h-auto py-4 space-y-2" onClick={() => navigator.share({ title: convite.nome_evento, url: window.location.href })}>
-            <Share2 size={24} />
-            <span className="text-xs">Partilhar</span>
-          </Button>
         </div>
       </div>
     </div>
