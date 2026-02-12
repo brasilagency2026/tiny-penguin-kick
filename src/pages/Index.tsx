@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
-import { Heart, Sparkles, Smartphone, Send, Check, HelpCircle } from 'lucide-react';
+import { Heart, Sparkles, Smartphone, Send, Check, HelpCircle, ShoppingBag, Wand2, Share2 } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const Index = () => {
@@ -62,6 +62,35 @@ const Index = () => {
               <Sparkles className="text-yellow-400 h-8 w-8" />
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* How it Works */}
+      <section id="como-funciona" className="py-24 bg-slate-50 px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl font-serif mb-4">Como Funciona?</h2>
+            <p className="text-slate-500">Três passos simples para o seu convite perfeito.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[
+              { icon: <ShoppingBag className="h-10 w-10" />, title: "1. Compre", desc: "Adquira seu acesso exclusivo através do Mercado Livre com segurança total." },
+              { icon: <Wand2 className="h-10 w-10" />, title: "2. Personalize", desc: "Receba seu link e preencha os dados do seu evento em nossa plataforma intuitiva." },
+              { icon: <Share2 className="h-10 w-10" />, title: "3. Compartilhe", desc: "Gere seu link exclusivo e envie para todos os seus convidados via WhatsApp." }
+            ].map((step, i) => (
+              <motion.div 
+                key={i}
+                whileHover={{ y: -10 }}
+                className="bg-white p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/50 text-center"
+              >
+                <div className="bg-primary/10 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 text-primary">
+                  {step.icon}
+                </div>
+                <h3 className="text-2xl font-serif mb-4">{step.title}</h3>
+                <p className="text-slate-500 leading-relaxed">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
