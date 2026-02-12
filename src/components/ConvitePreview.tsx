@@ -1,11 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapPin, Phone, Gift, Calendar, Clock, Heart, Sparkles, Flower2, Star, Utensils, Music, Camera, Church, GlassWater, Volume2, VolumeX } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Heart, Sparkles, Flower2, Star, Utensils, Music, Camera, Church, GlassWater, Volume2, VolumeX, CheckSquare, CreditCard, Download, MessageCircle, Copy } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import Countdown from './Countdown';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { QRCodeSVG } from 'qrcode.react';
+import RSVPForm from './RSVPForm';
+import { showSuccess } from '@/utils/toast';
 
 interface Props {
   data: any;
@@ -32,7 +36,6 @@ const ConvitePreview = ({ data }: Props) => {
 
   const timeline = data.timeline || [];
 
-  // Reset audio when URL changes
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.pause();
@@ -55,9 +58,16 @@ const ConvitePreview = ({ data }: Props) => {
     }
   };
 
+  const copyPix = () => {
+    if (data.pix_key) {
+      navigator.clipboard.writeText(data.pix_key);
+      showSuccess("Chave Pix copiada!");
+    }
+  };
+
   return (
     <div className={cn(
-      "min-h-full font-sans text-slate-800 pb-10 transition-all duration-500 relative overflow-hidden",
+      "min-h-full font-sans text-slate-800 pb-20 transition-all duration-500 relative overflow-hidden",
       isModern ? "bg-slate-50" : "bg-white",
       isRomantic ? "bg-rose-50/30" : ""
     )}>
@@ -81,35 +91,6 @@ const ConvitePreview = ({ data }: Props) => {
           <span className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-[8px] font-bold uppercase tracking-tighter shadow-sm border border-slate-100">
             {isPlaying ? "Tocando" : "Testar Som"}
           </span>
-        </div>
-      )}
-
-      {/* Decorative Elements for Romantic Theme */}
-      {isRomantic && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ 
-                opacity: [0, 0.5, 0], 
-                y: -200,
-                x: Math.sin(i) * 50 
-              }}
-              transition={{ 
-                duration: 5 + i, 
-                repeat: Infinity, 
-                delay: i * 2 
-              }}
-              className="absolute text-rose-200"
-              style={{ 
-                left: `${15 + i * 15}%`, 
-                bottom: '-10%' 
-              }}
-            >
-              <Heart size={24 + i * 4} fill="currentColor" />
-            </motion.div>
-          ))}
         </div>
       )}
 
@@ -139,10 +120,7 @@ const ConvitePreview = ({ data }: Props) => {
 
         <div className="z-10 space-y-6">
           {isRomantic && (
-            <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
+            <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }}>
               <Heart className="mx-auto text-rose-400" size={32} fill="currentColor" />
             </motion.div>
           )}
@@ -163,19 +141,6 @@ const ConvitePreview = ({ data }: Props) => {
         </div>
       </div>
 
-      {/* Main Photo (Romantic Style) */}
-      {isRomantic && data.foto_url && (
-        <div className="px-8 -mt-20 relative z-30 mb-10">
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="aspect-[4/5] rounded-[4rem] overflow-hidden border-8 border-white shadow-2xl rotate-2"
-          >
-            <img src={data.foto_url} className="w-full h-full object-cover" alt="Casal" />
-          </motion.div>
-        </div>
-      )}
-
       {/* Main Info Card */}
       <div className="px-4 -mt-16 relative z-20">
         <div className={cn(
@@ -188,10 +153,7 @@ const ConvitePreview = ({ data }: Props) => {
               <Countdown targetDate={data.data_evento} color={primaryColor} />
               <div className="space-y-6 pt-4">
                 <div className="flex items-center space-x-5">
-                  <div className={cn(
-                    "p-4 transition-all",
-                    isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50"
-                  )} style={{ color: isModern ? undefined : primaryColor }}>
+                  <div className={cn("p-4", isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50")} style={{ color: isModern ? undefined : primaryColor }}>
                     <Calendar size={24} />
                   </div>
                   <div>
@@ -201,10 +163,7 @@ const ConvitePreview = ({ data }: Props) => {
                 </div>
                 {data.horario && (
                   <div className="flex items-center space-x-5">
-                    <div className={cn(
-                      "p-4 transition-all",
-                      isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50"
-                    )} style={{ color: isModern ? undefined : primaryColor }}>
+                    <div className={cn("p-4", isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50")} style={{ color: isModern ? undefined : primaryColor }}>
                       <Clock size={24} />
                     </div>
                     <div>
@@ -223,40 +182,91 @@ const ConvitePreview = ({ data }: Props) => {
       {timeline.length > 0 && (
         <div className="mt-16 px-8 space-y-10">
           <div className="text-center">
-            <h3 className={cn(
-              "text-xs font-bold uppercase tracking-[0.3em]",
-              isModern ? "text-slate-900" : "text-slate-400"
-            )}>Cronograma</h3>
+            <h3 className={cn("text-xs font-bold uppercase tracking-[0.3em]", isModern ? "text-slate-900" : "text-slate-400")}>Cronograma</h3>
             <div className="h-1 w-16 bg-slate-100 mx-auto mt-3 rounded-full" style={{ backgroundColor: isModern ? primaryColor : undefined }}></div>
           </div>
-          
           <div className="space-y-10 relative before:absolute before:left-[23px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
             {timeline.map((item: any, i: number) => (
-              <motion.div 
-                key={i} 
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="relative pl-16"
-              >
-                <div 
-                  className="absolute left-0 top-0 w-12 h-12 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center z-10 shadow-sm" 
-                  style={{ color: primaryColor, borderColor: isModern ? primaryColor : undefined }}
-                >
+              <div key={i} className="relative pl-16">
+                <div className="absolute left-0 top-0 w-12 h-12 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center z-10 shadow-sm" style={{ color: primaryColor, borderColor: isModern ? primaryColor : undefined }}>
                   {ICON_MAP[item.icon] || <Star size={20} />}
                 </div>
                 <div className="pt-1">
                   <p className="text-xs font-bold text-slate-400 font-mono">{item.time}</p>
-                  <p className={cn(
-                    "text-xl font-bold",
-                    isModern ? "uppercase tracking-tight" : ""
-                  )}>{item.title}</p>
+                  <p className={cn("text-xl font-bold", isModern ? "uppercase tracking-tight" : "")}>{item.title}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
       )}
+
+      {/* Mural de Recados (Preview) */}
+      <div className="mt-16 px-8 space-y-8">
+        <div className="text-center">
+          <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400">Mural de Recados</h3>
+          <div className="h-1 w-16 bg-slate-100 mx-auto mt-3 rounded-full"></div>
+        </div>
+        <div className="bg-slate-50 p-6 rounded-3xl border border-dashed border-slate-200 relative">
+          <MessageCircle className="absolute top-4 right-4 text-slate-200 h-6 w-6" />
+          <p className="text-slate-400 italic text-sm">"As mensagens carinhosas dos seus convidados aparecerão aqui..."</p>
+          <p className="text-xs font-bold text-slate-300 mt-4">— Exemplo de Convidado</p>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="mt-12 px-8 grid grid-cols-2 gap-4">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className={cn("h-14 text-base font-bold shadow-lg", isModern ? "rounded-none" : "rounded-2xl")} style={{ backgroundColor: primaryColor }}>
+              <CheckSquare className="mr-2 h-5 w-5" /> Confirmar
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader><DialogTitle className="text-center font-serif">Confirmar Presença</DialogTitle></DialogHeader>
+            <RSVPForm conviteId="preview" primaryColor={primaryColor} />
+          </DialogContent>
+        </Dialog>
+        
+        <Button 
+          variant="outline" 
+          className={cn("h-14 text-base font-bold border-2 shadow-lg", isModern ? "rounded-none" : "rounded-2xl")} 
+          style={{ borderColor: primaryColor, color: primaryColor }}
+          onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.endereco || 'Local do Evento')}`, '_blank')}
+        >
+          <MapPin className="mr-2 h-5 w-5" /> Mapa
+        </Button>
+
+        {data.pix_key && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="secondary" className={cn("h-14 text-base font-bold col-span-2 shadow-md", isModern ? "rounded-none" : "rounded-2xl")}>
+                <CreditCard className="mr-2 h-5 w-5" /> Presentear com Pix
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md text-center">
+              <DialogHeader><DialogTitle className="font-serif">Presente em Pix</DialogTitle></DialogHeader>
+              <div className="py-6 space-y-4 flex flex-col items-center">
+                <div className="p-4 bg-white rounded-2xl border-2 border-slate-100">
+                  <QRCodeSVG value={data.pix_key} size={180} />
+                </div>
+                <div className="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-200 font-mono text-sm break-all w-full">
+                  {data.pix_key}
+                </div>
+                <Button onClick={copyPix} className="w-full gap-2 h-12 rounded-xl">
+                  <Copy size={18} /> Copiar Chave Pix
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        <div className="col-span-2 pt-4">
+          <Button variant="ghost" className="w-full gap-2 text-slate-400 hover:text-primary">
+            <Download size={18} /> Baixar Versão em PDF
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
