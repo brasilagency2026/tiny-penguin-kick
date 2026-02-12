@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Convite } from '@/types/convite';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -11,6 +11,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { InvitationPDF } from '@/components/InvitationPDF';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { cn } from '@/lib/utils';
 
 const ConvitePage = () => {
   const { slug } = useParams();
@@ -39,17 +40,30 @@ const ConvitePage = () => {
   if (!convite) return <div className="min-h-screen flex items-center justify-center">Convite não encontrado.</div>;
 
   const primaryColor = convite.cor || '#7c3aed';
+  const isModern = convite.tema === 'modern';
+  const isRomantic = convite.tema === 'romantic';
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-800 pb-20">
+    <div className={cn(
+      "min-h-screen font-sans text-slate-800 pb-20",
+      isModern ? "bg-slate-50" : "bg-white"
+    )}>
+      {/* Hero Section */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative h-[50vh] flex items-center justify-center text-center px-6 overflow-hidden"
-        style={{ backgroundColor: `${primaryColor}10` }}
+        className={cn(
+          "relative h-[50vh] flex items-center justify-center text-center px-6 overflow-hidden",
+          isModern ? "bg-white border-b" : ""
+        )}
+        style={{ backgroundColor: !isModern ? `${primaryColor}10` : undefined }}
       >
         <div className="z-10">
-          <h1 className="text-5xl md:text-7xl font-serif mb-4" style={{ color: primaryColor }}>
+          {isRomantic && <Heart className="mx-auto mb-4 animate-pulse" style={{ color: primaryColor }} />}
+          <h1 className={cn(
+            "text-5xl md:text-7xl mb-4",
+            isModern ? "font-sans font-black tracking-tighter uppercase" : "font-serif"
+          )} style={{ color: primaryColor }}>
             {convite.nome_evento}
           </h1>
           <p className="text-xl italic text-slate-600 max-w-md mx-auto">
@@ -58,10 +72,14 @@ const ConvitePage = () => {
         </div>
       </motion.div>
 
+      {/* Details Section */}
       <div className="max-w-lg mx-auto px-6 -mt-10 relative z-20">
-        <div className="bg-white rounded-3xl shadow-2xl p-8 space-y-8">
+        <div className={cn(
+          "bg-white p-8 space-y-8",
+          isModern ? "rounded-none shadow-none border" : "rounded-3xl shadow-2xl"
+        )}>
           <div className="flex items-center space-x-4">
-            <div className="p-3 rounded-2xl bg-slate-50" style={{ color: primaryColor }}>
+            <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
               <Calendar size={24} />
             </div>
             <div>
@@ -74,7 +92,7 @@ const ConvitePage = () => {
 
           {convite.horario && (
             <div className="flex items-center space-x-4">
-              <div className="p-3 rounded-2xl bg-slate-50" style={{ color: primaryColor }}>
+              <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
                 <Clock size={24} />
               </div>
               <div>
@@ -86,7 +104,7 @@ const ConvitePage = () => {
 
           {convite.endereco && (
             <div className="flex items-center space-x-4">
-              <div className="p-3 rounded-2xl bg-slate-50" style={{ color: primaryColor }}>
+              <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
                 <MapPin size={24} />
               </div>
               <div>
@@ -97,9 +115,10 @@ const ConvitePage = () => {
           )}
         </div>
 
+        {/* Action Buttons */}
         <div className="mt-8 grid grid-cols-2 gap-4">
           <Button 
-            className="h-16 rounded-2xl text-lg font-semibold shadow-lg"
+            className={cn("h-16 text-lg font-semibold shadow-lg", isModern ? "rounded-none" : "rounded-2xl")}
             style={{ backgroundColor: primaryColor }}
             onClick={() => window.open(`https://wa.me/${convite.contato}?text=Olá! Confirmo minha presença no evento: ${convite.nome_evento}`, '_blank')}
           >
@@ -108,7 +127,7 @@ const ConvitePage = () => {
           
           <Button 
             variant="outline"
-            className="h-16 rounded-2xl text-lg font-semibold border-2 shadow-lg"
+            className={cn("h-16 text-lg font-semibold border-2 shadow-lg", isModern ? "rounded-none" : "rounded-2xl")}
             style={{ borderColor: primaryColor, color: primaryColor }}
             onClick={() => window.open(convite.link_maps, '_blank')}
           >
@@ -118,7 +137,7 @@ const ConvitePage = () => {
           {convite.link_presentes && (
             <Button 
               variant="secondary"
-              className="h-16 rounded-2xl text-lg font-semibold col-span-2 shadow-md"
+              className={cn("h-16 text-lg font-semibold col-span-2 shadow-md", isModern ? "rounded-none" : "rounded-2xl")}
               onClick={() => window.open(convite.link_presentes, '_blank')}
             >
               <Gift className="mr-2 h-5 w-5" /> Lista de Presentes
@@ -126,6 +145,7 @@ const ConvitePage = () => {
           )}
         </div>
 
+        {/* Share & Download */}
         <div className="mt-12 flex justify-center space-x-6">
           <Dialog>
             <DialogTrigger asChild>

@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, MapPin, Phone, Gift, Heart } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette } from 'lucide-react';
 
 interface InvitationFormProps {
   onSubmit: (data: any) => void;
@@ -22,11 +23,16 @@ const InvitationForm = ({ onSubmit, loading }: InvitationFormProps) => {
     link_whatsapp: '',
     link_presentes: '',
     contato: '',
-    cor: '#7c3aed'
+    cor: '#7c3aed',
+    tema: 'classic'
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -88,6 +94,29 @@ const InvitationForm = ({ onSubmit, loading }: InvitationFormProps) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
+              <Label htmlFor="tema">Estilo do Convite</Label>
+              <div className="relative">
+                <Palette className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
+                <Select onValueChange={(v) => handleSelectChange('tema', v)} defaultValue="classic">
+                  <SelectTrigger className="pl-10">
+                    <SelectValue placeholder="Selecione um tema" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="classic">Clássico & Elegante</SelectItem>
+                    <SelectItem value="modern">Moderno & Minimalista</SelectItem>
+                    <SelectItem value="romantic">Romântico & Floral</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="cor">Cor do Tema</Label>
+              <Input id="cor" name="cor" type="color" className="h-10 w-full cursor-pointer" defaultValue="#7c3aed" onChange={handleChange} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
               <Label htmlFor="link_maps">Link do Google Maps</Label>
               <Input id="link_maps" name="link_maps" placeholder="https://goo.gl/maps/..." onChange={handleChange} />
             </div>
@@ -98,11 +127,6 @@ const InvitationForm = ({ onSubmit, loading }: InvitationFormProps) => {
                 <Input id="link_presentes" name="link_presentes" placeholder="https://site.com/lista" className="pl-10" onChange={handleChange} />
               </div>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="cor">Cor do Tema</Label>
-            <Input id="cor" name="cor" type="color" className="h-12 w-full cursor-pointer" defaultValue="#7c3aed" onChange={handleChange} />
           </div>
 
           <Button type="submit" className="w-full h-12 text-lg font-semibold" disabled={loading}>
