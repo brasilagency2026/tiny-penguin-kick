@@ -7,7 +7,7 @@ import { ptBR } from 'date-fns/locale';
 const styles = StyleSheet.create({
   page: {
     padding: 0,
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#f5f3ff', // Fundo lilás pastel suave
   },
   container: {
     margin: 'auto',
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     padding: 40,
     marginTop: 40,
     marginBottom: 40,
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+    border: '1pt solid #e9d5ff',
   },
   header: {
     alignItems: 'center',
