@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Users, Ticket, Eye, Lock, Plus, Copy, Trash2, Download, ExternalLink, Activity, UserPlus, CheckCircle2, ShoppingBag } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { Loader2, Users, Ticket, Eye, Lock, Plus, Copy, Trash2, Download, ExternalLink, Activity, UserPlus, CheckCircle2, ShoppingBag, PieChart as PieChartIcon } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { showSuccess, showError } from '@/utils/toast';
 
@@ -17,6 +17,7 @@ const Dashboard = () => {
   const [tokens, setTokens] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
   const [chartData, setChartData] = useState<any[]>([]);
+  const [themeData, setThemeData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
@@ -65,12 +66,24 @@ const Dashboard = () => {
     setRecentConvites(convites || []);
     setActivities(allPresencas || []);
 
+    // Bar Chart Data
     const chartDataFormatted = convites?.slice(0, 7).map(c => ({
       name: c.nome_evento.length > 10 ? c.nome_evento.substring(0, 10) + '...' : c.nome_evento,
       views: c.visualizacoes || 0
     })).reverse() || [];
-    
     setChartData(chartDataFormatted);
+
+    // Pie Chart Data (Themes)
+    const themes = convites?.reduce((acc: any, curr) => {
+      acc[curr.tema] = (acc[curr.tema] || 0) + 1;
+      return acc;
+    }, {});
+    const themeDataFormatted = Object.keys(themes || {}).map(key => ({
+      name: key.charAt(0).toUpperCase() + key.slice(1),
+      value: themes[key]
+    }));
+    setThemeData(themeDataFormatted);
+
     setLoading(false);
   };
 
@@ -138,6 +151,8 @@ const Dashboard = () => {
       fetchData();
     }
   };
+
+  const COLORS = ['#7c3aed', '#a78bfa', '#c4b5fd', '#ddd6fe'];
 
   if (!isAuthenticated) {
     return (
@@ -225,28 +240,59 @@ const Dashboard = () => {
               </Card>
 
               <Card className="border-none shadow-sm rounded-2xl overflow-hidden">
+                <CardHeader className="bg-white border-b border-slate-50">
+                  <CardTitle className="text-lg font-serif">Temas Populares</CardTitle>
+                  <CardDescription>Distribuição de estilos</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6 bg-white h-[350px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={themeData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {themeData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              <Card className="lg:col-span-3 border-none shadow-sm rounded-2xl overflow-hidden">
                 <CardHeader className="bg-white border-b border-slate-50 flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="text-lg font-serif">Atividade Recente</CardTitle>
-                    <CardDescription>Últimas confirmações</CardDescription>
+                    <CardDescription>Últimas confirmações de presença</CardDescription>
                   </div>
                   <Activity className="text-slate-300 h-5 w-5" />
                 </CardHeader>
-                <CardContent className="p-0 bg-white max-h-[350px] overflow-y-auto">
-                  <div className="divide-y divide-slate-50">
+                <CardContent className="p-0 bg-white">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-x divide-y divide-slate-50">
                     {activities.length === 0 ? (
-                      <div className="p-8 text-center text-slate-400 italic text-sm">Nenhuma atividade recente.</div>
+                      <div className="p-8 text-center text-slate-400 italic text-sm col-span-full">Nenhuma atividade recente.</div>
                     ) : (
                       activities.map((act, i) => (
-                        <div key={i} className="p-4 flex items-start gap-3 hover:bg-slate-50 transition-colors">
-                          <div className="bg-green-50 p-2 rounded-full">
-                            <UserPlus className="h-4 w-4 text-green-500" />
+                        <div key={i} className="p-6 flex items-start gap-4 hover:bg-slate-50 transition-colors">
+                          <div className="bg-green-50 p-3 rounded-2xl">
+                            <UserPlus className="h-5 w-5 text-green-500" />
                           </div>
                           <div>
-                            <p className="text-sm font-bold text-slate-700">{act.nome} confirmou presença</p>
+                            <p className="text-sm font-bold text-slate-700">{act.nome}</p>
                             <p className="text-xs text-slate-400">Evento: {act.convites?.nome_evento}</p>
-                            <p className="text-[10px] text-slate-300 mt-1 uppercase font-bold">
-                              {new Date(act.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            <div className="flex gap-2 mt-2">
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">{act.adultos} Adultos</Badge>
+                              {act.criancas > 0 && <Badge variant="outline" className="text-[10px] px-1.5 py-0">{act.criancas} Crianças</Badge>}
+                            </div>
+                            <p className="text-[10px] text-slate-300 mt-2 uppercase font-bold">
+                              {new Date(act.created_at).toLocaleDateString()} às {new Date(act.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </p>
                           </div>
                         </div>

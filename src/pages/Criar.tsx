@@ -3,11 +3,11 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import InvitationForm from '@/components/InvitationForm';
 import { showSuccess, showError } from '@/utils/toast';
-import { Loader2, Eye, Edit3, CheckCircle2, Copy, ExternalLink, Share2, Smartphone, Monitor } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, Eye, Edit3, CheckCircle2, Copy, ExternalLink, Share2, Smartphone, Monitor, Sparkles, QrCode as QrCodeIcon } from 'lucide-react';
 import ConvitePreview from '@/components/ConvitePreview';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { QRCodeSVG } from 'qrcode.react';
 
 const Criar = () => {
   const [searchParams] = useSearchParams();
@@ -99,6 +99,13 @@ const Criar = () => {
             <p className="opacity-90 mt-2">Seu convite mágico foi gerado com sucesso.</p>
           </div>
           <CardContent className="p-8 space-y-6">
+            <div className="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+              <QRCodeSVG value={fullUrl} size={160} />
+              <p className="text-[10px] uppercase font-bold text-slate-400 mt-4 tracking-widest flex items-center gap-2">
+                <QrCodeIcon size={12} /> Escaneie para testar no celular
+              </p>
+            </div>
+
             <div className="space-y-2">
               <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Link do seu Convite</p>
               <div className="flex gap-2">
