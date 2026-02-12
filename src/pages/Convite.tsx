@@ -3,10 +3,14 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Convite } from '@/types/convite';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { QRCodeSVG } from 'qrcode.react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import { InvitationPDF } from '@/components/InvitationPDF';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const ConvitePage = () => {
   const { slug } = useParams();
@@ -23,7 +27,6 @@ const ConvitePage = () => {
 
       if (data) {
         setConvite(data);
-        // Increment views
         await supabase.rpc('increment_views', { row_id: data.id });
       }
       setLoading(false);
@@ -39,11 +42,10 @@ const ConvitePage = () => {
 
   return (
     <div className="min-h-screen bg-white font-sans text-slate-800 pb-20">
-      {/* Hero Section */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative h-[60vh] flex items-center justify-center text-center px-6 overflow-hidden"
+        className="relative h-[50vh] flex items-center justify-center text-center px-6 overflow-hidden"
         style={{ backgroundColor: `${primaryColor}10` }}
       >
         <div className="z-10">
@@ -54,14 +56,8 @@ const ConvitePage = () => {
             "{convite.frase}"
           </p>
         </div>
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-          <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-4 border-current" style={{ color: primaryColor }} />
-          <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full border-2 border-current" style={{ color: primaryColor }} />
-        </div>
       </motion.div>
 
-      {/* Details Section */}
       <div className="max-w-lg mx-auto px-6 -mt-10 relative z-20">
         <div className="bg-white rounded-3xl shadow-2xl p-8 space-y-8">
           <div className="flex items-center space-x-4">
@@ -101,7 +97,6 @@ const ConvitePage = () => {
           )}
         </div>
 
-        {/* Action Buttons */}
         <div className="mt-8 grid grid-cols-2 gap-4">
           <Button 
             className="h-16 rounded-2xl text-lg font-semibold shadow-lg"
@@ -131,22 +126,38 @@ const ConvitePage = () => {
           )}
         </div>
 
-        <div className="mt-12 text-center">
-          <p className="text-slate-400 text-sm mb-4">Compartilhe este convite</p>
-          <div className="flex justify-center space-x-4">
-            <Button variant="ghost" size="icon" className="rounded-full" onClick={() => navigator.share({ title: convite.nome_evento, url: window.location.href })}>
-              <Share2 size={20} />
-            </Button>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Download size={20} />
-            </Button>
-          </div>
-        </div>
-      </div>
+        <div className="mt-12 flex justify-center space-x-6">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost" className="flex flex-col h-auto py-4 space-y-2">
+                <QrCode size={24} />
+                <span className="text-xs">QR Code</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md flex flex-col items-center">
+              <DialogHeader>
+                <DialogTitle>QR Code do Convite</DialogTitle>
+              </DialogHeader>
+              <div className="p-4 bg-white rounded-xl">
+                <QRCodeSVG value={window.location.href} size={200} />
+              </div>
+            </DialogContent>
+          </Dialog>
 
-      {/* Footer */}
-      <div className="mt-20 text-center text-slate-300 text-xs">
-        Criado com ConvitePro
+          <PDFDownloadLink document={<InvitationPDF convite={convite} />} fileName={`convite-${convite.slug}.pdf`}>
+            {({ loading }) => (
+              <Button variant="ghost" className="flex flex-col h-auto py-4 space-y-2" disabled={loading}>
+                <Download size={24} />
+                <span className="text-xs">{loading ? 'Gerando...' : 'Baixar PDF'}</span>
+              </Button>
+            )}
+          </PDFDownloadLink>
+
+          <Button variant="ghost" className="flex flex-col h-auto py-4 space-y-2" onClick={() => navigator.share({ title: convite.nome_evento, url: window.location.href })}>
+            <Share2 size={24} />
+            <span className="text-xs">Partilhar</span>
+          </Button>
+        </div>
       </div>
     </div>
   );
