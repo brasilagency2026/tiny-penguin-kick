@@ -33,6 +33,7 @@ const ConvitePage = () => {
 
       if (data) {
         setConvite(data);
+        // Increment views
         await supabase.rpc('increment_views', { row_id: data.id });
       }
       setLoading(false);
@@ -171,6 +172,18 @@ const ConvitePage = () => {
                 </div>
               </div>
             )}
+
+            {convite.dress_code && (
+              <div className="flex items-center space-x-4">
+                <div className={cn("p-3", isModern ? "bg-slate-100" : "rounded-2xl bg-slate-50")} style={{ color: primaryColor }}>
+                  <Shirt size={24} />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">Traje</p>
+                  <p className="text-lg font-medium">{convite.dress_code}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -254,6 +267,24 @@ const ConvitePage = () => {
               </DialogContent>
             </Dialog>
           )}
+
+          <div className="col-span-2 grid grid-cols-2 gap-4">
+            <PDFDownloadLink document={<InvitationPDF convite={convite} />} fileName={`convite-${convite.slug}.pdf`}>
+              {({ loading }) => (
+                <Button variant="ghost" className="w-full h-12 rounded-xl gap-2 text-slate-500" disabled={loading}>
+                  <Download size={18} /> {loading ? 'Gerando...' : 'Baixar PDF'}
+                </Button>
+              )}
+            </PDFDownloadLink>
+            
+            <Button 
+              variant="ghost" 
+              className="w-full h-12 rounded-xl gap-2 text-slate-500"
+              onClick={() => navigator.share({ title: convite.nome_evento, url: window.location.href })}
+            >
+              <Share2 size={18} /> Compartilhar
+            </Button>
+          </div>
         </div>
       </div>
     </div>
