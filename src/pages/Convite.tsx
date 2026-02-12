@@ -32,6 +32,7 @@ const ConvitePage = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showFloatingRSVP, setShowFloatingRSVP] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -46,7 +47,6 @@ const ConvitePage = () => {
         setConvite(data);
         await supabase.rpc('increment_views', { row_id: data.id });
         
-        // Fetch messages
         const { data: msgData } = await supabase
           .from('presencas')
           .select('nome, mensagem, created_at')
@@ -60,6 +60,12 @@ const ConvitePage = () => {
     };
 
     fetchConvite();
+
+    const handleScroll = () => {
+      setShowFloatingRSVP(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [slug]);
 
   const toggleMusic = () => {
@@ -84,10 +90,8 @@ const ConvitePage = () => {
     const title = encodeURIComponent(convite.nome_evento);
     const details = encodeURIComponent(convite.frase || '');
     const location = encodeURIComponent(convite.endereco || '');
-    
     const startDate = eventDate.toISOString().replace(/-|:|\.\d+/g, '');
     const endDate = new Date(eventDate.getTime() + 4 * 60 * 60 * 1000).toISOString().replace(/-|:|\.\d+/g, '');
-    
     const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate}/${endDate}&details=${details}&location=${location}`;
     window.open(googleUrl, '_blank');
   };
@@ -111,13 +115,42 @@ const ConvitePage = () => {
           <audio ref={audioRef} src={convite.musica_url} loop />
           <Button 
             onClick={toggleMusic}
-            className="fixed bottom-6 right-6 z-50 rounded-full w-14 h-14 shadow-2xl animate-bounce"
+            className="fixed bottom-6 left-6 z-50 rounded-full w-14 h-14 shadow-2xl"
             style={{ backgroundColor: primaryColor }}
           >
             {isPlaying ? <Volume2 /> : <Music />}
           </Button>
         </>
       )}
+
+      {/* Floating RSVP Button for Mobile */}
+      <AnimatePresence>
+        {showFloatingRSVP && (
+          <motion.div 
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-3rem)] max-w-xs"
+          >
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button 
+                  className="w-full h-14 rounded-full text-lg font-bold shadow-2xl"
+                  style={{ backgroundColor: primaryColor }}
+                >
+                  <CheckSquare className="mr-2 h-5 w-5" /> Confirmar Presença
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-serif text-center">Confirmar Presença</DialogTitle>
+                </DialogHeader>
+                <RSVPForm conviteId={convite.id!} primaryColor={primaryColor} />
+              </DialogContent>
+            </Dialog>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Hero Section */}
       <motion.div 

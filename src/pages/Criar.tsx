@@ -8,6 +8,7 @@ import ConvitePreview from '@/components/ConvitePreview';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { QRCodeSVG } from 'qrcode.react';
+import confetti from 'canvas-confetti';
 
 const Criar = () => {
   const [searchParams] = useSearchParams();
@@ -68,6 +69,14 @@ const Criar = () => {
 
       showSuccess("Convite criado com sucesso!");
       setCreatedSlug(slug);
+      
+      // Efeito de Confete
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: [data.cor || '#7c3aed', '#ffffff', '#ffd700']
+      });
     } catch (error: any) {
       showError("Erro ao criar convite: " + error.message);
     } finally {
@@ -140,7 +149,6 @@ const Criar = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
       <header className="bg-white border-b px-8 py-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <Link to="/" className="text-xl font-serif font-bold text-primary">ConvitePro</Link>
@@ -159,7 +167,6 @@ const Criar = () => {
 
       <div className="max-w-[1600px] mx-auto p-4 md:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Form Area */}
           <div className="lg:col-span-7 xl:col-span-8">
             <InvitationForm 
               onSubmit={handleSubmit} 
@@ -168,15 +175,10 @@ const Criar = () => {
             />
           </div>
 
-          {/* Preview Area (Sticky on Desktop) */}
           <div className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-24">
             <div className="relative mx-auto w-full max-w-[380px]">
-              {/* Phone Frame */}
               <div className="relative border-[12px] border-slate-900 rounded-[3rem] overflow-hidden shadow-2xl h-[780px] bg-white">
-                {/* Notch */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-50"></div>
-                
-                {/* Content */}
                 <div className="h-full overflow-y-auto scrollbar-hide">
                   {formData ? (
                     <ConvitePreview data={formData} />
@@ -192,8 +194,6 @@ const Criar = () => {
                   )}
                 </div>
               </div>
-              
-              {/* Decorative elements */}
               <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-2xl shadow-xl z-10 animate-bounce hidden xl:block">
                 <Sparkles className="text-yellow-400" />
               </div>
