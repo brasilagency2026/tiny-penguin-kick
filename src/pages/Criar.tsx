@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import InvitationForm from '@/components/InvitationForm';
 import { showSuccess, showError } from '@/utils/toast';
-import { Loader2, Eye, Edit3, CheckCircle2, Copy, ExternalLink, Share2 } from 'lucide-react';
+import { Loader2, Eye, Edit3, CheckCircle2, Copy, ExternalLink, Share2, Smartphone, Monitor } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ConvitePreview from '@/components/ConvitePreview';
 import { Button } from '@/components/ui/button';
@@ -132,41 +132,67 @@ const Criar = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        <Tabs defaultValue="edit" className="w-full">
-          <div className="flex justify-center mb-8">
-            <TabsList className="grid w-full max-w-[400px] grid-cols-2 h-12">
-              <TabsTrigger value="edit" className="flex items-center gap-2">
-                <Edit3 size={18} /> Editar
-              </TabsTrigger>
-              <TabsTrigger value="preview" className="flex items-center gap-2">
-                <Eye size={18} /> Visualizar
-              </TabsTrigger>
-            </TabsList>
+    <div className="min-h-screen bg-slate-50">
+      {/* Header */}
+      <header className="bg-white border-b px-8 py-4 flex items-center justify-between sticky top-0 z-50">
+        <div className="flex items-center gap-4">
+          <Link to="/" className="text-xl font-serif font-bold text-primary">ConvitePro</Link>
+          <div className="h-6 w-[1px] bg-slate-200"></div>
+          <p className="text-sm text-slate-500 font-medium">Criando seu convite mágico</p>
+        </div>
+        <div className="hidden md:flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
+          <div className="px-3 py-1.5 bg-white rounded-lg shadow-sm text-xs font-bold flex items-center gap-2">
+            <Monitor size={14} /> Desktop
           </div>
+          <div className="px-3 py-1.5 text-slate-400 text-xs font-bold flex items-center gap-2">
+            <Smartphone size={14} /> Mobile
+          </div>
+        </div>
+      </header>
 
-          <TabsContent value="edit">
+      <div className="max-w-[1600px] mx-auto p-4 md:p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Form Area */}
+          <div className="lg:col-span-7 xl:col-span-8">
             <InvitationForm 
               onSubmit={handleSubmit} 
               loading={loading} 
               onChange={(data) => setFormData(data)}
             />
-          </TabsContent>
+          </div>
 
-          <TabsContent value="preview">
-            <div className="max-w-md mx-auto border-[12px] border-slate-900 rounded-[3rem] overflow-hidden shadow-2xl h-[800px] bg-white relative">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-50"></div>
-              <div className="h-full overflow-y-auto">
-                {formData ? <ConvitePreview data={formData} /> : (
-                  <div className="h-full flex items-center justify-center p-8 text-center text-slate-400">
-                    Preencha os dados na aba "Editar" para ver a prévia aqui.
-                  </div>
-                )}
+          {/* Preview Area (Sticky on Desktop) */}
+          <div className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-24">
+            <div className="relative mx-auto w-full max-w-[380px]">
+              {/* Phone Frame */}
+              <div className="relative border-[12px] border-slate-900 rounded-[3rem] overflow-hidden shadow-2xl h-[780px] bg-white">
+                {/* Notch */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-50"></div>
+                
+                {/* Content */}
+                <div className="h-full overflow-y-auto scrollbar-hide">
+                  {formData ? (
+                    <ConvitePreview data={formData} />
+                  ) : (
+                    <div className="h-full flex flex-col items-center justify-center p-8 text-center space-y-4">
+                      <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-200">
+                        <Eye size={40} />
+                      </div>
+                      <p className="text-slate-400 font-medium">
+                        Preencha os dados ao lado para ver a mágica acontecer aqui em tempo real.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Decorative elements */}
+              <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-2xl shadow-xl z-10 animate-bounce hidden xl:block">
+                <Sparkles className="text-yellow-400" />
               </div>
             </div>
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
       </div>
     </div>
   );
