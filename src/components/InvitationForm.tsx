@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette, Music, CreditCard, Shirt, Plus, Trash2, Utensils, Star, Camera, GlassWater, Church, Image as ImageIcon } from 'lucide-react';
+import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette, Music, CreditCard, Shirt, Plus, Trash2, Utensils, Star, Camera, GlassWater, Church, Image as ImageIcon, Sparkles } from 'lucide-react';
 
 interface InvitationFormProps {
   onSubmit: (data: any) => void;
@@ -27,6 +27,14 @@ const MUSIC_PRESETS = [
   { name: 'Romântico (Piano)', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
   { name: 'Clássico (Violino)', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
   { name: 'Festa (Animado)', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
+];
+
+const PHOTO_PRESETS = [
+  { name: 'Casamento', url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800', icon: <Church size={14} /> },
+  { id: 'party', name: 'Festa', url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=800', icon: <Music size={14} /> },
+  { id: 'romantic', name: 'Romântico', url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=800', icon: <Heart size={14} /> },
+  { id: 'modern', name: 'Moderno', url: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=800', icon: <Sparkles size={14} /> },
+  { id: 'classic', name: 'Clássico', url: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800', icon: <Star size={14} /> },
 ];
 
 const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) => {
@@ -63,6 +71,10 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData({ ...formData, [name]: value });
+  };
+
+  const setPhotoUrl = (url: string) => {
+    setFormData({ ...formData, foto_url: url });
   };
 
   const handleTimelineChange = (index: number, field: string, value: string) => {
@@ -120,15 +132,35 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
             <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
               <ImageIcon className="text-primary" size={20} /> Foto de Capa
             </h3>
-            <div className="space-y-2">
-              <Label htmlFor="foto_url">Link da Foto (URL)</Label>
-              <Input 
-                id="foto_url" 
-                name="foto_url" 
-                placeholder="https://images.unsplash.com/photo-..." 
-                onChange={handleChange} 
-              />
-              <p className="text-[10px] text-slate-400 italic">Dica: Use uma foto vertical para melhor resultado.</p>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Sugestões de Fotos (Clique para selecionar)</Label>
+                <div className="flex flex-wrap gap-2">
+                  {PHOTO_PRESETS.map((photo, idx) => (
+                    <Button 
+                      key={idx} 
+                      type="button" 
+                      variant={formData.foto_url === photo.url ? "default" : "outline"}
+                      size="sm"
+                      className="rounded-full gap-2"
+                      onClick={() => setPhotoUrl(photo.url)}
+                    >
+                      {photo.icon} {photo.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="foto_url">Ou cole um link personalizado (URL)</Label>
+                <Input 
+                  id="foto_url" 
+                  name="foto_url" 
+                  value={formData.foto_url}
+                  placeholder="https://images.unsplash.com/photo-..." 
+                  onChange={handleChange} 
+                />
+                <p className="text-[10px] text-slate-400 italic">Dica: Use uma foto vertical para melhor resultado.</p>
+              </div>
             </div>
           </div>
 
