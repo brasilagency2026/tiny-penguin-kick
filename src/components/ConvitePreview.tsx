@@ -1,10 +1,11 @@
-import React from 'react';
-import { MapPin, Phone, Gift, Calendar, Clock, Heart, Sparkles, Flower2, Star, Utensils, Music, Camera, Church, GlassWater } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { MapPin, Phone, Gift, Calendar, Clock, Heart, Sparkles, Flower2, Star, Utensils, Music, Camera, Church, GlassWater, Volume2, VolumeX } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import Countdown from './Countdown';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from './ui/button';
 
 interface Props {
   data: any;
@@ -21,6 +22,9 @@ const ICON_MAP: Record<string, any> = {
 };
 
 const ConvitePreview = ({ data }: Props) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  
   const primaryColor = data.cor || '#7c3aed';
   const isModern = data.tema === 'modern';
   const isRomantic = data.tema === 'romantic';
@@ -28,12 +32,58 @@ const ConvitePreview = ({ data }: Props) => {
 
   const timeline = data.timeline || [];
 
+  // Reset audio when URL changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+      audioRef.current.load();
+    }
+  }, [data.musica_url]);
+
+  const toggleMusic = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!audioRef.current) return;
+    
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play()
+        .then(() => setIsPlaying(true))
+        .catch(err => console.error("Erro ao tocar:", err));
+    }
+  };
+
   return (
     <div className={cn(
       "min-h-full font-sans text-slate-800 pb-10 transition-all duration-500 relative overflow-hidden",
       isModern ? "bg-slate-50" : "bg-white",
       isRomantic ? "bg-rose-50/30" : ""
     )}>
+      {/* Audio Player for Preview */}
+      {data.musica_url && (
+        <div className="absolute bottom-6 left-6 z-50 flex flex-col items-center gap-2">
+          <audio ref={audioRef} src={data.musica_url} loop />
+          <motion.div
+            animate={!isPlaying ? { scale: [1, 1.1, 1] } : {}}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <Button 
+              onClick={toggleMusic}
+              className="rounded-full w-12 h-12 shadow-xl border-2 border-white"
+              style={{ backgroundColor: primaryColor }}
+              size="icon"
+            >
+              {isPlaying ? <Volume2 size={20} /> : <Music size={20} />}
+            </Button>
+          </motion.div>
+          <span className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-[8px] font-bold uppercase tracking-tighter shadow-sm border border-slate-100">
+            {isPlaying ? "Tocando" : "Testar Som"}
+          </span>
+        </div>
+      )}
+
       {/* Decorative Elements for Romantic Theme */}
       {isRomantic && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
