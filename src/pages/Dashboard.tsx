@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Users, Ticket, Eye, Lock, TrendingUp, Calendar as CalendarIcon, ArrowUpRight, Plus, Copy, UserCheck, Trash2, Download, ExternalLink } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { Input } from "@/components/ui/input";
+import { Loader2, Users, Ticket, Eye, Lock, TrendingUp, Calendar as CalendarIcon, Plus, Copy, Trash2, Download, ExternalLink, PieChart as PieChartIcon } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { showSuccess, showError } from '@/utils/toast';
 
 const Dashboard = () => {
-  const [stats, setStats] = useState({ tokens: 0, convites: 0, views: 0 });
+  const [stats, setStats] = useState({ tokens: 0, convites: 0, views: 0, totalGuests: 0 });
   const [recentConvites, setRecentConvites] = useState<any[]>([]);
   const [chartData, setChartData] = useState<any[]>([]);
+  const [rsvpData, setRsvpData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
@@ -35,13 +35,24 @@ const Dashboard = () => {
       .select('*')
       .order('created_at', { ascending: false });
     
+    const { data: allPresencas } = await supabase.from('presencas').select('adultos, criancas');
+    
     const totalViews = convites?.reduce((acc, curr) => acc + (curr.visualizacoes || 0), 0) || 0;
+    const totalAdults = allPresencas?.reduce((acc, curr) => acc + (curr.adultos || 0), 0) || 0;
+    const totalChildren = allPresencas?.reduce((acc, curr) => acc + (curr.criancas || 0), 0) || 0;
 
     setStats({ 
       tokens: tokenCount || 0, 
       convites: conviteCount || 0, 
-      views: totalViews 
+      views: totalViews,
+      totalGuests: totalAdults + totalChildren
     });
+
+    setRsvpData([
+      { name: 'Adultos', value: totalAdults, color: '#7c3aed' },
+      { name: 'Crianças', value: totalChildren, color: '#a78bfa' }
+    ]);
+
     setRecentConvites(convites || []);
 
     const chartDataFormatted = convites?.slice(0, 7).map(c => ({
@@ -71,47 +82,14 @@ const Dashboard = () => {
 
   const exportToCSV = (nomeEvento: string) => {
     if (guests.length === 0) return;
-    
-    const headers = ["Nome", "Adultos", "Crianças", "Data de Confirmação"];
-    const rows = guests.map(g => [
-      g.nome,
-      g.adultos,
-      g.criancas,
-      new Date(g.created_at).toLocaleDateString()
-    ]);
-
-    const csvContent = [
-      headers.join(","),
-      ...rows.map(r => r.join(","))
-    ].join("\n");
-
+    const headers = ["Nome", "Adultos", "Crianças", "Data"];
+    const rows = guests.map(g => [g.nome, g.adultos, g.criancas, new Date(g.created_at).toLocaleDateString()]);
+    const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
+    link.href = URL.createObjectURL(blob);
     link.setAttribute("download", `convidados-${nomeEvento.toLowerCase().replace(/\s+/g, '-')}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
-  };
-
-  const deleteConvite = async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir este convite?")) {
-      const { error } = await supabase.from('convites').delete().eq('id', id);
-      if (error) {
-        showError("Erro ao excluir");
-      } else {
-        showSuccess("Convite excluído");
-        fetchData();
-      }
-    }
-  };
-
-  const copyConviteLink = (slug: string) => {
-    const url = `${window.location.origin}/convite/${slug}`;
-    navigator.clipboard.writeText(url);
-    showSuccess("Link do convite copiado!");
   };
 
   const generateManualToken = async () => {
@@ -122,9 +100,8 @@ const Dashboard = () => {
       usado: false
     }]);
 
-    if (error) {
-      showError("Erro ao gerar token");
-    } else {
+    if (error) showError("Erro ao gerar token");
+    else {
       const url = `${window.location.origin}/criar?token=${token}`;
       navigator.clipboard.writeText(url);
       showSuccess("Token gerado e link copiado!");
@@ -145,13 +122,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="pb-10">
             <form onSubmit={handleLogin} className="space-y-4">
-              <Input 
-                type="password" 
-                placeholder="Senha mestre" 
-                value={password}
-                className="h-12 rounded-xl"
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <Input type="password" placeholder="Senha mestre" value={password} className="h-12 rounded-xl" onChange={(e) => setPassword(e.target.value)} />
               <Button type="submit" className="w-full h-12 rounded-xl text-lg font-bold">Entrar no Painel</Button>
             </form>
           </CardContent>
@@ -168,56 +139,37 @@ const Dashboard = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-serif font-bold">Painel de Controle</h1>
-            <p className="text-slate-500">Gerencie suas vendas e convites.</p>
+            <p className="text-slate-500">Visão geral da sua plataforma de convites.</p>
           </div>
-          <div className="flex gap-3">
-            <Button onClick={generateManualToken} className="rounded-xl gap-2">
-              <Plus size={18} /> Gerar Venda Manual
-            </Button>
-            <Button variant="outline" className="rounded-xl" onClick={() => setIsAuthenticated(false)}>Sair</Button>
-          </div>
+          <Button onClick={generateManualToken} className="rounded-xl gap-2 h-12 px-6">
+            <Plus size={18} /> Gerar Venda Manual
+          </Button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="border-none shadow-sm rounded-2xl overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 bg-white">
-              <CardTitle className="text-sm font-bold text-slate-400 uppercase tracking-widest">Vendas Totais</CardTitle>
-              <Ticket className="h-5 w-5 text-primary" />
-            </CardHeader>
-            <CardContent className="pt-4 bg-white">
-              <div className="text-3xl font-bold">{stats.tokens}</div>
-              <p className="text-xs text-green-500 flex items-center mt-1 font-medium">
-                <TrendingUp className="h-3 w-3 mr-1" /> +12% este mês
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="border-none shadow-sm rounded-2xl overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 bg-white">
-              <CardTitle className="text-sm font-bold text-slate-400 uppercase tracking-widest">Convites Ativos</CardTitle>
-              <Users className="h-5 w-5 text-blue-500" />
-            </CardHeader>
-            <CardContent className="pt-4 bg-white">
-              <div className="text-3xl font-bold">{stats.convites}</div>
-              <p className="text-xs text-slate-400 mt-1 font-medium">Taxa de conversão: 85%</p>
-            </CardContent>
-          </Card>
-          <Card className="border-none shadow-sm rounded-2xl overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 bg-white">
-              <CardTitle className="text-sm font-bold text-slate-400 uppercase tracking-widest">Visualizações</CardTitle>
-              <Eye className="h-5 w-5 text-purple-500" />
-            </CardHeader>
-            <CardContent className="pt-4 bg-white">
-              <div className="text-3xl font-bold">{stats.views.toLocaleString()}</div>
-              <p className="text-xs text-slate-400 mt-1 font-medium">Média de 42 por convite</p>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {[
+            { title: 'Vendas', value: stats.tokens, icon: <Ticket />, color: 'text-primary' },
+            { title: 'Convites', value: stats.convites, icon: <Users />, color: 'text-blue-500' },
+            { title: 'Views', value: stats.views.toLocaleString(), icon: <Eye />, color: 'text-purple-500' },
+            { title: 'Convidados', value: stats.totalGuests, icon: <UserCheck className="h-5 w-5" />, color: 'text-green-500' }
+          ].map((stat, i) => (
+            <Card key={i} className="border-none shadow-sm rounded-2xl overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 bg-white">
+                <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest">{stat.title}</CardTitle>
+                <div className={stat.color}>{stat.icon}</div>
+              </CardHeader>
+              <CardContent className="pt-4 bg-white">
+                <div className="text-3xl font-bold">{stat.value}</div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <Card className="lg:col-span-2 border-none shadow-sm rounded-2xl overflow-hidden">
             <CardHeader className="bg-white border-b border-slate-50">
-              <CardTitle className="text-lg font-serif">Engajamento por Convite</CardTitle>
-              <CardDescription>Visualizações dos convites mais recentes</CardDescription>
+              <CardTitle className="text-lg font-serif">Engajamento Recente</CardTitle>
+              <CardDescription>Visualizações por convite</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 bg-white h-[350px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -225,14 +177,9 @@ const Dashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} dy={10} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
-                  <Tooltip 
-                    cursor={{ fill: '#f8fafc' }}
-                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                  />
+                  <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
                   <Bar dataKey="views" radius={[6, 6, 0, 0]} barSize={40}>
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#7c3aed' : '#a78bfa'} />
-                    ))}
+                    {chartData.map((_, index) => <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#7c3aed' : '#a78bfa'} />)}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
@@ -241,125 +188,88 @@ const Dashboard = () => {
 
           <Card className="border-none shadow-sm rounded-2xl overflow-hidden">
             <CardHeader className="bg-white border-b border-slate-50">
-              <CardTitle className="text-lg font-serif">Todos os Convites</CardTitle>
-              <CardDescription>Gerencie e veja convidados</CardDescription>
+              <CardTitle className="text-lg font-serif">Perfil dos Convidados</CardTitle>
+              <CardDescription>Adultos vs Crianças</CardDescription>
             </CardHeader>
-            <CardContent className="p-0 bg-white">
-              <div className="divide-y divide-slate-50 max-h-[400px] overflow-y-auto">
-                {recentConvites.map((c) => (
-                  <div key={c.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors group">
-                    <Dialog onOpenChange={(open) => open && fetchGuests(c.id)}>
-                      <DialogTrigger asChild>
-                        <div className="flex items-center gap-3 cursor-pointer flex-1">
-                          <div className="bg-slate-100 p-2 rounded-lg">
-                            <CalendarIcon className="h-4 w-4 text-slate-500" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-slate-700 truncate max-w-[120px]">{c.nome_evento}</p>
-                            <p className="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">
-                              {new Date(c.created_at).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                        <DialogHeader className="flex flex-row items-center justify-between">
-                          <div>
-                            <DialogTitle className="text-2xl font-serif">{c.nome_evento}</DialogTitle>
-                            <DialogDescription>Lista de convidados confirmados</DialogDescription>
-                          </div>
-                          <Button variant="outline" size="sm" className="gap-2 rounded-xl" onClick={() => exportToCSV(c.nome_evento)}>
-                            <Download size={16} /> Exportar CSV
-                          </Button>
-                        </DialogHeader>
-                        <div className="mt-6 space-y-4">
-                          <div className="grid grid-cols-3 gap-4 mb-6">
-                            <div className="bg-slate-50 p-4 rounded-2xl text-center">
-                              <p className="text-xs text-slate-400 font-bold uppercase">Total</p>
-                              <p className="text-2xl font-bold text-primary">
-                                {guests.reduce((acc, g) => acc + g.adultos + g.criancas, 0)}
-                              </p>
-                            </div>
-                            <div className="bg-slate-50 p-4 rounded-2xl text-center">
-                              <p className="text-xs text-slate-400 font-bold uppercase">Adultos</p>
-                              <p className="text-2xl font-bold text-slate-700">
-                                {guests.reduce((acc, g) => acc + g.adultos, 0)}
-                              </p>
-                            </div>
-                            <div className="bg-slate-50 p-4 rounded-2xl text-center">
-                              <p className="text-xs text-slate-400 font-bold uppercase">Crianças</p>
-                              <p className="text-2xl font-bold text-slate-700">
-                                {guests.reduce((acc, g) => acc + g.criancas, 0)}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="border rounded-2xl overflow-hidden">
-                            <Table>
-                              <TableHeader className="bg-slate-50">
-                                <TableRow>
-                                  <TableHead>Nome</TableHead>
-                                  <TableHead className="text-center">Adultos</TableHead>
-                                  <TableHead className="text-center">Crianças</TableHead>
-                                </TableRow>
-                              </TableHeader>
-                              <TableBody>
-                                {guests.length === 0 ? (
-                                  <TableRow>
-                                    <TableCell colSpan={3} className="text-center py-8 text-slate-400 italic">
-                                      Nenhuma confirmação ainda.
-                                    </TableCell>
-                                  </TableRow>
-                                ) : (
-                                  guests.map((guest) => (
-                                    <TableRow key={guest.id}>
-                                      <TableCell className="font-medium">{guest.nome}</TableCell>
-                                      <TableCell className="text-center">{guest.adultos}</TableCell>
-                                      <TableCell className="text-center">{guest.criancas}</TableCell>
-                                    </TableRow>
-                                  ))
-                                )}
-                              </TableBody>
-                            </Table>
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                    <div className="flex items-center gap-1">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-slate-400 hover:text-primary"
-                        onClick={() => copyConviteLink(c.slug)}
-                        title="Copiar Link"
-                      >
-                        <Copy size={14} />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-slate-400 hover:text-primary"
-                        onClick={() => window.open(`/convite/${c.slug}`, '_blank')}
-                        title="Visualizar"
-                      >
-                        <ExternalLink size={14} />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => deleteConvite(c.id)}
-                        title="Excluir"
-                      >
-                        <Trash2 size={14} />
-                      </Button>
-                    </div>
+            <CardContent className="pt-6 bg-white h-[350px] flex flex-col items-center justify-center">
+              <ResponsiveContainer width="100%" height="80%">
+                <PieChart>
+                  <Pie data={rsvpData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                    {rsvpData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="flex gap-6 mt-4">
+                {rsvpData.map((d, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: d.color }}></div>
+                    <span className="text-xs font-bold text-slate-500 uppercase">{d.name}: {d.value}</span>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
         </div>
+
+        <Card className="border-none shadow-sm rounded-2xl overflow-hidden">
+          <CardHeader className="bg-white border-b border-slate-50">
+            <CardTitle className="text-lg font-serif">Gerenciamento de Convites</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0 bg-white">
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="pl-6">Evento</TableHead>
+                  <TableHead>Data</TableHead>
+                  <TableHead>Views</TableHead>
+                  <TableHead className="text-right pr-6">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentConvites.map((c) => (
+                  <TableRow key={c.id} className="group">
+                    <TableCell className="pl-6 font-bold text-slate-700">{c.nome_evento}</TableCell>
+                    <TableCell className="text-slate-500">{new Date(c.data_evento).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="bg-slate-100 text-slate-600">{c.visualizacoes || 0}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right pr-6 space-x-2">
+                      <Dialog onOpenChange={(open) => open && fetchGuests(c.id)}>
+                        <DialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="rounded-lg gap-2">
+                            <Users size={14} /> Convidados
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader className="flex flex-row items-center justify-between">
+                            <DialogTitle className="text-2xl font-serif">{c.nome_evento}</DialogTitle>
+                            <Button variant="outline" size="sm" onClick={() => exportToCSV(c.nome_evento)} className="gap-2">
+                              <Download size={14} /> CSV
+                            </Button>
+                          </DialogHeader>
+                          <div className="mt-4 border rounded-xl overflow-hidden">
+                            <Table>
+                              <TableHeader className="bg-slate-50">
+                                <TableRow><TableHead>Nome</TableHead><TableHead className="text-center">Adultos</TableHead><TableHead className="text-center">Crianças</TableHead></TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {guests.map((g) => (
+                                  <TableRow key={g.id}><TableCell className="font-medium">{g.nome}</TableCell><TableCell className="text-center">{g.adultos}</TableCell><TableCell className="text-center">{g.criancas}</TableCell></TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                      <Button variant="ghost" size="icon" onClick={() => window.open(`/convite/${c.slug}`, '_blank')}><ExternalLink size={16} /></Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

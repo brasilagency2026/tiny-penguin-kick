@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Phone, Gift, Calendar, Clock, Heart, Sparkles, Flower2, Star } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Heart, Sparkles, Flower2, Star, Utensils, Music, Camera } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -21,7 +21,7 @@ const ConvitePreview = ({ data }: Props) => {
       isModern ? "bg-slate-50" : "bg-white",
       isRomantic ? "bg-rose-50/30" : ""
     )}>
-      {/* Header Image/Color Area */}
+      {/* Header */}
       <div 
         className={cn(
           "relative h-[360px] flex items-center justify-center text-center px-6 overflow-hidden transition-all duration-500",
@@ -33,28 +33,8 @@ const ConvitePreview = ({ data }: Props) => {
           borderColor: isModern ? primaryColor : undefined
         }}
       >
-        {/* Theme Specific Background Decorations */}
-        {isRomantic && (
-          <div className="absolute inset-0 opacity-20 pointer-events-none">
-            <Flower2 className="absolute top-4 left-4 text-rose-300 rotate-12" size={60} />
-            <Flower2 className="absolute bottom-10 right-4 text-rose-300 -rotate-12" size={80} />
-            <Heart className="absolute top-20 right-10 text-rose-200" size={30} />
-          </div>
-        )}
-
-        {isClassic && (
-          <div className="absolute inset-0 opacity-5 pointer-events-none">
-            <div className="absolute inset-0 border-[20px] border-double m-4" style={{ borderColor: primaryColor }}></div>
-          </div>
-        )}
-
         <div className="z-10 space-y-6">
-          {isRomantic && (
-            <div className="flex justify-center gap-2">
-              <Heart className="animate-pulse" style={{ color: primaryColor }} size={28} />
-            </div>
-          )}
-          
+          {isRomantic && <Heart className="mx-auto animate-pulse text-rose-400" size={28} />}
           <h1 className={cn(
             "leading-tight transition-all duration-500",
             isModern ? "text-6xl font-black tracking-tighter uppercase italic" : "text-4xl font-serif",
@@ -62,51 +42,35 @@ const ConvitePreview = ({ data }: Props) => {
           )} style={{ color: isModern || isRomantic ? undefined : primaryColor }}>
             {data.nome_evento || "Nome do Evento"}
           </h1>
-
-          <div className="flex items-center justify-center gap-4">
-            <div className="h-[1px] w-8 bg-slate-200"></div>
-            <p className="text-sm italic text-slate-500 max-w-[240px] leading-relaxed">
-              {data.frase ? `"${data.frase}"` : "Sua frase especial aparecerá aqui..."}
-            </p>
-            <div className="h-[1px] w-8 bg-slate-200"></div>
-          </div>
+          <p className="text-sm italic text-slate-500 max-w-[240px] mx-auto">
+            {data.frase ? `"${data.frase}"` : "Sua frase especial aparecerá aqui..."}
+          </p>
         </div>
       </div>
 
-      {/* Content Card */}
+      {/* Main Info */}
       <div className="px-4 -mt-12 relative z-20">
         <div className={cn(
           "bg-white p-8 space-y-8 transition-all duration-500",
-          isModern ? "rounded-none shadow-none border-x-4 border-b-4" : "rounded-[2.5rem] shadow-2xl shadow-slate-200",
-          isModern ? "" : "border border-slate-50"
+          isModern ? "rounded-none shadow-none border-x-4 border-b-4" : "rounded-[2.5rem] shadow-2xl shadow-slate-200"
         )} style={{ borderColor: isModern ? primaryColor : undefined }}>
           
-          {data.data_evento ? (
-            <div className="space-y-8">
+          {data.data_evento && (
+            <>
               <Countdown targetDate={data.data_evento} color={primaryColor} />
-              
               <div className="space-y-6 pt-2">
                 <div className="flex items-center space-x-5">
-                  <div className={cn(
-                    "p-3 transition-all",
-                    isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50"
-                  )} style={{ color: isModern ? undefined : primaryColor }}>
+                  <div className={cn("p-3", isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50")} style={{ color: isModern ? undefined : primaryColor }}>
                     <Calendar size={22} />
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-400 uppercase font-bold tracking-[0.2em]">Data do Evento</p>
-                    <p className="text-base font-bold">
-                      {format(new Date(data.data_evento), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                    </p>
+                    <p className="text-[10px] text-slate-400 uppercase font-bold tracking-[0.2em]">Data</p>
+                    <p className="text-base font-bold">{format(new Date(data.data_evento), "dd 'de' MMMM", { locale: ptBR })}</p>
                   </div>
                 </div>
-
                 {data.horario && (
                   <div className="flex items-center space-x-5">
-                    <div className={cn(
-                      "p-3 transition-all",
-                      isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50"
-                    )} style={{ color: isModern ? undefined : primaryColor }}>
+                    <div className={cn("p-3", isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50")} style={{ color: isModern ? undefined : primaryColor }}>
                       <Clock size={22} />
                     </div>
                     <div>
@@ -115,42 +79,35 @@ const ConvitePreview = ({ data }: Props) => {
                     </div>
                   </div>
                 )}
-
-                {data.endereco && (
-                  <div className="flex items-center space-x-5">
-                    <div className={cn(
-                      "p-3 transition-all",
-                      isModern ? "bg-slate-900 text-white" : "rounded-2xl bg-slate-50"
-                    )} style={{ color: isModern ? undefined : primaryColor }}>
-                      <MapPin size={22} />
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-slate-400 uppercase font-bold tracking-[0.2em]">Localização</p>
-                      <p className="text-base font-bold leading-snug">{data.endereco}</p>
-                    </div>
-                  </div>
-                )}
               </div>
-            </div>
-          ) : (
-            <div className="py-16 text-center space-y-4">
-              <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-slate-200">
-                <Calendar size={24} />
-              </div>
-              <p className="text-slate-300 italic text-sm">
-                Selecione uma data para ver os detalhes
-              </p>
-            </div>
+            </>
           )}
         </div>
       </div>
-      
-      {/* Footer Preview */}
-      <div className="mt-12 px-6 text-center">
-        <div className="inline-flex items-center gap-3 text-[10px] text-slate-300 font-bold uppercase tracking-[0.3em]">
-          <div className="w-8 h-[1px] bg-slate-100"></div>
-          ConvitePro
-          <div className="w-8 h-[1px] bg-slate-100"></div>
+
+      {/* Timeline Section */}
+      <div className="mt-12 px-8 space-y-8">
+        <div className="text-center">
+          <h3 className="text-lg font-bold uppercase tracking-widest text-slate-400">Cronograma</h3>
+          <div className="h-1 w-12 bg-slate-100 mx-auto mt-2"></div>
+        </div>
+        
+        <div className="space-y-8 relative before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
+          {[
+            { time: data.horario || '19:00', title: 'Cerimônia', icon: <Heart size={16} /> },
+            { time: '20:30', title: 'Jantar', icon: <Utensils size={16} /> },
+            { time: '22:00', title: 'Festa', icon: <Music size={16} /> }
+          ].map((item, i) => (
+            <div key={i} className="relative pl-12">
+              <div className="absolute left-0 top-1 w-10 h-10 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center z-10" style={{ color: primaryColor }}>
+                {item.icon}
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-400">{item.time}</p>
+                <p className="text-base font-bold">{item.title}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
