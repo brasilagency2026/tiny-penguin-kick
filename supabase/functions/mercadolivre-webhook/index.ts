@@ -7,7 +7,6 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Gestion du preflight CORS
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -18,39 +17,34 @@ serve(async (req) => {
     const body = await req.json();
     const { resource, topic } = body;
 
-    console.log(`[mercadolivre-webhook] Tópico: ${topic}, Recurso: ${resource}`);
-
     if (topic === 'payment') {
       const paymentId = resource.split('/').pop();
       
       const ML_ACCESS_TOKEN = Deno.env.get('ML_ACCESS_TOKEN');
       const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
       const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-      const SITE_URL = Deno.env.get('NEXT_PUBLIC_SITE_URL');
+      const SITE_URL = Deno.env.get('NEXT_PUBLIC_SITE_URL') || 'http://localhost:8080';
 
       if (!ML_ACCESS_TOKEN) {
         console.error("[mercadolivre-webhook] ML_ACCESS_TOKEN não configurado");
         return new Response('Erro de configuração', { status: 500, headers: corsHeaders });
       }
 
-      // 1. Verificar pagamento no Mercado Livre
       const mlResponse = await fetch(`https://api.mercadolibre.com/v1/payments/${paymentId}`, {
         headers: { 'Authorization': `Bearer ${ML_ACCESS_TOKEN}` }
       });
       
       if (!mlResponse.ok) {
-        console.error("[mercadolivre-webhook] Erro ao consultar API do ML", await mlResponse.text());
+        console.error("[mercadolivre-webhook] Erro ao consultar API do ML");
         return new Response('Erro API Mercado Livre', { status: 502, headers: corsHeaders });
       }
 
       const payment = await mlResponse.json();
-      console.log(`[mercadolivre-webhook] Status do pagamento: ${payment.status}`);
 
       if (payment.status === 'approved') {
         const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
         const token = crypto.randomUUID();
 
-        // 2. Salvar token no banco
         const { error: insertError } = await supabase.from('acessos_ml').insert({
           payment_id: paymentId,
           comprador_email: payment.payer.email,
@@ -58,15 +52,14 @@ serve(async (req) => {
           token: token
         });
 
-        if (insertError) {
-          console.error("[mercadolivre-webhook] Erro ao salvar no banco:", insertError);
-          throw insertError;
-        }
+        if (insertError) throw insertError;
 
-        console.log(`[mercadolivre-webhook] Token gerado com sucesso: ${token}`);
-
-        // 3. Envio de mensagem (Opcional: implementar via API de mensagens do ML)
-        // O link seria: ${SITE_URL}/criar?token=${token}
+        const linkCriacao = `${SITE_URL}/criar?token=${token}`;
+        console.log(`[mercadolivre-webhook] VENDA APROVADA!`);
+        console.log(`[mercadolivre-webhook] Comprador: ${payment.payer.email}`);
+        console.log(`[mercadolivre-webhook] Link para enviar ao cliente: ${linkCriacao}`);
+        
+        // Aqui você poderia integrar com uma API de WhatsApp ou Email para enviar automaticamente
       }
     }
 
@@ -75,7 +68,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     });
   } catch (e) {
-    console.error(`[mercadolivre-webhook] Erro crítico: ${e.message}`);
+    console.error(`[mercadolivre-webhook] Erro: ${e.message}`);
     return new Response(JSON.stringify({ error: e.message }), { 
       status: 500, 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
