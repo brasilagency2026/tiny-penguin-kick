@@ -1,12 +1,13 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Users, Ticket, Eye, Lock, Plus, Copy, Trash2, Download, ExternalLink, Activity, UserPlus, CheckCircle2, ShoppingBag, PieChart as PieChartIcon, MessageSquare } from 'lucide-react';
+import { Loader2, Users, Ticket, Eye, Lock, Plus, Copy, Trash2, Download, ExternalLink, Activity, UserPlus, CheckCircle2, MessageSquare } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { showSuccess, showError } from '@/utils/toast';
@@ -28,7 +29,7 @@ const Dashboard = () => {
     if (password === 'admin123') {
       setIsAuthenticated(true);
     } else {
-      alert('Senha incorreta');
+      alert('Mot de passe incorrect');
     }
   };
 
@@ -66,14 +67,12 @@ const Dashboard = () => {
     setRecentConvites(convites || []);
     setActivities(allPresencas || []);
 
-    // Bar Chart Data
     const chartDataFormatted = convites?.slice(0, 7).map(c => ({
       name: c.nome_evento.length > 10 ? c.nome_evento.substring(0, 10) + '...' : c.nome_evento,
       views: c.visualizacoes || 0
     })).reverse() || [];
     setChartData(chartDataFormatted);
 
-    // Pie Chart Data (Themes)
     const themes = convites?.reduce((acc: any, curr) => {
       acc[curr.tema] = (acc[curr.tema] || 0) + 1;
       return acc;
@@ -104,11 +103,11 @@ const Dashboard = () => {
   };
 
   const deleteConvite = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este convite?")) return;
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cette invitation ?")) return;
     const { error } = await supabase.from('convites').delete().eq('id', id);
-    if (error) showError("Erro ao excluir");
+    if (error) showError("Erreur lors de la suppression");
     else {
-      showSuccess("Convite excluído");
+      showSuccess("Invitation supprimée");
       fetchData();
     }
   };
@@ -116,24 +115,24 @@ const Dashboard = () => {
   const copyLink = (slug: string) => {
     const url = `${window.location.origin}/convite/${slug}`;
     navigator.clipboard.writeText(url);
-    showSuccess("Link do convite copiado!");
+    showSuccess("Lien de l'invitation copié !");
   };
 
   const copyTokenLink = (token: string) => {
     const url = `${window.location.origin}/criar?token=${token}`;
     navigator.clipboard.writeText(url);
-    showSuccess("Link de criação copiado!");
+    showSuccess("Lien de création copié !");
   };
 
   const exportToCSV = (nomeEvento: string) => {
     if (guests.length === 0) return;
-    const headers = ["Nome", "Adultos", "Crianças", "Mensagem", "Data"];
+    const headers = ["Nom", "Adultes", "Enfants", "Message", "Date"];
     const rows = guests.map(g => [g.nome, g.adultos, g.criancas, g.mensagem || '', new Date(g.created_at).toLocaleDateString()]);
     const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", `convidados-${nomeEvento.toLowerCase().replace(/\s+/g, '-')}.csv`);
+    link.setAttribute("download", `invites-${nomeEvento.toLowerCase().replace(/\s+/g, '-')}.csv`);
     link.click();
   };
 
@@ -141,11 +140,11 @@ const Dashboard = () => {
     const token = crypto.randomUUID();
     const { error } = await supabase.from('acessos_ml').insert([{
       token,
-      comprador_email: 'venda_manual@admin.com',
+      comprador_email: 'vente_manuelle@admin.com',
       usado: false
     }]);
 
-    if (error) showError("Erro ao gerar token");
+    if (error) showError("Erreur lors de la génération du token");
     else {
       copyTokenLink(token);
       fetchData();
@@ -162,13 +161,13 @@ const Dashboard = () => {
             <div className="mx-auto bg-primary/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
               <Lock className="text-primary h-8 w-8" />
             </div>
-            <CardTitle className="text-2xl font-serif">Acesso Restrito</CardTitle>
-            <CardDescription>Entre com sua senha administrativa para continuar.</CardDescription>
+            <CardTitle className="text-2xl font-serif">Accès Restreint</CardTitle>
+            <CardDescription>Entrez votre mot de passe administrateur pour continuer.</CardDescription>
           </CardHeader>
           <CardContent className="pb-10">
             <form onSubmit={handleLogin} className="space-y-4">
-              <input type="password" placeholder="Senha mestre" value={password} className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20" onChange={(e) => setPassword(e.target.value)} />
-              <Button type="submit" className="w-full h-12 rounded-xl text-lg font-bold">Entrar no Painel</Button>
+              <input type="password" placeholder="Mot de passe maître" value={password} className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20" onChange={(e) => setPassword(e.target.value)} />
+              <Button type="submit" className="w-full h-12 rounded-xl text-lg font-bold">Entrer dans le Panel</Button>
             </form>
           </CardContent>
         </Card>
@@ -183,20 +182,20 @@ const Dashboard = () => {
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-serif font-bold">Painel de Controle</h1>
-            <p className="text-slate-500">Visão geral da sua plataforma de convites.</p>
+            <h1 className="text-3xl font-serif font-bold">Tableau de Bord</h1>
+            <p className="text-slate-500">Vue d'ensemble de votre plateforme d'invitations.</p>
           </div>
           <Button onClick={generateManualToken} className="rounded-xl gap-2 h-12 px-6">
-            <Plus size={18} /> Gerar Venda Manual
+            <Plus size={18} /> Générer Vente Manuelle
           </Button>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            { title: 'Vendas', value: stats.tokens, icon: <Ticket />, color: 'text-primary' },
-            { title: 'Convites', value: stats.convites, icon: <Users />, color: 'text-blue-500' },
-            { title: 'Views', value: stats.views.toLocaleString(), icon: <Eye />, color: 'text-purple-500' },
-            { title: 'Convidados', value: stats.totalGuests, icon: <CheckCircle2 className="h-5 w-5" />, color: 'text-green-500' }
+            { title: 'Ventes', value: stats.tokens, icon: <Ticket />, color: 'text-primary' },
+            { title: 'Invitations', value: stats.convites, icon: <Users />, color: 'text-blue-500' },
+            { title: 'Vues', value: stats.views.toLocaleString(), icon: <Eye />, color: 'text-purple-500' },
+            { title: 'Invités', value: stats.totalGuests, icon: <CheckCircle2 className="h-5 w-5" />, color: 'text-green-500' }
           ].map((stat, i) => (
             <Card key={i} className="border-none shadow-sm rounded-2xl overflow-hidden">
               <CardHeader className="flex flex-row items-center justify-between pb-2 bg-white">
@@ -212,17 +211,17 @@ const Dashboard = () => {
 
         <Tabs defaultValue="overview" className="space-y-8">
           <TabsList className="bg-white p-1 rounded-xl border shadow-sm">
-            <TabsTrigger value="overview" className="rounded-lg">Visão Geral</TabsTrigger>
-            <TabsTrigger value="convites" className="rounded-lg">Convites</TabsTrigger>
-            <TabsTrigger value="vendas" className="rounded-lg">Vendas (Tokens)</TabsTrigger>
+            <TabsTrigger value="overview" className="rounded-lg">Vue d'ensemble</TabsTrigger>
+            <TabsTrigger value="convites" className="rounded-lg">Invitations</TabsTrigger>
+            <TabsTrigger value="vendas" className="rounded-lg">Ventes (Tokens)</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <Card className="lg:col-span-2 border-none shadow-sm rounded-2xl overflow-hidden">
                 <CardHeader className="bg-white border-b border-slate-50">
-                  <CardTitle className="text-lg font-serif">Engajamento Recente</CardTitle>
-                  <CardDescription>Visualizações por convite</CardDescription>
+                  <CardTitle className="text-lg font-serif">Engagement Récent</CardTitle>
+                  <CardDescription>Vues par invitation</CardDescription>
                 </CardHeader>
                 <CardContent className="pt-6 bg-white h-[350px]">
                   <ResponsiveContainer width="100%" height="100%">
@@ -241,8 +240,8 @@ const Dashboard = () => {
 
               <Card className="border-none shadow-sm rounded-2xl overflow-hidden">
                 <CardHeader className="bg-white border-b border-slate-50">
-                  <CardTitle className="text-lg font-serif">Temas Populares</CardTitle>
-                  <CardDescription>Distribuição de estilos</CardDescription>
+                  <CardTitle className="text-lg font-serif">Thèmes Populaires</CardTitle>
+                  <CardDescription>Distribution des styles</CardDescription>
                 </CardHeader>
                 <CardContent className="pt-6 bg-white h-[350px]">
                   <ResponsiveContainer width="100%" height="100%">
@@ -269,15 +268,15 @@ const Dashboard = () => {
               <Card className="lg:col-span-3 border-none shadow-sm rounded-2xl overflow-hidden">
                 <CardHeader className="bg-white border-b border-slate-50 flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle className="text-lg font-serif">Atividade Recente</CardTitle>
-                    <CardDescription>Últimas confirmações de presença</CardDescription>
+                    <CardTitle className="text-lg font-serif">Activité Récente</CardTitle>
+                    <CardDescription>Dernières confirmations de présence</CardDescription>
                   </div>
                   <Activity className="text-slate-300 h-5 w-5" />
                 </CardHeader>
                 <CardContent className="p-0 bg-white">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-x divide-y divide-slate-50">
                     {activities.length === 0 ? (
-                      <div className="p-8 text-center text-slate-400 italic text-sm col-span-full">Nenhuma atividade recente.</div>
+                      <div className="p-8 text-center text-slate-400 italic text-sm col-span-full">Aucune activité récente.</div>
                     ) : (
                       activities.map((act, i) => (
                         <div key={i} className="p-6 flex items-start gap-4 hover:bg-slate-50 transition-colors">
@@ -286,10 +285,10 @@ const Dashboard = () => {
                           </div>
                           <div>
                             <p className="text-sm font-bold text-slate-700">{act.nome}</p>
-                            <p className="text-xs text-slate-400">Evento: {act.convites?.nome_evento}</p>
+                            <p className="text-xs text-slate-400">Événement : {act.convites?.nome_evento}</p>
                             <div className="flex gap-2 mt-2">
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">{act.adultos} Adultos</Badge>
-                              {act.criancas > 0 && <Badge variant="outline" className="text-[10px] px-1.5 py-0">{act.criancas} Crianças</Badge>}
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">{act.adultos} Adultes</Badge>
+                              {act.criancas > 0 && <Badge variant="outline" className="text-[10px] px-1.5 py-0">{act.criancas} Enfants</Badge>}
                             </div>
                             {act.mensagem && (
                               <div className="mt-2 p-2 bg-slate-50 rounded-lg border border-slate-100 flex gap-2 items-start">
@@ -298,7 +297,7 @@ const Dashboard = () => {
                               </div>
                             )}
                             <p className="text-[10px] text-slate-300 mt-2 uppercase font-bold">
-                              {new Date(act.created_at).toLocaleDateString()} às {new Date(act.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(act.created_at).toLocaleDateString()} à {new Date(act.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </p>
                           </div>
                         </div>
@@ -316,10 +315,10 @@ const Dashboard = () => {
                 <Table>
                   <TableHeader>
                     <TableRow className="hover:bg-transparent">
-                      <TableHead className="pl-6">Evento</TableHead>
-                      <TableHead>Data</TableHead>
-                      <TableHead>Views</TableHead>
-                      <TableHead className="text-right pr-6">Ações</TableHead>
+                      <TableHead className="pl-6">Événement</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Vues</TableHead>
+                      <TableHead className="text-right pr-6">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -331,11 +330,11 @@ const Dashboard = () => {
                           <Badge variant="secondary" className="bg-slate-100 text-slate-600">{c.visualizacoes || 0}</Badge>
                         </TableCell>
                         <TableCell className="text-right pr-6 space-x-2">
-                          <Button variant="ghost" size="icon" onClick={() => copyLink(c.slug)} title="Copiar Link"><Copy size={16} /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => copyLink(c.slug)} title="Copier le lien"><Copy size={16} /></Button>
                           <Dialog onOpenChange={(open) => open && fetchGuests(c.id)}>
                             <DialogTrigger asChild>
                               <Button variant="ghost" size="sm" className="rounded-lg gap-2">
-                                <Users size={14} /> Convidados
+                                <Users size={14} /> Invités
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="max-w-3xl">
@@ -349,10 +348,10 @@ const Dashboard = () => {
                                 <Table>
                                   <TableHeader className="bg-slate-50">
                                     <TableRow>
-                                      <TableHead>Nome</TableHead>
-                                      <TableHead className="text-center">Adultos</TableHead>
-                                      <TableHead className="text-center">Crianças</TableHead>
-                                      <TableHead>Mensagem</TableHead>
+                                      <TableHead>Nom</TableHead>
+                                      <TableHead className="text-center">Adultes</TableHead>
+                                      <TableHead className="text-center">Enfants</TableHead>
+                                      <TableHead>Message</TableHead>
                                     </TableRow>
                                   </TableHeader>
                                   <TableBody>
@@ -388,11 +387,11 @@ const Dashboard = () => {
                 <Table>
                   <TableHeader>
                     <TableRow className="hover:bg-transparent">
-                      <TableHead className="pl-6">Email Comprador</TableHead>
+                      <TableHead className="pl-6">Email Acheteur</TableHead>
                       <TableHead>Token</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Data Venda</TableHead>
-                      <TableHead className="text-right pr-6">Ações</TableHead>
+                      <TableHead>Statut</TableHead>
+                      <TableHead>Date Vente</TableHead>
+                      <TableHead className="text-right pr-6">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -402,13 +401,13 @@ const Dashboard = () => {
                         <TableCell className="font-mono text-xs text-slate-400">{t.token.substring(0, 8)}...</TableCell>
                         <TableCell>
                           <Badge variant={t.usado ? "secondary" : "default"} className={t.usado ? "" : "bg-green-500"}>
-                            {t.usado ? "Usado" : "Disponível"}
+                            {t.usado ? "Utilisé" : "Disponible"}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-slate-500">{new Date(t.created_at).toLocaleDateString()}</TableCell>
                         <TableCell className="text-right pr-6">
                           {!t.usado && (
-                            <Button variant="ghost" size="icon" onClick={() => copyTokenLink(t.token)} title="Copiar Link de Criação">
+                            <Button variant="ghost" size="icon" onClick={() => copyTokenLink(t.token)} title="Copier le lien de création">
                               <Copy size={16} />
                             </Button>
                           )}

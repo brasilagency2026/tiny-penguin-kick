@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from "@/components/ui/button";
@@ -35,9 +37,9 @@ const RSVPForm = ({ conviteId, primaryColor }: Props) => {
       if (error) throw error;
       
       setSubmitted(true);
-      showSuccess("Presença confirmada com sucesso!");
+      showSuccess("Présence confirmée avec succès !");
     } catch (error: any) {
-      showError("Erro ao confirmar: " + error.message);
+      showError("Erreur lors de la confirmation : " + error.message);
     } finally {
       setLoading(false);
     }
@@ -71,8 +73,8 @@ const RSVPForm = ({ conviteId, primaryColor }: Props) => {
           </motion.div>
         </div>
         <div className="space-y-2">
-          <h3 className="text-2xl font-serif font-bold">Presença Confirmada!</h3>
-          <p className="text-slate-500">Obrigado por confirmar. Mal podemos esperar para te ver lá!</p>
+          <h3 className="text-2xl font-serif font-bold">Présence Confirmée !</h3>
+          <p className="text-slate-500">Merci d'avoir confirmé. Nous avons hâte de vous voir !</p>
         </div>
       </motion.div>
     );
@@ -81,11 +83,11 @@ const RSVPForm = ({ conviteId, primaryColor }: Props) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="nome">Seu Nome Completo</Label>
+        <Label htmlFor="nome">Votre Nom Complet</Label>
         <Input 
           id="nome" 
           required 
-          placeholder="Como está no convite"
+          placeholder="Comme indiqué sur l'invitation"
           className="h-12 rounded-xl"
           value={formData.nome}
           onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
@@ -94,7 +96,7 @@ const RSVPForm = ({ conviteId, primaryColor }: Props) => {
       
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="adultos">Adultos</Label>
+          <Label htmlFor="adultos">Adultes</Label>
           <div className="relative">
             <Users className="absolute left-3 top-3.5 h-5 w-5 text-slate-400" />
             <Input 
@@ -108,7 +110,7 @@ const RSVPForm = ({ conviteId, primaryColor }: Props) => {
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="criancas">Crianças</Label>
+          <Label htmlFor="criancas">Enfants</Label>
           <div className="relative">
             <UserPlus className="absolute left-3 top-3.5 h-5 w-5 text-slate-400" />
             <Input 
@@ -124,12 +126,12 @@ const RSVPForm = ({ conviteId, primaryColor }: Props) => {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="mensagem">Deixe um recado (Opcional)</Label>
+        <Label htmlFor="mensagem">Laissez un message (Optionnel)</Label>
         <div className="relative">
           <MessageSquare className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
           <Textarea 
             id="mensagem" 
-            placeholder="Escreva uma mensagem carinhosa..."
+            placeholder="Écrivez un petit mot gentil..."
             className="pl-10 min-h-[100px] rounded-xl resize-none"
             value={formData.mensagem}
             onChange={(e) => setFormData({ ...formData, mensagem: e.target.value })}
@@ -143,7 +145,7 @@ const RSVPForm = ({ conviteId, primaryColor }: Props) => {
         style={{ backgroundColor: primaryColor }}
         disabled={loading}
       >
-        {loading ? "Confirmando..." : "Confirmar Presença"}
+        {loading ? "Confirmation..." : "Confirmer ma présence"}
       </Button>
     </form>
   );

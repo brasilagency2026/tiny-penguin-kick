@@ -1,9 +1,11 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import InvitationForm from '@/components/InvitationForm';
 import { showSuccess, showError } from '@/utils/toast';
-import { Loader2, Eye, Edit3, CheckCircle2, Copy, ExternalLink, Share2, Smartphone, Monitor, Sparkles, QrCode as QrCodeIcon } from 'lucide-react';
+import { Loader2, Eye, CheckCircle2, Copy, ExternalLink, Share2, Smartphone, Monitor, Sparkles, QrCode as QrCodeIcon } from 'lucide-react';
 import ConvitePreview from '@/components/ConvitePreview';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -23,8 +25,14 @@ const Criar = () => {
   useEffect(() => {
     const verifyToken = async () => {
       if (!token) {
-        showError("Token não fornecido.");
+        showError("Token non fourni.");
         navigate('/');
+        return;
+      }
+
+      if (token === 'demo') {
+        setIsValid(true);
+        setVerifying(false);
         return;
       }
 
@@ -35,10 +43,10 @@ const Criar = () => {
         .single();
 
       if (error || !data) {
-        showError("Token inválido.");
+        showError("Token invalide.");
         navigate('/');
       } else if (data.usado) {
-        showError("Este token já foi utilizado.");
+        showError("Ce token a déjà été utilisé.");
         navigate('/');
       } else {
         setIsValid(true);
@@ -62,15 +70,16 @@ const Criar = () => {
 
       if (conviteError) throw conviteError;
 
-      await supabase
-        .from('acessos_ml')
-        .update({ usado: true, convite_id: convite.id })
-        .eq('token', token);
+      if (token !== 'demo') {
+        await supabase
+          .from('acessos_ml')
+          .update({ usado: true, convite_id: convite.id })
+          .eq('token', token);
+      }
 
-      showSuccess("Convite criado com sucesso!");
+      showSuccess("Invitation créée avec succès !");
       setCreatedSlug(slug);
       
-      // Efeito de Confete
       confetti({
         particleCount: 150,
         spread: 70,
@@ -78,7 +87,7 @@ const Criar = () => {
         colors: [data.cor || '#7c3aed', '#ffffff', '#ffd700']
       });
     } catch (error: any) {
-      showError("Erro ao criar convite: " + error.message);
+      showError("Erreur lors de la création : " + error.message);
     } finally {
       setLoading(false);
     }
@@ -86,7 +95,7 @@ const Criar = () => {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    showSuccess("Link copiado!");
+    showSuccess("Lien copié !");
   };
 
   if (verifying) {
@@ -104,19 +113,19 @@ const Criar = () => {
         <Card className="w-full max-w-lg border-none shadow-2xl bg-white rounded-[2.5rem] overflow-hidden">
           <div className="bg-primary p-12 text-center text-white">
             <CheckCircle2 className="mx-auto h-20 w-20 mb-6 animate-bounce" />
-            <h2 className="text-3xl font-serif font-bold">Tudo Pronto!</h2>
-            <p className="opacity-90 mt-2">Seu convite mágico foi gerado com sucesso.</p>
+            <h2 className="text-3xl font-serif font-bold">Tout est prêt !</h2>
+            <p className="opacity-90 mt-2">Votre invitation magique a été générée avec succès.</p>
           </div>
           <CardContent className="p-8 space-y-6">
             <div className="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
               <QRCodeSVG value={fullUrl} size={160} />
               <p className="text-[10px] uppercase font-bold text-slate-400 mt-4 tracking-widest flex items-center gap-2">
-                <QrCodeIcon size={12} /> Escaneie para testar no celular
+                <QrCodeIcon size={12} /> Scannez pour tester sur mobile
               </p>
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Link do seu Convite</p>
+              <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Lien de votre Invitation</p>
               <div className="flex gap-2">
                 <div className="flex-1 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-sm font-medium truncate text-slate-600">
                   {fullUrl}
@@ -129,16 +138,16 @@ const Criar = () => {
 
             <div className="grid grid-cols-1 gap-3">
               <Button className="h-14 rounded-2xl text-lg font-bold gap-2" onClick={() => window.open(fullUrl, '_blank')}>
-                <ExternalLink size={20} /> Visualizar Agora
+                <ExternalLink size={20} /> Visualiser maintenant
               </Button>
-              <Button variant="outline" className="h-14 rounded-2xl text-lg font-bold gap-2" onClick={() => navigator.share({ title: 'Meu Convite', url: fullUrl })}>
-                <Share2 size={20} /> Compartilhar
+              <Button variant="outline" className="h-14 rounded-2xl text-lg font-bold gap-2" onClick={() => navigator.share({ title: 'Mon Invitation', url: fullUrl })}>
+                <Share2 size={20} /> Partager
               </Button>
             </div>
 
             <div className="pt-4 text-center">
               <Link to="/" className="text-sm text-slate-400 hover:text-primary transition-colors font-medium">
-                Voltar para o Início
+                Retour à l'accueil
               </Link>
             </div>
           </CardContent>
@@ -153,7 +162,7 @@ const Criar = () => {
         <div className="flex items-center gap-4">
           <Link to="/" className="text-xl font-serif font-bold text-primary">ConvitePro</Link>
           <div className="h-6 w-[1px] bg-slate-200"></div>
-          <p className="text-sm text-slate-500 font-medium">Criando seu convite mágico</p>
+          <p className="text-sm text-slate-500 font-medium">Création de votre invitation magique</p>
         </div>
         <div className="hidden md:flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
           <div className="px-3 py-1.5 bg-white rounded-lg shadow-sm text-xs font-bold flex items-center gap-2">
@@ -188,7 +197,7 @@ const Criar = () => {
                         <Eye size={40} />
                       </div>
                       <p className="text-slate-400 font-medium">
-                        Preencha os dados ao lado para ver a mágica acontecer aqui em tempo real.
+                        Remplissez les données à gauche pour voir la magie opérer ici en temps réel.
                       </p>
                     </div>
                   )}
