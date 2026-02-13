@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette, Music, CreditCard, Shirt, Plus, Trash2, Utensils, Star, Camera, GlassWater, Church, Image as ImageIcon, Sparkles, Baby, GraduationCap, PartyPopper } from 'lucide-react';
+import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette, Music, CreditCard, Shirt, Plus, Trash2, Utensils, Star, Camera, GlassWater, Church, Image as ImageIcon, Sparkles, Baby, GraduationCap, PartyPopper, Volume2 } from 'lucide-react';
 
 interface InvitationFormProps {
   onSubmit: (data: any) => void;
@@ -39,6 +39,13 @@ const PHOTO_PRESETS = [
   { id: 'baby', name: 'Bebê', url: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80&w=800', icon: <Baby size={14} /> },
   { id: 'party', name: 'Festa', url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=800', icon: <Music size={14} /> },
   { id: 'grad', name: 'Formatura', url: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&q=80&w=800', icon: <GraduationCap size={14} /> },
+];
+
+const MUSIC_PRESETS = [
+  { name: 'Romântica 1', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+  { name: 'Romântica 2', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
+  { name: 'Animada 1', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3' },
+  { name: 'Suave', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
 ];
 
 const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) => {
@@ -180,6 +187,36 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
                 name="foto_url" 
                 value={formData.foto_url}
                 placeholder="Ou cole um link de imagem personalizado..." 
+                onChange={handleChange} 
+              />
+            </div>
+          </div>
+
+          {/* Music Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
+              <Music className="text-primary" size={20} /> Música de Fundo
+            </h3>
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                {MUSIC_PRESETS.map((music, idx) => (
+                  <Button 
+                    key={idx} 
+                    type="button" 
+                    variant={formData.musica_url === music.url ? "default" : "outline"}
+                    size="sm"
+                    className="rounded-full gap-2"
+                    onClick={() => setFormData({ ...formData, musica_url: music.url })}
+                  >
+                    <Volume2 size={14} /> {music.name}
+                  </Button>
+                ))}
+              </div>
+              <Input 
+                id="musica_url" 
+                name="musica_url" 
+                value={formData.musica_url}
+                placeholder="Link direto do MP3 (ex: Dropbox, Google Drive direto)..." 
                 onChange={handleChange} 
               />
             </div>
