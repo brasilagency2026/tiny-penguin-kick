@@ -2,6 +2,7 @@ export interface Convite {
   id?: string;
   token: string;
   nome_evento: string;
+  tipo_evento?: string;
   frase?: string;
   data_evento: string;
   horario?: string;
@@ -18,6 +19,7 @@ export interface Convite {
   visualizacoes?: number;
   slug: string;
   created_at?: string;
+  timeline?: any;
 }
 
 export interface AcessoML {

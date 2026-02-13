@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette, Music, CreditCard, Shirt, Plus, Trash2, Utensils, Star, Camera, GlassWater, Church, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { Calendar, Clock, MapPin, Phone, Gift, Heart, Palette, Music, CreditCard, Shirt, Plus, Trash2, Utensils, Star, Camera, GlassWater, Church, Image as ImageIcon, Sparkles, Baby, GraduationCap, PartyPopper } from 'lucide-react';
 
 interface InvitationFormProps {
   onSubmit: (data: any) => void;
@@ -14,32 +14,37 @@ interface InvitationFormProps {
 }
 
 const ICONS = [
-  { id: 'heart', icon: <Heart size={14} />, label: 'Coração' },
-  { id: 'church', icon: <Church size={14} />, label: 'Cerimônia' },
-  { id: 'utensils', icon: <Utensils size={14} />, label: 'Jantar' },
-  { id: 'music', icon: <Music size={14} />, label: 'Festa' },
-  { id: 'star', icon: <Star size={14} />, label: 'Destaque' },
-  { id: 'camera', icon: <Camera size={14} />, label: 'Fotos' },
+  { id: 'heart', icon: <Heart size={14} />, label: 'Cœur' },
+  { id: 'church', icon: <Church size={14} />, label: 'Cérémonie' },
+  { id: 'utensils', icon: <Utensils size={14} />, label: 'Repas' },
+  { id: 'music', icon: <Music size={14} />, label: 'Fête' },
+  { id: 'star', icon: <Star size={14} />, label: 'Étoile' },
+  { id: 'camera', icon: <Camera size={14} />, label: 'Photos' },
   { id: 'glass', icon: <GlassWater size={14} />, label: 'Brinde' },
+  { id: 'baby', icon: <Baby size={14} />, label: 'Bébé' },
+  { id: 'grad', icon: <GraduationCap size={14} />, label: 'Diplôme' },
 ];
 
-const MUSIC_PRESETS = [
-  { name: 'Romântico (Piano)', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
-  { name: 'Clássico (Violino)', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
-  { name: 'Festa (Animado)', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
+const EVENT_TYPES = [
+  { id: 'casamento', label: 'Mariage', icon: <Heart size={14} /> },
+  { id: 'nascimento', label: 'Naissance', icon: <Baby size={14} /> },
+  { id: 'aniversario', label: 'Anniversaire', icon: <PartyPopper size={14} /> },
+  { id: 'formatura', label: 'Remise de diplôme', icon: <GraduationCap size={14} /> },
+  { id: 'batizado', label: 'Baptême', icon: <Church size={14} /> },
+  { id: 'outro', label: 'Autre Événement', icon: <Sparkles size={14} /> },
 ];
 
 const PHOTO_PRESETS = [
-  { name: 'Casamento', url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800', icon: <Church size={14} /> },
-  { id: 'party', name: 'Festa', url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=800', icon: <Music size={14} /> },
-  { id: 'romantic', name: 'Romântico', url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=800', icon: <Heart size={14} /> },
-  { id: 'modern', name: 'Moderno', url: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=800', icon: <Sparkles size={14} /> },
-  { id: 'classic', name: 'Clássico', url: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800', icon: <Star size={14} /> },
+  { id: 'wedding', name: 'Mariage', url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800', icon: <Church size={14} /> },
+  { id: 'baby', name: 'Bébé', url: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80&w=800', icon: <Baby size={14} /> },
+  { id: 'party', name: 'Fête', url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=800', icon: <Music size={14} /> },
+  { id: 'grad', name: 'Diplôme', url: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800', icon: <GraduationCap size={14} /> },
 ];
 
 const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) => {
   const [formData, setFormData] = useState({
     nome_evento: '',
+    tipo_evento: 'casamento',
     frase: '',
     data_evento: '',
     horario: '',
@@ -55,9 +60,8 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
     cor: '#7c3aed',
     tema: 'classic',
     timeline: [
-      { time: '19:00', title: 'Cerimônia', icon: 'church' },
-      { time: '20:30', title: 'Jantar', icon: 'utensils' },
-      { time: '22:00', title: 'Festa', icon: 'music' }
+      { time: '19:00', title: 'Début', icon: 'star' },
+      { time: '21:00', title: 'Célébration', icon: 'music' }
     ]
   });
 
@@ -71,10 +75,6 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData({ ...formData, [name]: value });
-  };
-
-  const setPhotoUrl = (url: string) => {
-    setFormData({ ...formData, foto_url: url });
   };
 
   const handleTimelineChange = (index: number, field: string, value: string) => {
@@ -105,24 +105,52 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
   return (
     <Card className="w-full max-w-2xl mx-auto border-none shadow-xl bg-white/80 backdrop-blur-sm">
       <CardHeader className="text-center">
-        <CardTitle className="text-3xl font-serif text-primary">Crie seu Convite Mágico</CardTitle>
-        <p className="text-muted-foreground">Preencha os detalhes abaixo para gerar seu link exclusivo.</p>
+        <CardTitle className="text-3xl font-serif text-primary">Créez votre Invitation</CardTitle>
+        <p className="text-muted-foreground">Personnalisez chaque détail de votre événement.</p>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Basic Info */}
+          {/* Event Type Selection */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-              <Heart className="text-primary" size={20} /> Informações Básicas
+              <Sparkles className="text-primary" size={20} /> Type d'Événement
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="nome_evento">Nome do Evento / Noivos</Label>
-                <Input id="nome_evento" name="nome_evento" placeholder="Ex: Maria & João" required onChange={handleChange} />
+                <Label htmlFor="tipo_evento">Quel type d'événement ?</Label>
+                <Select onValueChange={(v) => handleSelectChange('tipo_evento', v)} defaultValue="casamento">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionnez le type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EVENT_TYPES.map(type => (
+                      <SelectItem key={type.id} value={type.id}>
+                        <div className="flex items-center gap-2">{type.icon} {type.label}</div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="data_evento">Data do Evento</Label>
+                <Label htmlFor="nome_evento">Nom de l'Événement</Label>
+                <Input id="nome_evento" name="nome_evento" placeholder="Ex: Mariage de Marie & Jean" required onChange={handleChange} />
+              </div>
+            </div>
+          </div>
+
+          {/* Basic Info */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
+              <Calendar className="text-primary" size={20} /> Date et Heure
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="data_evento">Date de l'Événement</Label>
                 <Input id="data_evento" name="data_evento" type="date" required onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="horario">Heure de Début</Label>
+                <Input id="horario" name="horario" placeholder="Ex: 19:30" onChange={handleChange} />
               </div>
             </div>
           </div>
@@ -130,54 +158,41 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
           {/* Photo Section */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-              <ImageIcon className="text-primary" size={20} /> Foto de Capa
+              <ImageIcon className="text-primary" size={20} /> Image de Couverture
             </h3>
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Sugestões de Fotos (Clique para selecionar)</Label>
-                <div className="flex flex-wrap gap-2">
-                  {PHOTO_PRESETS.map((photo, idx) => (
-                    <Button 
-                      key={idx} 
-                      type="button" 
-                      variant={formData.foto_url === photo.url ? "default" : "outline"}
-                      size="sm"
-                      className="rounded-full gap-2"
-                      onClick={() => setPhotoUrl(photo.url)}
-                    >
-                      {photo.icon} {photo.name}
-                    </Button>
-                  ))}
-                </div>
+              <div className="flex flex-wrap gap-2">
+                {PHOTO_PRESETS.map((photo, idx) => (
+                  <Button 
+                    key={idx} 
+                    type="button" 
+                    variant={formData.foto_url === photo.url ? "default" : "outline"}
+                    size="sm"
+                    className="rounded-full gap-2"
+                    onClick={() => setFormData({ ...formData, foto_url: photo.url })}
+                  >
+                    {photo.icon} {photo.name}
+                  </Button>
+                ))}
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="foto_url">Ou cole um link personalizado (URL)</Label>
-                <Input 
-                  id="foto_url" 
-                  name="foto_url" 
-                  value={formData.foto_url}
-                  placeholder="https://images.unsplash.com/photo-..." 
-                  onChange={handleChange} 
-                />
-                <p className="text-[10px] text-slate-400 italic">Dica: Use uma foto vertical para melhor resultado.</p>
-              </div>
+              <Input 
+                id="foto_url" 
+                name="foto_url" 
+                value={formData.foto_url}
+                placeholder="Ou collez un lien d'image personnalisé..." 
+                onChange={handleChange} 
+              />
             </div>
           </div>
 
-          {/* Location & Time */}
+          {/* Location */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-              <MapPin className="text-primary" size={20} /> Local e Horário
+              <MapPin className="text-primary" size={20} /> Lieu
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="horario">Horário de Início</Label>
-                <Input id="horario" name="horario" placeholder="Ex: 19:30" onChange={handleChange} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="endereco">Endereço Completo</Label>
-                <Input id="endereco" name="endereco" placeholder="Rua, Número, Bairro, Cidade" onChange={handleChange} />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="endereco">Adresse Complète</Label>
+              <Input id="endereco" name="endereco" placeholder="Rue, Numéro, Ville" onChange={handleChange} />
             </div>
           </div>
 
@@ -185,53 +200,34 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-                <Clock className="text-primary" size={20} /> Cronograma do Evento
+                <Clock className="text-primary" size={20} /> Programme
               </h3>
               <Button type="button" variant="outline" size="sm" onClick={addTimelineItem} className="gap-2">
-                <Plus size={14} /> Adicionar
+                <Plus size={14} /> Ajouter
               </Button>
             </div>
             <div className="space-y-3">
               {formData.timeline.map((item, index) => (
-                <div key={index} className="flex gap-3 items-end animate-in fade-in slide-in-from-top-2">
+                <div key={index} className="flex gap-3 items-end">
                   <div className="w-20">
-                    <Label className="text-[10px] uppercase">Hora</Label>
-                    <Input 
-                      value={item.time} 
-                      placeholder="19:00" 
-                      onChange={(e) => handleTimelineChange(index, 'time', e.target.value)} 
-                    />
+                    <Input value={item.time} placeholder="19:00" onChange={(e) => handleTimelineChange(index, 'time', e.target.value)} />
                   </div>
                   <div className="flex-1">
-                    <Label className="text-[10px] uppercase">Atividade</Label>
-                    <Input 
-                      value={item.title} 
-                      placeholder="Ex: Cerimônia" 
-                      onChange={(e) => handleTimelineChange(index, 'title', e.target.value)} 
-                    />
+                    <Input value={item.title} placeholder="Activité" onChange={(e) => handleTimelineChange(index, 'title', e.target.value)} />
                   </div>
                   <div className="w-24">
-                    <Label className="text-[10px] uppercase">Ícone</Label>
                     <Select value={item.icon} onValueChange={(v) => handleTimelineChange(index, 'icon', v)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {ICONS.map(i => (
                           <SelectItem key={i.id} value={i.id}>
-                            <div className="flex items-center gap-2">{i.icon} {i.label}</div>
+                            <div className="flex items-center gap-2">{i.icon}</div>
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
-                    size="icon" 
-                    className="text-red-400 hover:text-red-600"
-                    onClick={() => removeTimelineItem(index)}
-                  >
+                  <Button type="button" variant="ghost" size="icon" className="text-red-400" onClick={() => removeTimelineItem(index)}>
                     <Trash2 size={18} />
                   </Button>
                 </div>
@@ -239,71 +235,42 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
             </div>
           </div>
 
-          {/* Style & Music */}
+          {/* Style */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-              <Palette className="text-primary" size={20} /> Estilo e Música
+              <Palette className="text-primary" size={20} /> Style Visuel
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="tema">Estilo do Convite</Label>
+                <Label htmlFor="tema">Thème</Label>
                 <Select onValueChange={(v) => handleSelectChange('tema', v)} defaultValue="classic">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione um tema" />
-                  </SelectTrigger>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="classic">Clássico & Elegante</SelectItem>
-                    <SelectItem value="modern">Moderno & Minimalista</SelectItem>
-                    <SelectItem value="romantic">Romântico & Floral</SelectItem>
+                    <SelectItem value="classic">Classique</SelectItem>
+                    <SelectItem value="modern">Moderne</SelectItem>
+                    <SelectItem value="romantic">Romantique</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="musica_url">Música de Fundo</Label>
-                <Select onValueChange={(v) => handleSelectChange('musica_url', v)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Escolha uma música" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {MUSIC_PRESETS.map(m => (
-                      <SelectItem key={m.url} value={m.url}>{m.name}</SelectItem>
-                    ))}
-                    <SelectItem value="custom">Link Personalizado (MP3)</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="cor">Couleur Principale</Label>
+                <div className="flex gap-2">
+                  {['#7c3aed', '#db2777', '#0f172a', '#059669', '#d97706'].map(c => (
+                    <button
+                      key={c}
+                      type="button"
+                      className={`w-8 h-8 rounded-full border-2 ${formData.cor === c ? 'border-slate-900' : 'border-transparent'}`}
+                      style={{ backgroundColor: c }}
+                      onClick={() => setFormData({ ...formData, cor: c })}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-            {formData.musica_url === 'custom' && (
-              <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                <Label htmlFor="custom_music">Link da Música (URL MP3)</Label>
-                <Input id="custom_music" name="musica_url" placeholder="https://exemplo.com/musica.mp3" onChange={handleChange} />
-              </div>
-            )}
-          </div>
-
-          {/* Extra Info */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-              <Plus className="text-primary" size={20} /> Informações Extras
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="dress_code">Dress Code (Traje)</Label>
-                <Input id="dress_code" name="dress_code" placeholder="Ex: Esporte Fino" onChange={handleChange} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="pix_key">Chave Pix para Presentes</Label>
-                <Input id="pix_key" name="pix_key" placeholder="E-mail, CPF ou Aleatória" onChange={handleChange} />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="frase">Frase Especial</Label>
-              <Textarea id="frase" name="frase" placeholder="Uma mensagem carinhosa para seus convidados..." onChange={handleChange} />
             </div>
           </div>
 
-          <Button type="submit" className="w-full h-14 text-lg font-bold shadow-lg shadow-primary/20" disabled={loading}>
-            {loading ? "Gerando Convite..." : "Finalizar e Gerar Link"}
+          <Button type="submit" className="w-full h-14 text-lg font-bold shadow-lg" disabled={loading}>
+            {loading ? "Génération..." : "Finaliser l'Invitation"}
           </Button>
         </form>
       </CardContent>
