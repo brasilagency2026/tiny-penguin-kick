@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
-import { Heart, Sparkles, ShoppingBag, ArrowRight, Baby, GraduationCap, PartyPopper, Church, Wand2, Share2, Play } from 'lucide-react';
+import { Heart, Sparkles, ShoppingBag, ArrowRight, Baby, GraduationCap, PartyPopper, Church, Wand2, Share2, Play, Cross } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
@@ -44,11 +44,11 @@ const Index = () => {
       color: "bg-amber-50"
     },
     { 
-      icon: <Sparkles className="text-purple-500" />, 
-      title: "Evento Pro", 
-      desc: "Inaugurações e lançamentos de produtos.",
+      icon: <Cross className="text-slate-400" />, 
+      title: "Avis de décès", 
+      desc: "Uma homenagem digna e respeitosa para quem partiu.",
       mlLink: "#", 
-      color: "bg-purple-50"
+      color: "bg-slate-100"
     }
   ];
 
@@ -196,7 +196,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
               { icon: <ShoppingBag className="h-10 w-10" />, title: "1. Compre", desc: "Adquira seu acesso exclusivo via Mercado Livre com total segurança." },
-              { icon: <Wand2 className="h-10 w-10" />, title: "2. Personalize", desc: "Preencha os detalhes do seu evento em nossa plataforma intuitiva." },
+              { icon: <Wand2 className="h-10 w-10" />, title: "2. Personalize", desc: "Preencha os detalhes do seu evento em nossa plateforme intuitiva." },
               { icon: <Share2 className="h-10 w-10" />, title: "3. Compartilhe", desc: "Gere seu link exclusivo e envie para seus convidados via WhatsApp." }
             ].map((step, i) => (
               <motion.div 
