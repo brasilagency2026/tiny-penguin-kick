@@ -54,7 +54,7 @@ const ConvitePreview = ({ data }: Props) => {
     } else {
       audioRef.current.play()
         .then(() => setIsPlaying(true))
-        .catch(err => console.error("Erro ao tocar:", err));
+        .catch(err => console.error("Erro au tocar:", err));
     }
   };
 
@@ -110,9 +110,10 @@ const ConvitePreview = ({ data }: Props) => {
         {data.foto_url && (
           <div className="absolute inset-0 z-0">
             <img 
+              key={data.foto_url}
               src={data.foto_url} 
               alt="Capa" 
-              className="w-full h-full object-cover opacity-80"
+              className="w-full h-full object-cover opacity-100"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
           </div>
