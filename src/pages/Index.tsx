@@ -45,7 +45,7 @@ const Index = () => {
     },
     { 
       icon: <Cross className="text-slate-400" />, 
-      title: "Avis de décès", 
+      title: "Comunicado de Falecimento", 
       desc: "Uma homenagem digna e respeitosa para quem partiu.",
       mlLink: "#", 
       color: "bg-slate-100"
