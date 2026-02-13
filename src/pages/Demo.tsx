@@ -75,31 +75,6 @@ const DEMO_DATA: Record<string, any> = {
 const Demo = () => {
   const { theme } = useParams();
   const data = DEMO_DATA[theme || 'classic'] || DEMO_DATA.classic;
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  const toggleMusic = () => {
-    if (!audioRef.current) return;
-    
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current.load();
-      const playPromise = audioRef.current.play();
-      
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setIsPlaying(true);
-          })
-          .catch(err => {
-            console.error("Erro ao tocar áudio:", err);
-            showError("Erro ao carregar som. Tente clicar novamente.");
-          });
-      }
-    }
-  };
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -126,77 +101,7 @@ const Demo = () => {
         <div className="relative border-[12px] border-slate-900 rounded-[3.5rem] overflow-hidden shadow-2xl bg-white min-h-[800px]">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-50"></div>
           
-          <audio 
-            ref={audioRef} 
-            src={data.musica_url} 
-            loop 
-            preload="auto"
-          />
-          
-          <div className="absolute bottom-6 left-6 z-40 flex flex-col items-center gap-2">
-            <motion.div
-              animate={!isPlaying ? { scale: [1, 1.1, 1] } : {}}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <Button 
-                onClick={toggleMusic}
-                className="rounded-full w-14 h-14 shadow-2xl border-4 border-white"
-                style={{ backgroundColor: data.cor }}
-              >
-                {isPlaying ? <Volume2 size={24} /> : <Music size={24} />}
-              </Button>
-            </motion.div>
-            <span className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tighter shadow-sm border border-slate-100">
-              {isPlaying ? "Tocando" : "Clique p/ ouvir"}
-            </span>
-          </div>
-
           <ConvitePreview data={data} />
-
-          <div className="px-8 pb-12 space-y-8 bg-white">
-            <div className="space-y-6">
-              <div className="text-center">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Mural de Recados</h3>
-                <div className="h-1 w-12 bg-slate-100 mx-auto mt-2"></div>
-              </div>
-              <div className="space-y-4">
-                {data.messages.map((msg: any, i: number) => (
-                  <div key={i} className="bg-slate-50 p-4 rounded-2xl border border-slate-100 relative">
-                    <MessageCircle className="absolute top-3 right-3 text-slate-200 h-5 w-5" />
-                    <p className="text-sm text-slate-600 italic mb-2">"{msg.mensagem}"</p>
-                    <p className="text-xs font-bold text-slate-800">— {msg.nome}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="h-14 rounded-2xl font-bold col-span-1" style={{ backgroundColor: data.cor }}>
-                    <CheckSquare className="mr-2 h-4 w-4" /> Confirmar
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader><DialogTitle className="text-center font-serif">Confirmar Presença</DialogTitle></DialogHeader>
-                  <RSVPForm conviteId="demo" primaryColor={data.cor} />
-                </DialogContent>
-              </Dialog>
-
-              <Button 
-                variant="outline" 
-                className="h-14 rounded-2xl font-bold border-2 col-span-1" 
-                style={{ borderColor: data.cor, color: data.cor }}
-                onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.endereco)}`, '_blank')}
-              >
-                <MapPin className="mr-2 h-4 w-4" /> Mapa
-              </Button>
-
-              <Button variant="ghost" className="col-span-2 text-slate-400 text-xs gap-2">
-                <Download size={14} /> Baixar Versão em PDF
-              </Button>
-            </div>
-          </div>
         </div>
         
         <div className="mt-8 text-center space-y-4">
@@ -209,12 +114,6 @@ const Demo = () => {
           </div>
         </div>
       </main>
-
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-3rem)] max-w-xs md:hidden">
-        <Button className="w-full h-14 rounded-full text-lg font-bold shadow-2xl" style={{ backgroundColor: data.cor }}>
-          <CheckSquare className="mr-2 h-5 w-5" /> Confirmar Agora
-        </Button>
-      </div>
     </div>
   );
 };

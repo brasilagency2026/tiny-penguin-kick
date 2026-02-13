@@ -35,6 +35,7 @@ const ConvitePreview = ({ data }: Props) => {
   const isClassic = data.tema === 'classic' || !data.tema;
 
   const timeline = data.timeline || [];
+  const messages = data.messages || [];
 
   useEffect(() => {
     if (audioRef.current) {
@@ -200,17 +201,30 @@ const ConvitePreview = ({ data }: Props) => {
         </div>
       )}
 
-      {/* Mural de Recados (Preview) */}
+      {/* Mural de Recados */}
       <div className="mt-16 px-8 space-y-8">
         <div className="text-center">
           <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400">Mural de Recados</h3>
           <div className="h-1 w-16 bg-slate-100 mx-auto mt-3 rounded-full"></div>
         </div>
-        <div className="bg-slate-50 p-6 rounded-3xl border border-dashed border-slate-200 relative">
-          <MessageCircle className="absolute top-4 right-4 text-slate-200 h-6 w-6" />
-          <p className="text-slate-400 italic text-sm">"As mensagens carinhosas dos seus convidados aparecerão aqui..."</p>
-          <p className="text-xs font-bold text-slate-300 mt-4">— Exemplo de Convidado</p>
-        </div>
+        
+        {messages.length > 0 ? (
+          <div className="space-y-4">
+            {messages.map((msg: any, i: number) => (
+              <div key={i} className="bg-slate-50 p-4 rounded-2xl border border-slate-100 relative">
+                <MessageCircle className="absolute top-3 right-3 text-slate-200 h-5 w-5" />
+                <p className="text-sm text-slate-600 italic mb-2">"{msg.mensagem}"</p>
+                <p className="text-xs font-bold text-slate-800">— {msg.nome}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-slate-50 p-6 rounded-3xl border border-dashed border-slate-200 relative">
+            <MessageCircle className="absolute top-4 right-4 text-slate-200 h-6 w-6" />
+            <p className="text-slate-400 italic text-sm">"As mensagens carinhosas dos seus convidados aparecerão aqui..."</p>
+            <p className="text-xs font-bold text-slate-300 mt-4">— Exemplo de Convidado</p>
+          </div>
+        )}
       </div>
 
       {/* Action Buttons */}
