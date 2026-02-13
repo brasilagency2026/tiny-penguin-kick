@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
-import { Heart, Sparkles, ShoppingBag, ArrowRight, Baby, GraduationCap, PartyPopper, Church, Wand2, Share2 } from 'lucide-react';
+import { Heart, Sparkles, ShoppingBag, ArrowRight, Baby, GraduationCap, PartyPopper, Church, Wand2, Share2, Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
@@ -62,7 +62,12 @@ const Index = () => {
           <a href="#como-funciona" className="hover:text-primary transition-colors">Como Funciona</a>
           <a href="#demo" className="hover:text-primary transition-colors">Demos</a>
         </div>
-        <Button variant="outline" className="rounded-full px-6" onClick={() => navigate('/dashboard')}>Admin</Button>
+        <div className="flex gap-4">
+          <Button variant="ghost" className="rounded-full font-bold text-primary" onClick={() => navigate('/criar?token=demo')}>
+            <Play size={16} className="mr-2 fill-current" /> Testar Criador
+          </Button>
+          <Button variant="outline" className="rounded-full px-6" onClick={() => navigate('/dashboard')}>Admin</Button>
+        </div>
       </nav>
 
       {/* Hero */}
@@ -86,9 +91,9 @@ const Index = () => {
               <Button 
                 size="lg" 
                 className="rounded-full h-14 px-10 text-lg font-semibold shadow-xl shadow-primary/20"
-                onClick={() => document.getElementById('categories')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => navigate('/criar?token=demo')}
               >
-                Escolher meu convite
+                Criar meu convite agora
               </Button>
               <Button size="lg" variant="ghost" className="rounded-full h-14 px-10 text-lg font-semibold gap-2" onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}>
                 Ver demonstrações <ArrowRight size={20} />
@@ -156,7 +161,7 @@ const Index = () => {
             {[
               { id: "classic", title: "Clássico", desc: "Elegância atemporal com fontes serifadas.", img: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=400" },
               { id: "modern", title: "Moderno", desc: "Minimalismo contemporâneo e tipografia marcante.", img: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=400" },
-              { id: "romantic", title: "Romântico", desc: "Delicadeza floral e animações suaves.", img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=400" }
+              { id: "romantic", title: "Romântico", desc: "Delicadeza floral e animações suaves.", img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=800" }
             ].map((demo, i) => (
               <motion.div 
                 key={i}
