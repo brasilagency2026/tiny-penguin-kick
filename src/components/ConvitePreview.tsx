@@ -98,44 +98,41 @@ const ConvitePreview = ({ data }: Props) => {
       <div 
         className={cn(
           "relative h-[420px] flex items-center justify-center text-center px-6 overflow-hidden transition-all duration-500",
-          isModern ? "bg-white border-b-8" : "",
+          isModern ? "border-b-8" : "",
           isRomantic ? "rounded-b-[5rem]" : "",
           isClassic ? "border-b-4 border-double" : ""
         )}
         style={{ 
-          backgroundColor: !isModern ? `${primaryColor}15` : undefined,
+          backgroundColor: !data.foto_url ? (isModern ? '#ffffff' : `${primaryColor}15`) : 'transparent',
+          backgroundImage: data.foto_url ? `url(${data.foto_url})` : 'none',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           borderColor: isModern || isClassic ? primaryColor : undefined
         }}
       >
+        {/* Overlay for readability when image exists */}
         {data.foto_url && (
-          <div className="absolute inset-0 z-0">
-            <img 
-              key={data.foto_url}
-              src={data.foto_url} 
-              alt="Capa" 
-              className="w-full h-full object-cover opacity-100"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
-          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-black/10 z-0"></div>
         )}
 
-        <div className="z-10 space-y-6">
+        <div className="z-10 space-y-6 relative">
           {isRomantic && (
             <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }}>
               <Heart className="mx-auto text-rose-400" size={32} fill="currentColor" />
             </motion.div>
           )}
           <h1 className={cn(
-            "leading-tight transition-all duration-500 drop-shadow-sm",
+            "leading-tight transition-all duration-500 drop-shadow-md",
             isModern ? "text-7xl font-black tracking-tighter uppercase italic" : "text-5xl font-serif",
             isRomantic ? "text-rose-600 font-cursive italic" : "",
             isClassic ? "tracking-widest uppercase" : ""
-          )} style={{ color: isModern || isRomantic ? undefined : primaryColor }}>
+          )} style={{ color: data.foto_url ? (isModern ? '#000' : primaryColor) : (isModern || isRomantic ? undefined : primaryColor) }}>
             {data.nome_evento || "Nome do Evento"}
           </h1>
           <p className={cn(
-            "text-sm italic max-w-[240px] mx-auto font-medium",
-            isModern ? "font-mono uppercase tracking-widest text-slate-400" : "text-slate-600"
+            "text-sm italic max-w-[240px] mx-auto font-bold",
+            isModern ? "font-mono uppercase tracking-widest text-slate-900" : "text-slate-800",
+            data.foto_url ? "bg-white/40 backdrop-blur-sm p-2 rounded-lg" : ""
           )}>
             {data.frase ? `"${data.frase}"` : "Sua frase especial aparecerá aqui..."}
           </p>
