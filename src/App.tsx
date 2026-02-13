@@ -11,6 +11,7 @@ import GerenciarConvite from "./pages/GerenciarConvite";
 import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 
+// Initialisation du client de requête
 const queryClient = new QueryClient();
 
 const App = () => (
