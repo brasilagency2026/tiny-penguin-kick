@@ -9,6 +9,7 @@ import Convite from "./pages/Convite";
 import Dashboard from "./pages/Dashboard";
 import GerenciarConvite from "./pages/GerenciarConvite";
 import Demo from "./pages/Demo";
+import DemoGerenciar from "./pages/DemoGerenciar";
 import NotFound from "./pages/NotFound";
 
 // Initialisation du client de requête
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/gerenciar/:slug" element={<GerenciarConvite />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/demo/:theme" element={<Demo />} />
+          <Route path="/demo-gestao" element={<DemoGerenciar />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

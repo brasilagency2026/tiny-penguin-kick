@@ -67,8 +67,8 @@ const Index = () => {
           <a href="#gestao" className="hover:text-primary transition-colors">Gestão</a>
         </div>
         <div className="flex gap-4">
-          <Button variant="ghost" className="rounded-full font-bold text-primary hidden sm:flex" onClick={() => navigate('/criar?token=demo')}>
-            <Play size={16} className="mr-2 fill-current" /> Testar Criador
+          <Button variant="ghost" className="rounded-full font-bold text-primary hidden sm:flex" onClick={() => navigate('/demo-gestao')}>
+            <LayoutDashboard size={16} className="mr-2" /> Ver Painel Demo
           </Button>
           <Button 
             className="rounded-full px-8 font-bold shadow-lg shadow-primary/20"
@@ -104,7 +104,7 @@ const Index = () => {
               >
                 <ShoppingBag className="mr-2" /> Adquirir Acesso Único
               </Button>
-              <Button size="lg" variant="ghost" className="rounded-full h-16 px-10 text-lg font-semibold gap-2" onClick={() => navigate('/criar?token=demo')}>
+              <Button size="lg" variant="ghost" className="rounded-full h-16 px-10 text-lg font-semibold gap-2" onClick={() => navigate('/demo/classic')}>
                 Ver Demonstração <ArrowRight size={20} />
               </Button>
             </div>
@@ -175,7 +175,7 @@ const Index = () => {
               <h2 className="text-4xl md:text-5xl font-serif mb-6">Fundos Profissionais</h2>
               <p className="text-lg text-slate-500">Escolha entre nossa curadoria de imagens de alta resolução ou use sua própria foto especial.</p>
             </div>
-            <Button variant="outline" className="rounded-full h-12 px-8 font-bold" onClick={() => navigate('/criar?token=demo')}>
+            <Button variant="outline" className="rounded-full h-12 px-8 font-bold" onClick={() => navigate('/demo/classic')}>
               Ver todos os fundos
             </Button>
           </div>
@@ -230,9 +230,9 @@ const Index = () => {
             <Button 
               size="lg" 
               className="rounded-full h-16 px-12 text-xl font-bold bg-white text-slate-900 hover:bg-slate-100"
-              onClick={() => window.open(ML_UNIQUE_LINK, '_blank')}
+              onClick={() => navigate('/demo-gestao')}
             >
-              Garantir meu Acesso
+              Ver Painel de Gestão Demo
             </Button>
           </div>
         </div>
