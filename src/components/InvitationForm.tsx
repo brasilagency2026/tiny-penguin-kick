@@ -62,7 +62,6 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
     link_maps: '',
     link_whatsapp: '',
     link_presentes: '',
-    pix_key: '',
     musica_url: '',
     foto_url: '',
     contato: '',

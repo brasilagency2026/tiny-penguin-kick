@@ -78,13 +78,6 @@ const ConvitePage = () => {
     setIsPlaying(!isPlaying);
   };
 
-  const copyPix = () => {
-    if (convite?.pix_key) {
-      navigator.clipboard.writeText(convite.pix_key);
-      showSuccess("Chave Pix copiada!");
-    }
-  };
-
   const addToCalendar = () => {
     const eventDate = new Date(convite.data_evento);
     const title = encodeURIComponent(convite.nome_evento);
@@ -352,36 +345,6 @@ const ConvitePage = () => {
               </div>
             </DialogContent>
           </Dialog>
-
-          {convite.pix_key && (
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button 
-                  variant="secondary"
-                  className={cn("h-16 text-lg font-semibold col-span-2 shadow-md", isModern ? "rounded-none" : "rounded-2xl")}
-                >
-                  <CreditCard className="mr-2 h-5 w-5" /> Presentear com Pix
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md text-center">
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-serif">Presente em Pix</DialogTitle>
-                </DialogHeader>
-                <div className="py-6 space-y-4 flex flex-col items-center">
-                  <p className="text-slate-500">Sua presença é nosso maior presente, mas se desejar nos agraciar:</p>
-                  <div className="p-4 bg-white rounded-2xl border-2 border-slate-100">
-                    <QRCodeSVG value={convite.pix_key} size={180} />
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-200 font-mono text-sm break-all w-full">
-                    {convite.pix_key}
-                  </div>
-                  <Button onClick={copyPix} className="w-full gap-2 h-12 rounded-xl">
-                    <Copy size={18} /> Copiar Chave Pix
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          )}
 
           <div className="col-span-2 pt-4">
             <PDFDownloadLink document={<InvitationPDF convite={convite} />} fileName={`convite-${convite.slug}.pdf`}>

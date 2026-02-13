@@ -22,7 +22,6 @@ const DEMO_DATA: Record<string, any> = {
     endereco: "Catedral Metropolitana, Praça da Sé, São Paulo",
     tema: "classic",
     cor: "#7c3aed",
-    pix_key: "helenaegabriel@email.com",
     musica_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     timeline: [
       { time: '19:00', title: 'Cerimônia Religiosa', icon: 'church' },
@@ -42,7 +41,6 @@ const DEMO_DATA: Record<string, any> = {
     endereco: "Espaço Contemporâneo, Av. Europa, 1200",
     tema: "modern",
     cor: "#0f172a",
-    pix_key: "000.000.000-00",
     musica_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
     timeline: [
       { time: '17:30', title: 'Welcome Drinks', icon: 'glass' },
@@ -62,7 +60,6 @@ const DEMO_DATA: Record<string, any> = {
     tema: "romantic",
     cor: "#db2777",
     foto_url: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=800",
-    pix_key: "sophiaelucas@love.com",
     musica_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
     timeline: [
       { time: '16:00', title: 'Cerimônia no Jardim', icon: 'heart' },
@@ -88,7 +85,6 @@ const Demo = () => {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      // Forçar o carregamento antes de tocar para evitar erros de buffer
       audioRef.current.load();
       const playPromise = audioRef.current.play();
       
@@ -103,11 +99,6 @@ const Demo = () => {
           });
       }
     }
-  };
-
-  const copyPix = () => {
-    navigator.clipboard.writeText(data.pix_key);
-    showSuccess("Chave Pix copiada!");
   };
 
   return (
@@ -135,7 +126,6 @@ const Demo = () => {
         <div className="relative border-[12px] border-slate-900 rounded-[3.5rem] overflow-hidden shadow-2xl bg-white min-h-[800px]">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-50"></div>
           
-          {/* Music Player - Removido crossOrigin para evitar problemas de CORS */}
           <audio 
             ref={audioRef} 
             src={data.musica_url} 
@@ -163,9 +153,7 @@ const Demo = () => {
 
           <ConvitePreview data={data} />
 
-          {/* Interactive Demo Elements */}
           <div className="px-8 pb-12 space-y-8 bg-white">
-            {/* Wall of Messages Mock */}
             <div className="space-y-6">
               <div className="text-center">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Mural de Recados</h3>
@@ -182,11 +170,10 @@ const Demo = () => {
               </div>
             </div>
 
-            {/* Action Buttons Mock */}
             <div className="grid grid-cols-2 gap-3">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button className="h-14 rounded-2xl font-bold" style={{ backgroundColor: data.cor }}>
+                  <Button className="h-14 rounded-2xl font-bold col-span-1" style={{ backgroundColor: data.cor }}>
                     <CheckSquare className="mr-2 h-4 w-4" /> Confirmar
                   </Button>
                 </DialogTrigger>
@@ -198,34 +185,12 @@ const Demo = () => {
 
               <Button 
                 variant="outline" 
-                className="h-14 rounded-2xl font-bold border-2" 
+                className="h-14 rounded-2xl font-bold border-2 col-span-1" 
                 style={{ borderColor: data.cor, color: data.cor }}
                 onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.endereco)}`, '_blank')}
               >
                 <MapPin className="mr-2 h-4 w-4" /> Mapa
               </Button>
-
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="secondary" className="h-14 rounded-2xl font-bold col-span-2">
-                    <CreditCard className="mr-2 h-4 w-4" /> Presentear com Pix
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md text-center">
-                  <DialogHeader><DialogTitle className="font-serif">Presente em Pix</DialogTitle></DialogHeader>
-                  <div className="py-4 space-y-4 flex flex-col items-center">
-                    <div className="p-3 bg-white rounded-2xl border-2 border-slate-100">
-                      <QRCodeSVG value={data.pix_key} size={150} />
-                    </div>
-                    <div className="bg-slate-50 p-3 rounded-xl border border-dashed border-slate-200 font-mono text-xs break-all w-full">
-                      {data.pix_key}
-                    </div>
-                    <Button onClick={copyPix} className="w-full gap-2 h-12 rounded-xl">
-                      <Copy size={16} /> Copiar Chave
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
 
               <Button variant="ghost" className="col-span-2 text-slate-400 text-xs gap-2">
                 <Download size={14} /> Baixar Versão em PDF
@@ -236,7 +201,7 @@ const Demo = () => {
         
         <div className="mt-8 text-center space-y-4">
           <p className="text-slate-400 text-sm font-medium">
-            Esta é uma demonstração completa. Seus convidados poderão confirmar presença, ver o mapa e até enviar presentes via Pix.
+            Esta é uma demonstração completa. Seus convidados poderão confirmar presença e ver o mapa do evento.
           </p>
           <div className="flex justify-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
@@ -245,7 +210,6 @@ const Demo = () => {
         </div>
       </main>
 
-      {/* Floating RSVP for Demo */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-3rem)] max-w-xs md:hidden">
         <Button className="w-full h-14 rounded-full text-lg font-bold shadow-2xl" style={{ backgroundColor: data.cor }}>
           <CheckSquare className="mr-2 h-5 w-5" /> Confirmar Agora
