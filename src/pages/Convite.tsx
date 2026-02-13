@@ -335,7 +335,7 @@ const ConvitePage = () => {
                   Google Maps
                 </Button>
                 <Button onClick={() => openMap('waze')} className="h-14 rounded-xl gap-3 bg-white text-slate-900 border-2 hover:bg-slate-50">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/6/66/Waze_icon.svg" className="w-6 h-6" alt="Waze" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Waze_icon.svg/1200px-Waze_icon.svg.png" className="w-6 h-6" alt="Waze" />
                   Waze
                 </Button>
               </div>
