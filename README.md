@@ -2,6 +2,9 @@
 
 ConvitePro é uma solução SaaS completa para venda e criação de convites digitais interativos, integrada com Mercado Livre e Supabase.
 
+## 🚀 Status da Sincronização
+Dernière mise à jour effectuée par l'assistant Dyad le : {new Date().toLocaleString()}
+
 ## 🚀 Como colocar no ar (Deploy)
 
 ### 1. Frontend (Vercel)
@@ -31,7 +34,7 @@ As Edge Functions processam as vendas automaticamente. Você precisa configurar 
 1. O cliente compra no Mercado Livre.
 2. O ML avisa nosso sistema via Webhook.
 3. O sistema gera um **Token Único** e salva no banco.
-4. Você (ou um bot) envia o link para o cliente: `https://seu-site.com/criar?token=TOKEN_GERADO`.
+4. Você (ou un bot) envia o link para o cliente: `https://seu-site.com/criar?token=TOKEN_GERADO`.
 5. O cliente preenche os dados e o convite fica pronto instantaneamente!
 
 ## 📊 Painel Administrativo
