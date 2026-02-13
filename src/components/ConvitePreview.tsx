@@ -250,11 +250,11 @@ const ConvitePreview = ({ data }: Props) => {
             </DialogHeader>
             <div className="grid grid-cols-1 gap-3 py-4">
               <Button onClick={() => openMap('google')} className="h-14 rounded-xl gap-3 bg-white text-slate-900 border-2 hover:bg-slate-50">
-                <img src="https://www.google.com/images/branding/product/ico/maps15_b_64dp.ico" className="w-6 h-6" alt="Google Maps" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Google_Maps_icon_%282020%29.svg" className="w-6 h-6" alt="Google Maps" />
                 Google Maps
               </Button>
               <Button onClick={() => openMap('waze')} className="h-14 rounded-xl gap-3 bg-white text-slate-900 border-2 hover:bg-slate-50">
-                <img src="https://v.fastcdn.co/u/60000000/52933333-0-Waze-Logo.png" className="w-6 h-6" alt="Waze" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/66/Waze_icon.svg" className="w-6 h-6" alt="Waze" />
                 Waze
               </Button>
             </div>
