@@ -5,7 +5,7 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import InvitationForm from '@/components/InvitationForm';
 import { showSuccess, showError } from '@/utils/toast';
-import { Loader2, Eye, CheckCircle2, Copy, ExternalLink, Share2, Smartphone, Monitor, Sparkles, QrCode as QrCodeIcon } from 'lucide-react';
+import { Loader2, Eye, CheckCircle2, Copy, ExternalLink, Share2, Smartphone, Monitor, Sparkles, QrCode as QrCodeIcon, Settings } from 'lucide-react';
 import ConvitePreview from '@/components/ConvitePreview';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -108,6 +108,8 @@ const Criar = () => {
 
   if (createdSlug) {
     const fullUrl = `${window.location.origin}/convite/${createdSlug}`;
+    const manageUrl = `${window.location.origin}/gerenciar/${createdSlug}?token=${token}`;
+    
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-lg border-none shadow-2xl bg-white rounded-[2.5rem] overflow-hidden">
@@ -124,24 +126,39 @@ const Criar = () => {
               </p>
             </div>
 
-            <div className="space-y-2">
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Link do seu Convite</p>
-              <div className="flex gap-2">
-                <div className="flex-1 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-sm font-medium truncate text-slate-600">
-                  {fullUrl}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Link para os Convidados</p>
+                <div className="flex gap-2">
+                  <div className="flex-1 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-sm font-medium truncate text-slate-600">
+                    {fullUrl}
+                  </div>
+                  <Button size="icon" variant="outline" className="h-14 w-14 rounded-2xl" onClick={() => copyToClipboard(fullUrl)}>
+                    <Copy size={20} />
+                  </Button>
                 </div>
-                <Button size="icon" variant="outline" className="h-14 w-14 rounded-2xl" onClick={() => copyToClipboard(fullUrl)}>
-                  <Copy size={20} />
-                </Button>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Link de Gestão (SÓ SEU)</p>
+                <div className="flex gap-2">
+                  <div className="flex-1 bg-slate-100 p-4 rounded-2xl border border-slate-200 text-sm font-medium truncate text-slate-400">
+                    {manageUrl}
+                  </div>
+                  <Button size="icon" variant="secondary" className="h-14 w-14 rounded-2xl" onClick={() => copyToClipboard(manageUrl)}>
+                    <Settings size={20} />
+                  </Button>
+                </div>
+                <p className="text-[10px] text-slate-400 italic">Guarde este link para ver quem confirmou presença!</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 gap-3">
               <Button className="h-14 rounded-2xl text-lg font-bold gap-2" onClick={() => window.open(fullUrl, '_blank')}>
-                <ExternalLink size={20} /> Visualizar agora
+                <ExternalLink size={20} /> Visualizar Convite
               </Button>
-              <Button variant="outline" className="h-14 rounded-2xl text-lg font-bold gap-2" onClick={() => navigator.share({ title: 'Meu Convite', url: fullUrl })}>
-                <Share2 size={20} /> Compartilhar
+              <Button variant="outline" className="h-14 rounded-2xl text-lg font-bold gap-2" onClick={() => window.open(manageUrl, '_blank')}>
+                <Settings size={20} /> Gerenciar Convidados
               </Button>
             </div>
 

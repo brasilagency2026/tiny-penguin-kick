@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Criar from "./pages/Criar";
 import Convite from "./pages/Convite";
 import Dashboard from "./pages/Dashboard";
+import GerenciarConvite from "./pages/GerenciarConvite";
 import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/criar" element={<Criar />} />
           <Route path="/convite/:slug" element={<Convite />} />
+          <Route path="/gerenciar/:slug" element={<GerenciarConvite />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/demo/:theme" element={<Demo />} />
           <Route path="*" element={<NotFound />} />
