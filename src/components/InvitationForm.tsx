@@ -278,17 +278,17 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
           {/* Style */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-              <Palette className="text-primary" size={20} /> Estilo Visual
+              <Palette className="text-primary" size={20} /> Estilo de Fonte
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="tema">Tema</Label>
+                <Label htmlFor="tema">Fonte Principal</Label>
                 <Select onValueChange={(v) => handleSelectChange('tema', v)} defaultValue="classic">
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="classic">Clássico</SelectItem>
-                    <SelectItem value="modern">Moderno</SelectItem>
-                    <SelectItem value="romantic">Romântico</SelectItem>
+                    <SelectItem value="classic">Serifada (Elegante)</SelectItem>
+                    <SelectItem value="modern">Sans-Serif (Moderna)</SelectItem>
+                    <SelectItem value="romantic">Cursiva (Manuscrita)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
