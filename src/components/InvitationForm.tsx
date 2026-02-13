@@ -38,7 +38,7 @@ const PHOTO_PRESETS = [
   { id: 'wedding', name: 'Casamento', url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800', icon: <Church size={14} /> },
   { id: 'baby', name: 'Bebê', url: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80&w=800', icon: <Baby size={14} /> },
   { id: 'party', name: 'Festa', url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=800', icon: <Music size={14} /> },
-  { id: 'grad', name: 'Formatura', url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800', icon: <GraduationCap size={14} /> },
+  { id: 'grad', name: 'Formatura', url: 'https://images.unsplash.com/photo-1525921429624-479b6a29d84c?auto=format&fit=crop&q=80&w=800', icon: <GraduationCap size={14} /> },
 ];
 
 const MUSIC_PRESETS = [
