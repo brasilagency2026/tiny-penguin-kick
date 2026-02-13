@@ -23,7 +23,8 @@ serve(async (req) => {
       const ML_ACCESS_TOKEN = Deno.env.get('ML_ACCESS_TOKEN');
       const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
       const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-      const SITE_URL = Deno.env.get('NEXT_PUBLIC_SITE_URL') || 'http://localhost:8080';
+      // Alterado para SITE_URL para ser mais genérico e correto
+      const SITE_URL = Deno.env.get('SITE_URL') || 'http://localhost:8080';
 
       if (!ML_ACCESS_TOKEN) {
         console.error("[mercadolivre-webhook] ML_ACCESS_TOKEN não configurado");
@@ -58,8 +59,6 @@ serve(async (req) => {
         console.log(`[mercadolivre-webhook] VENDA APROVADA!`);
         console.log(`[mercadolivre-webhook] Comprador: ${payment.payer.email}`);
         console.log(`[mercadolivre-webhook] Link para enviar ao cliente: ${linkCriacao}`);
-        
-        // Aqui você poderia integrar com uma API de WhatsApp ou Email para enviar automaticamente
       }
     }
 
