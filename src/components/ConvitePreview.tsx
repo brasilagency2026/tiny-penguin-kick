@@ -112,7 +112,7 @@ const ConvitePreview = ({ data }: Props) => {
             <img 
               src={data.foto_url} 
               alt="Capa" 
-              className="w-full h-full object-cover opacity-40"
+              className="w-full h-full object-cover opacity-60"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
           </div>
