@@ -14,31 +14,31 @@ interface InvitationFormProps {
 }
 
 const ICONS = [
-  { id: 'heart', icon: <Heart size={14} />, label: 'Cœur' },
-  { id: 'church', icon: <Church size={14} />, label: 'Cérémonie' },
-  { id: 'utensils', icon: <Utensils size={14} />, label: 'Repas' },
-  { id: 'music', icon: <Music size={14} />, label: 'Fête' },
-  { id: 'star', icon: <Star size={14} />, label: 'Étoile' },
-  { id: 'camera', icon: <Camera size={14} />, label: 'Photos' },
+  { id: 'heart', icon: <Heart size={14} />, label: 'Coração' },
+  { id: 'church', icon: <Church size={14} />, label: 'Cerimônia' },
+  { id: 'utensils', icon: <Utensils size={14} />, label: 'Refeição' },
+  { id: 'music', icon: <Music size={14} />, label: 'Festa' },
+  { id: 'star', icon: <Star size={14} />, label: 'Estrela' },
+  { id: 'camera', icon: <Camera size={14} />, label: 'Fotos' },
   { id: 'glass', icon: <GlassWater size={14} />, label: 'Brinde' },
-  { id: 'baby', icon: <Baby size={14} />, label: 'Bébé' },
-  { id: 'grad', icon: <GraduationCap size={14} />, label: 'Diplôme' },
+  { id: 'baby', icon: <Baby size={14} />, label: 'Bebê' },
+  { id: 'grad', icon: <GraduationCap size={14} />, label: 'Formatura' },
 ];
 
 const EVENT_TYPES = [
-  { id: 'casamento', label: 'Mariage', icon: <Heart size={14} /> },
-  { id: 'nascimento', label: 'Naissance', icon: <Baby size={14} /> },
-  { id: 'aniversario', label: 'Anniversaire', icon: <PartyPopper size={14} /> },
-  { id: 'formatura', label: 'Remise de diplôme', icon: <GraduationCap size={14} /> },
-  { id: 'batizado', label: 'Baptême', icon: <Church size={14} /> },
-  { id: 'outro', label: 'Autre Événement', icon: <Sparkles size={14} /> },
+  { id: 'casamento', label: 'Casamento', icon: <Heart size={14} /> },
+  { id: 'nascimento', label: 'Nascimento / Chá', icon: <Baby size={14} /> },
+  { id: 'aniversario', label: 'Aniversário', icon: <PartyPopper size={14} /> },
+  { id: 'formatura', label: 'Formatura', icon: <GraduationCap size={14} /> },
+  { id: 'batizado', label: 'Batizado', icon: <Church size={14} /> },
+  { id: 'outro', label: 'Outro Evento', icon: <Sparkles size={14} /> },
 ];
 
 const PHOTO_PRESETS = [
-  { id: 'wedding', name: 'Mariage', url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800', icon: <Church size={14} /> },
-  { id: 'baby', name: 'Bébé', url: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80&w=800', icon: <Baby size={14} /> },
-  { id: 'party', name: 'Fête', url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=800', icon: <Music size={14} /> },
-  { id: 'grad', name: 'Diplôme', url: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800', icon: <GraduationCap size={14} /> },
+  { id: 'wedding', name: 'Casamento', url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800', icon: <Church size={14} /> },
+  { id: 'baby', name: 'Bebê', url: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80&w=800', icon: <Baby size={14} /> },
+  { id: 'party', name: 'Festa', url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=800', icon: <Music size={14} /> },
+  { id: 'grad', name: 'Formatura', url: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800', icon: <GraduationCap size={14} /> },
 ];
 
 const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) => {
@@ -60,8 +60,8 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
     cor: '#7c3aed',
     tema: 'classic',
     timeline: [
-      { time: '19:00', title: 'Début', icon: 'star' },
-      { time: '21:00', title: 'Célébration', icon: 'music' }
+      { time: '19:00', title: 'Início', icon: 'star' },
+      { time: '21:00', title: 'Celebração', icon: 'music' }
     ]
   });
 
@@ -105,22 +105,22 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
   return (
     <Card className="w-full max-w-2xl mx-auto border-none shadow-xl bg-white/80 backdrop-blur-sm">
       <CardHeader className="text-center">
-        <CardTitle className="text-3xl font-serif text-primary">Créez votre Invitation</CardTitle>
-        <p className="text-muted-foreground">Personnalisez chaque détail de votre événement.</p>
+        <CardTitle className="text-3xl font-serif text-primary">Crie seu Convite</CardTitle>
+        <p className="text-muted-foreground">Personalize cada detalhe do seu evento.</p>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Event Type Selection */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-              <Sparkles className="text-primary" size={20} /> Type d'Événement
+              <Sparkles className="text-primary" size={20} /> Tipo de Evento
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="tipo_evento">Quel type d'événement ?</Label>
+                <Label htmlFor="tipo_evento">Qual o tipo do evento?</Label>
                 <Select onValueChange={(v) => handleSelectChange('tipo_evento', v)} defaultValue="casamento">
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionnez le type" />
+                    <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
                   <SelectContent>
                     {EVENT_TYPES.map(type => (
@@ -132,8 +132,8 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="nome_evento">Nom de l'Événement</Label>
-                <Input id="nome_evento" name="nome_evento" placeholder="Ex: Mariage de Marie & Jean" required onChange={handleChange} />
+                <Label htmlFor="nome_evento">Nome do Evento</Label>
+                <Input id="nome_evento" name="nome_evento" placeholder="Ex: Casamento de Maria & João" required onChange={handleChange} />
               </div>
             </div>
           </div>
@@ -141,15 +141,15 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
           {/* Basic Info */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-              <Calendar className="text-primary" size={20} /> Date et Heure
+              <Calendar className="text-primary" size={20} /> Data e Hora
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="data_evento">Date de l'Événement</Label>
+                <Label htmlFor="data_evento">Data do Evento</Label>
                 <Input id="data_evento" name="data_evento" type="date" required onChange={handleChange} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="horario">Heure de Début</Label>
+                <Label htmlFor="horario">Horário de Início</Label>
                 <Input id="horario" name="horario" placeholder="Ex: 19:30" onChange={handleChange} />
               </div>
             </div>
@@ -158,7 +158,7 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
           {/* Photo Section */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-              <ImageIcon className="text-primary" size={20} /> Image de Couverture
+              <ImageIcon className="text-primary" size={20} /> Imagem de Capa
             </h3>
             <div className="space-y-4">
               <div className="flex flex-wrap gap-2">
@@ -179,7 +179,7 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
                 id="foto_url" 
                 name="foto_url" 
                 value={formData.foto_url}
-                placeholder="Ou collez un lien d'image personnalisé..." 
+                placeholder="Ou cole um link de imagem personalizado..." 
                 onChange={handleChange} 
               />
             </div>
@@ -188,11 +188,11 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
           {/* Location */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-              <MapPin className="text-primary" size={20} /> Lieu
+              <MapPin className="text-primary" size={20} /> Localização
             </h3>
             <div className="space-y-2">
-              <Label htmlFor="endereco">Adresse Complète</Label>
-              <Input id="endereco" name="endereco" placeholder="Rue, Numéro, Ville" onChange={handleChange} />
+              <Label htmlFor="endereco">Endereço Completo</Label>
+              <Input id="endereco" name="endereco" placeholder="Rua, Número, Cidade" onChange={handleChange} />
             </div>
           </div>
 
@@ -200,10 +200,10 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-                <Clock className="text-primary" size={20} /> Programme
+                <Clock className="text-primary" size={20} /> Cronograma
               </h3>
               <Button type="button" variant="outline" size="sm" onClick={addTimelineItem} className="gap-2">
-                <Plus size={14} /> Ajouter
+                <Plus size={14} /> Adicionar
               </Button>
             </div>
             <div className="space-y-3">
@@ -213,7 +213,7 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
                     <Input value={item.time} placeholder="19:00" onChange={(e) => handleTimelineChange(index, 'time', e.target.value)} />
                   </div>
                   <div className="flex-1">
-                    <Input value={item.title} placeholder="Activité" onChange={(e) => handleTimelineChange(index, 'title', e.target.value)} />
+                    <Input value={item.title} placeholder="Atividade" onChange={(e) => handleTimelineChange(index, 'title', e.target.value)} />
                   </div>
                   <div className="w-24">
                     <Select value={item.icon} onValueChange={(v) => handleTimelineChange(index, 'icon', v)}>
@@ -238,22 +238,22 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
           {/* Style */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-              <Palette className="text-primary" size={20} /> Style Visuel
+              <Palette className="text-primary" size={20} /> Estilo Visual
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="tema">Thème</Label>
+                <Label htmlFor="tema">Tema</Label>
                 <Select onValueChange={(v) => handleSelectChange('tema', v)} defaultValue="classic">
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="classic">Classique</SelectItem>
-                    <SelectItem value="modern">Moderne</SelectItem>
-                    <SelectItem value="romantic">Romantique</SelectItem>
+                    <SelectItem value="classic">Clássico</SelectItem>
+                    <SelectItem value="modern">Moderno</SelectItem>
+                    <SelectItem value="romantic">Romântico</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="cor">Couleur Principale</Label>
+                <Label htmlFor="cor">Cor Principal</Label>
                 <div className="flex gap-2">
                   {['#7c3aed', '#db2777', '#0f172a', '#059669', '#d97706'].map(c => (
                     <button
@@ -270,7 +270,7 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
           </div>
 
           <Button type="submit" className="w-full h-14 text-lg font-bold shadow-lg" disabled={loading}>
-            {loading ? "Génération..." : "Finaliser l'Invitation"}
+            {loading ? "Gerando..." : "Finalizar Convite"}
           </Button>
         </form>
       </CardContent>

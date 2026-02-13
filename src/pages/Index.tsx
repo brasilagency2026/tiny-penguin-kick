@@ -1,54 +1,53 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
-import { Heart, Sparkles, ShoppingBag, ArrowRight, Baby, GraduationCap, PartyPopper, Church, ExternalLink } from 'lucide-react';
+import { Heart, Sparkles, ShoppingBag, ArrowRight, Baby, GraduationCap, PartyPopper, Church, Wand2, Share2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
   const navigate = useNavigate();
 
-  // Liens à remplacer par vos vraies annonces Mercado Livre
   const categories = [
     { 
       icon: <Heart className="text-rose-500" />, 
-      title: "Mariage", 
-      desc: "Élégance et romantisme pour votre grand jour.",
-      mlLink: "https://www.mercadolivre.com.br/p/mariage-digital", // Exemple
+      title: "Casamento", 
+      desc: "Elegância e romantismo para o seu grande dia.",
+      mlLink: "#", 
       color: "bg-rose-50"
     },
     { 
       icon: <Baby className="text-blue-400" />, 
-      title: "Naissance", 
-      desc: "Annoncez l'arrivée de votre petit trésor.",
-      mlLink: "https://www.mercadolivre.com.br/p/naissance-digital", // Exemple
+      title: "Chá de Bebê", 
+      desc: "Anuncie a chegada do seu pequeno tesouro.",
+      mlLink: "#", 
       color: "bg-blue-50"
     },
     { 
       icon: <GraduationCap className="text-slate-700" />, 
-      title: "Diplôme", 
-      desc: "Célébrez votre réussite académique.",
-      mlLink: "https://www.mercadolivre.com.br/p/diplome-digital", // Exemple
+      title: "Formatura", 
+      desc: "Celebre a sua conquista acadêmica.",
+      mlLink: "#", 
       color: "bg-slate-50"
     },
     { 
       icon: <PartyPopper className="text-yellow-500" />, 
-      title: "Anniversaire", 
-      desc: "Une fête inoubliable pour tous les âges.",
-      mlLink: "https://www.mercadolivre.com.br/p/anniversaire-digital", // Exemple
+      title: "Aniversário", 
+      desc: "Uma festa inesquecível para todas as idades.",
+      mlLink: "#", 
       color: "bg-yellow-50"
     },
     { 
       icon: <Church className="text-amber-600" />, 
-      title: "Baptême", 
-      desc: "Un moment sacré partagé avec vos proches.",
-      mlLink: "https://www.mercadolivre.com.br/p/bapteme-digital", // Exemple
+      title: "Batizado", 
+      desc: "Um momento sagrado compartilhado com quem você ama.",
+      mlLink: "#", 
       color: "bg-amber-50"
     },
     { 
       icon: <Sparkles className="text-purple-500" />, 
-      title: "Événement Pro", 
-      desc: "Inaugurations et lancements de produits.",
-      mlLink: "https://www.mercadolivre.com.br/p/pro-digital", // Exemple
+      title: "Evento Pro", 
+      desc: "Inaugurações e lançamentos de produtos.",
+      mlLink: "#", 
       color: "bg-purple-50"
     }
   ];
@@ -59,9 +58,9 @@ const Index = () => {
       <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
         <div className="text-2xl font-serif font-bold text-primary">ConvitePro</div>
         <div className="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
-          <a href="#categories" className="hover:text-primary transition-colors">Catégories</a>
-          <a href="#como-funciona" className="hover:text-primary transition-colors">Comment ça marche</a>
-          <a href="#demo" className="hover:text-primary transition-colors">Démos</a>
+          <a href="#categories" className="hover:text-primary transition-colors">Categorias</a>
+          <a href="#como-funciona" className="hover:text-primary transition-colors">Como Funciona</a>
+          <a href="#demo" className="hover:text-primary transition-colors">Demos</a>
         </div>
         <Button variant="outline" className="rounded-full px-6" onClick={() => navigate('/dashboard')}>Admin</Button>
       </nav>
@@ -75,13 +74,13 @@ const Index = () => {
             transition={{ duration: 0.8 }}
           >
             <div className="inline-flex items-center gap-2 bg-primary/5 text-primary px-4 py-2 rounded-full text-sm font-bold mb-6">
-              <Sparkles size={16} /> La plateforme n°1 d'invitations digitales
+              <Sparkles size={16} /> A plataforma nº1 de convites digitais
             </div>
             <h1 className="text-6xl md:text-8xl font-serif leading-tight mb-8">
-              Des invitations <span className="text-primary italic">magiques</span> pour chaque moment.
+              Convites <span className="text-primary italic">mágicos</span> para cada momento.
             </h1>
             <p className="text-xl text-slate-600 mb-10 max-w-lg leading-relaxed">
-              Choisissez votre type d'événement ci-dessous et recevez votre accès instantanément après l'achat.
+              Escolha o seu tipo de evento abaixo e receba seu acesso instantaneamente após a compra.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
@@ -89,10 +88,10 @@ const Index = () => {
                 className="rounded-full h-14 px-10 text-lg font-semibold shadow-xl shadow-primary/20"
                 onClick={() => document.getElementById('categories')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                Choisir mon invitation
+                Escolher meu convite
               </Button>
               <Button size="lg" variant="ghost" className="rounded-full h-14 px-10 text-lg font-semibold gap-2" onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}>
-                Voir les démos <ArrowRight size={20} />
+                Ver demonstrações <ArrowRight size={20} />
               </Button>
             </div>
           </motion.div>
@@ -106,7 +105,7 @@ const Index = () => {
             <div className="relative z-10 bg-slate-100 rounded-[3rem] p-4 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
               <img 
                 src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800" 
-                alt="Invitation Digitale" 
+                alt="Convite Digital" 
                 className="rounded-[2.5rem] w-full h-[600px] object-cover"
               />
             </div>
@@ -118,8 +117,8 @@ const Index = () => {
       <section id="categories" className="py-24 bg-slate-50 px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-            <h2 className="text-4xl font-serif mb-4">Sélectionnez votre Événement</h2>
-            <p className="text-slate-500">Chaque invitation est optimisée pour son type de célébration.</p>
+            <h2 className="text-4xl font-serif mb-4">Selecione seu Evento</h2>
+            <p className="text-slate-500">Cada convite é otimizado para o seu tipo de celebração.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {categories.map((cat, i) => (
@@ -138,7 +137,7 @@ const Index = () => {
                   className="w-full rounded-2xl h-12 font-bold gap-2"
                   onClick={() => window.open(cat.mlLink, '_blank')}
                 >
-                  <ShoppingBag size={18} /> Acheter sur Mercado Livre
+                  <ShoppingBag size={18} /> Comprar no Mercado Livre
                 </Button>
               </motion.div>
             ))}
@@ -150,14 +149,14 @@ const Index = () => {
       <section id="demo" className="py-24 bg-white px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-            <h2 className="text-4xl font-serif mb-4">Choisissez votre Style Visuel</h2>
-            <p className="text-slate-500">Trois thèmes exclusifs qui s'adaptent à tous vos événements.</p>
+            <h2 className="text-4xl font-serif mb-4">Escolha seu Estilo Visual</h2>
+            <p className="text-slate-500">Três temas exclusivos que se adaptam a todos os seus eventos.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { id: "classic", title: "Classique", desc: "Élégance intemporelle avec des polices avec empattement.", img: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=400" },
-              { id: "modern", title: "Moderne", desc: "Minimalisme contemporain et typographie audacieuse.", img: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=400" },
-              { id: "romantic", title: "Romantique", desc: "Délicatesse florale et animations douces.", img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=400" }
+              { id: "classic", title: "Clássico", desc: "Elegância atemporal com fontes serifadas.", img: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=400" },
+              { id: "modern", title: "Moderno", desc: "Minimalismo contemporâneo e tipografia marcante.", img: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=400" },
+              { id: "romantic", title: "Romântico", desc: "Delicadeza floral e animações suaves.", img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=400" }
             ].map((demo, i) => (
               <motion.div 
                 key={i}
@@ -173,7 +172,7 @@ const Index = () => {
                     className="w-full rounded-xl"
                     onClick={() => navigate(`/demo/${demo.id}`)}
                   >
-                    Voir l'exemple
+                    Ver exemplo
                   </Button>
                 </div>
               </motion.div>
@@ -186,14 +185,14 @@ const Index = () => {
       <section id="como-funciona" className="py-24 bg-slate-50 px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-            <h2 className="text-4xl font-serif mb-4">Comment ça marche ?</h2>
-            <p className="text-slate-500">Trois étapes simples pour votre invitation parfaite.</p>
+            <h2 className="text-4xl font-serif mb-4">Como Funciona?</h2>
+            <p className="text-slate-500">Três passos simples para o seu convite perfeito.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
-              { icon: <ShoppingBag className="h-10 w-10" />, title: "1. Achetez", desc: "Achetez votre accès exclusif via Mercado Livre en toute sécurité." },
-              { icon: <Wand2 className="h-10 w-10" />, title: "2. Personnalisez", desc: "Remplissez les détails de votre événement sur notre plateforme." },
-              { icon: <Share2 className="h-10 w-10" />, title: "3. Partagez", desc: "Générez votre lien exclusif et envoyez-le à vos invités via WhatsApp." }
+              { icon: <ShoppingBag className="h-10 w-10" />, title: "1. Compre", desc: "Adquira seu acesso exclusivo via Mercado Livre com total segurança." },
+              { icon: <Wand2 className="h-10 w-10" />, title: "2. Personalize", desc: "Preencha os detalhes do seu evento em nossa plataforma intuitiva." },
+              { icon: <Share2 className="h-10 w-10" />, title: "3. Compartilhe", desc: "Gere seu link exclusivo e envie para seus convidados via WhatsApp." }
             ].map((step, i) => (
               <motion.div 
                 key={i} 

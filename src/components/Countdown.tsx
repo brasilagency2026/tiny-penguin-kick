@@ -45,10 +45,10 @@ const Countdown = ({ targetDate, color }: Props) => {
 
   return (
     <div className="flex justify-center items-center divide-x divide-slate-100 py-6 bg-slate-50/50 rounded-2xl">
-      <Unit value={timeLeft.days} label="Jours" />
-      <Unit value={timeLeft.hours} label="Heures" />
+      <Unit value={timeLeft.days} label="Dias" />
+      <Unit value={timeLeft.hours} label="Horas" />
       <Unit value={timeLeft.minutes} label="Min" />
-      <Unit value={timeLeft.seconds} label="Sec" />
+      <Unit value={timeLeft.seconds} label="Seg" />
     </div>
   );
 };
