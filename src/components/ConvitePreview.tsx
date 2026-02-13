@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapPin, Phone, Gift, Calendar, Clock, Heart, Sparkles, Flower2, Star, Utensils, Music, Camera, Church, GlassWater, Volume2, VolumeX, CheckSquare, CreditCard, Download, MessageCircle, Copy } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Heart, Sparkles, Flower2, Star, Utensils, Music, Camera, Church, GlassWater, Volume2, VolumeX, CheckSquare, CreditCard, Download, MessageCircle, Copy, Navigation } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -63,6 +63,14 @@ const ConvitePreview = ({ data }: Props) => {
       navigator.clipboard.writeText(data.pix_key);
       showSuccess("Chave Pix copiada!");
     }
+  };
+
+  const openMap = (type: 'google' | 'waze') => {
+    const address = encodeURIComponent(data.endereco || 'Local do Evento');
+    const url = type === 'google' 
+      ? (data.link_maps || `https://www.google.com/maps/search/?api=1&query=${address}`)
+      : `https://waze.com/ul?q=${address}`;
+    window.open(url, '_blank');
   };
 
   return (
@@ -226,14 +234,32 @@ const ConvitePreview = ({ data }: Props) => {
           </DialogContent>
         </Dialog>
         
-        <Button 
-          variant="outline" 
-          className={cn("h-14 text-base font-bold border-2 shadow-lg", isModern ? "rounded-none" : "rounded-2xl")} 
-          style={{ borderColor: primaryColor, color: primaryColor }}
-          onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.endereco || 'Local do Evento')}`, '_blank')}
-        >
-          <MapPin className="mr-2 h-5 w-5" /> Mapa
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button 
+              variant="outline" 
+              className={cn("h-14 text-base font-bold border-2 shadow-lg", isModern ? "rounded-none" : "rounded-2xl")} 
+              style={{ borderColor: primaryColor, color: primaryColor }}
+            >
+              <MapPin className="mr-2 h-5 w-5" /> Mapa
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-xs text-center">
+            <DialogHeader>
+              <DialogTitle className="font-serif">Abrir GPS</DialogTitle>
+            </DialogHeader>
+            <div className="grid grid-cols-1 gap-3 py-4">
+              <Button onClick={() => openMap('google')} className="h-14 rounded-xl gap-3 bg-white text-slate-900 border-2 hover:bg-slate-50">
+                <img src="https://www.google.com/images/branding/product/ico/maps15_b_64dp.ico" className="w-6 h-6" alt="Google Maps" />
+                Google Maps
+              </Button>
+              <Button onClick={() => openMap('waze')} className="h-14 rounded-xl gap-3 bg-white text-slate-900 border-2 hover:bg-slate-50">
+                <img src="https://v.fastcdn.co/u/60000000/52933333-0-Waze-Logo.png" className="w-6 h-6" alt="Waze" />
+                Waze
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {data.pix_key && (
           <Dialog>

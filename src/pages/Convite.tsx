@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Convite } from '@/types/convite';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy, ExternalLink, Shirt, Star, Church, Utensils, Camera, GlassWater, MessageCircle } from 'lucide-react';
+import { MapPin, Phone, Gift, Calendar, Clock, Share2, Download, QrCode, Heart, CalendarPlus, CheckSquare, Music, Volume2, VolumeX, CreditCard, Copy, ExternalLink, Shirt, Star, Church, Utensils, Camera, GlassWater, MessageCircle, Navigation } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -94,6 +94,14 @@ const ConvitePage = () => {
     const endDate = new Date(eventDate.getTime() + 4 * 60 * 60 * 1000).toISOString().replace(/-|:|\.\d+/g, '');
     const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate}/${endDate}&details=${details}&location=${location}`;
     window.open(googleUrl, '_blank');
+  };
+
+  const openMap = (type: 'google' | 'waze') => {
+    const address = encodeURIComponent(convite.endereco || '');
+    const url = type === 'google' 
+      ? (convite.link_maps || `https://www.google.com/maps/search/?api=1&query=${address}`)
+      : `https://waze.com/ul?q=${address}`;
+    window.open(url, '_blank');
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
@@ -307,14 +315,32 @@ const ConvitePage = () => {
             </DialogContent>
           </Dialog>
           
-          <Button 
-            variant="outline"
-            className={cn("h-16 text-lg font-semibold border-2 shadow-lg", isModern ? "rounded-none" : "rounded-2xl")}
-            style={{ borderColor: primaryColor, color: primaryColor }}
-            onClick={() => window.open(convite.link_maps || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(convite.endereco)}`, '_blank')}
-          >
-            <MapPin className="mr-2 h-5 w-5" /> Localização
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline"
+                className={cn("h-16 text-lg font-semibold border-2 shadow-lg", isModern ? "rounded-none" : "rounded-2xl")}
+                style={{ borderColor: primaryColor, color: primaryColor }}
+              >
+                <MapPin className="mr-2 h-5 w-5" /> Localização
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-xs text-center">
+              <DialogHeader>
+                <DialogTitle className="font-serif">Como deseja chegar?</DialogTitle>
+              </DialogHeader>
+              <div className="grid grid-cols-1 gap-3 py-4">
+                <Button onClick={() => openMap('google')} className="h-14 rounded-xl gap-3 bg-white text-slate-900 border-2 hover:bg-slate-50">
+                  <img src="https://www.google.com/images/branding/product/ico/maps15_b_64dp.ico" className="w-6 h-6" alt="Google Maps" />
+                  Google Maps
+                </Button>
+                <Button onClick={() => openMap('waze')} className="h-14 rounded-xl gap-3 bg-white text-slate-900 border-2 hover:bg-slate-50">
+                  <img src="https://v.fastcdn.co/u/60000000/52933333-0-Waze-Logo.png" className="w-6 h-6" alt="Waze" />
+                  Waze
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           {convite.pix_key && (
             <Dialog>
