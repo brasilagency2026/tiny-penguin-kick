@@ -5,7 +5,7 @@ import {
   Heart, Sparkles, ShoppingBag, ArrowRight, Baby, GraduationCap, 
   PartyPopper, Church, Wand2, Share2, Play, Cross, CheckCircle2,
   Music, MapPin, LayoutDashboard, Download, MessageSquare, Smartphone,
-  Users, ShieldCheck, Zap
+  Users, ShieldCheck, Zap, Timer
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,6 +14,11 @@ const Index = () => {
   const ML_UNIQUE_LINK = "#"; // Link único para o produto no Mercado Livre
 
   const features = [
+    {
+      icon: <Timer className="text-orange-500" />,
+      title: "Contagem Regressiva",
+      desc: "Aumente a expectativa dos seus convidados com um contador em tempo real para o grande dia."
+    },
     {
       icon: <Music className="text-purple-500" />,
       title: "Trilha Sonora",
@@ -38,11 +43,6 @@ const Index = () => {
       icon: <MessageSquare className="text-amber-500" />,
       title: "Mural de Recados",
       desc: "Um espaço carinhoso onde seus convidados podem deixar mensagens especiais."
-    },
-    {
-      icon: <Smartphone className="text-slate-700" />,
-      title: "100% Mobile",
-      desc: "Experiência perfeita em qualquer celular, com interface rápida e intuitiva."
     }
   ];
 
@@ -94,7 +94,7 @@ const Index = () => {
               Transforme seu evento em uma <span className="text-primary italic">experiência.</span>
             </h1>
             <p className="text-xl text-slate-500 mb-12 max-w-lg leading-relaxed">
-              Muito mais que um convite: uma plataforma completa com música, confirmação de presença e painel de gestão para o seu grande dia.
+              Muito mais que um convite: uma plataforma completa com música, contagem regressiva e painel de gestão para o seu grande dia.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
@@ -173,7 +173,7 @@ const Index = () => {
           <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
             <div className="max-w-2xl">
               <h2 className="text-4xl md:text-5xl font-serif mb-6">Fundos Profissionais</h2>
-              <p className="text-lg text-slate-500">Escolha entre nossa curadoria de imagens de alta resolução ou use sua própria foto especial.</p>
+              <p className="text-lg text-slate-500">Escolha entre nossa curadoria de imagens de alta resolution ou use sua própria foto especial.</p>
             </div>
             <Button variant="outline" className="rounded-full h-12 px-8 font-bold" onClick={() => navigate('/demo/classic')}>
               Ver todos os fundos
