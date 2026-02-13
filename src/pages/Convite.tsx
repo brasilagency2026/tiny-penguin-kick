@@ -335,7 +335,18 @@ const ConvitePage = () => {
                   Google Maps
                 </Button>
                 <Button onClick={() => openMap('waze')} className="h-14 rounded-xl gap-3 bg-white text-slate-900 border-2 hover:bg-slate-50">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Waze_icon.svg/1200px-Waze_icon.svg.png" className="w-6 h-6" alt="Waze" />
+                  <div className="w-6 h-6 flex items-center justify-center">
+                    <img 
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Waze_icon.svg/240px-Waze_icon.svg.png" 
+                      className="w-full h-full object-contain" 
+                      alt="Waze" 
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        const parent = e.currentTarget.parentElement;
+                        if (parent) parent.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-navigation"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>';
+                      }}
+                    />
+                  </div>
                   Waze
                 </Button>
               </div>
