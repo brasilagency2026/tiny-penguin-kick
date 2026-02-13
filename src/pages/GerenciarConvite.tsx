@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Users, Download, ExternalLink, ArrowLeft, MessageSquare, UserCheck, Trash2 } from 'lucide-react';
+import { Loader2, Users, Download, ExternalLink, ArrowLeft, MessageSquare, UserCheck, Trash2, Copy, LayoutDashboard } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 
 const GerenciarConvite = () => {
@@ -22,7 +22,6 @@ const GerenciarConvite = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // 1. Vérifier le convite et le token
       const { data: conviteData, error: conviteError } = await supabase
         .from('convites')
         .select('*')
@@ -35,7 +34,6 @@ const GerenciarConvite = () => {
         return;
       }
 
-      // Sécurité : Vérifier si le token correspond
       if (conviteData.token !== token && token !== 'admin-bypass') {
         showError("Acesso negado. Token inválido.");
         setLoading(false);
@@ -44,7 +42,6 @@ const GerenciarConvite = () => {
 
       setConvite(conviteData);
 
-      // 2. Récupérer les invités
       const { data: guestsData } = await supabase
         .from('presencas')
         .select('*')
@@ -92,6 +89,12 @@ const GerenciarConvite = () => {
     }
   };
 
+  const copyInviteLink = () => {
+    const url = `${window.location.origin}/convite/${slug}`;
+    navigator.clipboard.writeText(url);
+    showSuccess("Link do convite copiado!");
+  };
+
   if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-primary h-10 w-10" /></div>;
   if (!convite) return <div className="min-h-screen flex items-center justify-center">Acesso não autorizado.</div>;
 
@@ -99,11 +102,16 @@ const GerenciarConvite = () => {
     <div className="min-h-screen bg-slate-50 p-4 md:p-8">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
-          <Link to={`/convite/${slug}`}>
-            <Button variant="ghost" className="gap-2">
-              <ArrowLeft size={18} /> Ver Convite
+          <div className="flex gap-2">
+            <Link to={`/convite/${slug}`}>
+              <Button variant="ghost" size="sm" className="gap-2">
+                <ArrowLeft size={16} /> Ver Convite
+              </Button>
+            </Link>
+            <Button variant="ghost" size="sm" className="gap-2" onClick={copyInviteLink}>
+              <Copy size={16} /> Copiar Link
             </Button>
-          </Link>
+          </div>
           <Badge variant="outline" className="bg-white px-4 py-1">Painel do Organizador</Badge>
         </div>
 
