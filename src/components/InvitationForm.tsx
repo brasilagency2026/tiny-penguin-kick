@@ -27,20 +27,20 @@ const ICONS = [
 ];
 
 const EVENT_TYPES = [
-  { id: 'casamento', label: 'Casamento', icon: <Heart size={14} /> },
   { id: 'nascimento', label: 'Nascimento / Chá', icon: <Baby size={14} /> },
-  { id: 'formatura', label: 'Formatura', icon: <GraduationCap size={14} /> },
-  { id: 'aniversario', label: 'Aniversário', icon: <PartyPopper size={14} /> },
   { id: 'batizado', label: 'Batizado', icon: <Church size={14} /> },
-  { id: 'deces', label: 'Comunicado de Falecimento', icon: <Cross size={14} /> },
+  { id: 'aniversario', label: 'Aniversário', icon: <PartyPopper size={14} /> },
+  { id: 'formatura', label: 'Formatura', icon: <GraduationCap size={14} /> },
+  { id: 'casamento', label: 'Casamento', icon: <Heart size={14} /> },
   { id: 'outro', label: 'Outro Evento', icon: <Sparkles size={14} /> },
+  { id: 'deces', label: 'Comunicado de Falecimento', icon: <Cross size={14} /> },
 ];
 
 const PHOTO_PRESETS = [
   { id: 'wedding', name: 'Casamento', url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800', icon: <Church size={14} /> },
   { id: 'baby', name: 'Bebê', url: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80&w=800', icon: <Baby size={14} /> },
-  { id: 'grad', name: 'Formatura', url: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&q=80&w=800', icon: <GraduationCap size={14} /> },
   { id: 'party', name: 'Festa', url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=800', icon: <Music size={14} /> },
+  { id: 'grad', name: 'Formatura', url: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&q=80&w=800', icon: <GraduationCap size={14} /> },
   { id: 'deces', name: 'Homenagem', url: 'https://images.unsplash.com/photo-1516589174184-c685266e430c?auto=format&fit=crop&q=80&w=800', icon: <Cross size={14} /> },
 ];
 
@@ -54,7 +54,7 @@ const MUSIC_PRESETS = [
 const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) => {
   const [formData, setFormData] = useState({
     nome_evento: '',
-    tipo_evento: 'casamento',
+    tipo_evento: 'nascimento',
     frase: '',
     data_evento: '',
     horario: '',
@@ -128,7 +128,7 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="tipo_evento">Qual o tipo do evento?</Label>
-                <Select onValueChange={(v) => handleSelectChange('tipo_evento', v)} defaultValue="casamento">
+                <Select onValueChange={(v) => handleSelectChange('tipo_evento', v)} defaultValue="nascimento">
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
@@ -143,7 +143,7 @@ const InvitationForm = ({ onSubmit, onChange, loading }: InvitationFormProps) =>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="nome_evento">Nome do Evento</Label>
-                <Input id="nome_evento" name="nome_evento" placeholder="Ex: Casamento de Maria & João" required onChange={handleChange} />
+                <Input id="nome_evento" name="nome_evento" placeholder="Ex: Chá de Bebê do Arthur" required onChange={handleChange} />
               </div>
             </div>
           </div>

@@ -9,25 +9,18 @@ const Index = () => {
 
   const categories = [
     { 
-      icon: <Heart className="text-rose-500" />, 
-      title: "Casamento", 
-      desc: "Elegância e romantismo para o seu grande dia.",
-      mlLink: "#", 
-      color: "bg-rose-50"
-    },
-    { 
       icon: <Baby className="text-blue-400" />, 
-      title: "Chá de Bebê", 
+      title: "Nascimento / Chá", 
       desc: "Anuncie a chegada do seu pequeno tesouro.",
       mlLink: "#", 
       color: "bg-blue-50"
     },
     { 
-      icon: <GraduationCap className="text-slate-700" />, 
-      title: "Formatura", 
-      desc: "Celebre a sua conquista acadêmica.",
+      icon: <Church className="text-amber-600" />, 
+      title: "Batizado", 
+      desc: "Um momento sagrado compartilhado com quem você ama.",
       mlLink: "#", 
-      color: "bg-slate-50"
+      color: "bg-amber-50"
     },
     { 
       icon: <PartyPopper className="text-yellow-500" />, 
@@ -37,11 +30,25 @@ const Index = () => {
       color: "bg-yellow-50"
     },
     { 
-      icon: <Church className="text-amber-600" />, 
-      title: "Batizado", 
-      desc: "Um momento sagrado compartilhado com quem você ama.",
+      icon: <GraduationCap className="text-slate-700" />, 
+      title: "Formatura", 
+      desc: "Celebre a sua conquista acadêmica.",
       mlLink: "#", 
-      color: "bg-amber-50"
+      color: "bg-slate-50"
+    },
+    { 
+      icon: <Heart className="text-rose-500" />, 
+      title: "Casamento", 
+      desc: "Elegância e romantismo para o seu grande dia.",
+      mlLink: "#", 
+      color: "bg-rose-50"
+    },
+    { 
+      icon: <Sparkles className="text-primary" />, 
+      title: "Outro Evento", 
+      desc: "Personalize seu convite para qualquer outra ocasião especial.",
+      mlLink: "#", 
+      color: "bg-slate-50"
     },
     { 
       icon: <Cross className="text-slate-400" />, 
