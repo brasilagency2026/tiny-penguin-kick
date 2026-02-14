@@ -35,22 +35,26 @@ const Dashboard = () => {
   };
 
   const fetchData = async () => {
-    const { count: tokenCount, data: allTokens } = await supabase
+    // Buscando tokens
+    const { data: allTokens } = await supabase
       .from('acessos_ml')
-      .select('*', { count: 'exact' })
+      .select('*')
       .order('created_at', { ascending: false });
     
-    const { count: conviteCount, data: convites } = await supabase
+    // Buscando convites
+    const { data: convites } = await supabase
       .from('convites')
       .select('*')
       .order('created_at', { ascending: false });
     
+    // Buscando atividades recentes
     const { data: allPresencas } = await supabase
       .from('presencas')
       .select('*, convites(nome_evento)')
       .order('created_at', { ascending: false })
       .limit(10);
     
+    // Buscando estatísticas de presença
     const { data: presencasStats } = await supabase.from('presencas').select('adultos, criancas');
     
     const totalViews = convites?.reduce((acc, curr) => acc + (curr.visualizacoes || 0), 0) || 0;
@@ -58,8 +62,8 @@ const Dashboard = () => {
     const totalChildren = presencasStats?.reduce((acc, curr) => acc + (curr.criancas || 0), 0) || 0;
 
     setStats({ 
-      tokens: tokenCount || 0, 
-      convites: conviteCount || 0, 
+      tokens: allTokens?.length || 0, 
+      convites: convites?.length || 0, 
       views: totalViews,
       totalGuests: totalAdults + totalChildren
     });
