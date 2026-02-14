@@ -12,8 +12,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const Index = () => {
   const navigate = useNavigate();
-  // Link real do seu anúncio conforme o print
-  const ML_UNIQUE_LINK = "https://produto.mercadolivre.com.br/MLB-6254023008-convite-digital-interativo-gesto-de-convidados-e-rsvp-JM";
+  // Link exato do seu anúncio atualizado
+  const ML_UNIQUE_LINK = "https://produto.mercadolivre.com.br/MLB-6254023008-convite-digital-interativo-gesto-de-convidados-e-rsvp-_JM";
 
   const steps = [
     {
