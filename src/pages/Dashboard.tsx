@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Users, Ticket, Eye, Lock, Plus, Copy, Trash2, Download, ExternalLink, Activity, UserPlus, CheckCircle2, MessageSquare } from 'lucide-react';
+import { Loader2, Users, Ticket, Eye, Lock, Plus, Copy, Trash2, Download, ExternalLink, Activity, UserPlus, CheckCircle2, MessageSquare, Zap, Globe } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { showSuccess, showError } from '@/utils/toast';
@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [guests, setGuests] = useState<any[]>([]);
+  const [testingWebhook, setTestingWebhook] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,6 +125,22 @@ const Dashboard = () => {
     showSuccess("Link de criação copiado!");
   };
 
+  const testWebhook = async () => {
+    setTestingWebhook(true);
+    try {
+      const response = await fetch('https://exklceslsmplyinxwpuv.supabase.co/functions/v1/mercadolivre-webhook');
+      if (response.ok) {
+        showSuccess("Conexão com Webhook ativa e respondendo!");
+      } else {
+        showError("Webhook respondeu com erro. Verifique os logs no Supabase.");
+      }
+    } catch (err) {
+      showError("Não foi possível alcançar o Webhook.");
+    } finally {
+      setTestingWebhook(false);
+    }
+  };
+
   const exportToCSV = (nomeEvento: string) => {
     if (guests.length === 0) return;
     const headers = ["Nome", "Adultos", "Crianças", "Mensagem", "Data"];
@@ -185,9 +202,15 @@ const Dashboard = () => {
             <h1 className="text-3xl font-serif font-bold">Painel de Controle</h1>
             <p className="text-slate-500">Visão geral da sua plataforma de convites.</p>
           </div>
-          <Button onClick={generateManualToken} className="rounded-xl gap-2 h-12 px-6">
-            <Plus size={18} /> Gerar Venda Manual
-          </Button>
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={testWebhook} disabled={testingWebhook} className="rounded-xl gap-2 h-12 px-6 border-2">
+              {testingWebhook ? <Loader2 className="animate-spin" size={18} /> : <Globe size={18} />}
+              Testar Webhook
+            </Button>
+            <Button onClick={generateManualToken} className="rounded-xl gap-2 h-12 px-6">
+              <Plus size={18} /> Gerar Venda Manual
+            </Button>
+          </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
