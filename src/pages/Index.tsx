@@ -12,7 +12,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const Index = () => {
   const navigate = useNavigate();
-  const ML_UNIQUE_LINK = "#"; // Link único para o produto no Mercado Livre
+  // Link real do seu anúncio conforme o print
+  const ML_UNIQUE_LINK = "https://produto.mercadolivre.com.br/MLB-6254023008-convite-digital-interativo-gesto-de-convidados-e-rsvp-JM";
 
   const steps = [
     {
@@ -92,14 +93,6 @@ const Index = () => {
       q: "Os convidados precisam baixar algum aplicativo?",
       a: "Não. O convite abre diretamente no navegador de qualquer celular ou computador, como um site moderno e leve."
     }
-  ];
-
-  const backgrounds = [
-    { name: "Casamento", url: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=400" },
-    { name: "Nascimento", url: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80&w=400" },
-    { name: "Festas", url: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=400" },
-    { name: "Formatura", url: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&q=80&w=400" },
-    { name: "Homenagens", url: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&q=80&w=400" }
   ];
 
   return (
