@@ -13,17 +13,15 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    console.log("[mercadolivre-webhook] Notification reçue:", JSON.stringify(body));
+    console.log("[mercadolivre-webhook] Notificação recebida:", JSON.stringify(body));
     
     const { resource, topic, action } = body;
 
-    // Mercado Livre peut envoyer 'payment' ou 'payment.updated' selon la version de l'API
     if (topic === 'payment' || action === 'payment.created' || action === 'payment.updated') {
       const paymentId = resource ? resource.split('/').pop() : body.data?.id;
       
       if (!paymentId) {
-        console.error("[mercadolivre-webhook] ID de paiement introuvable dans le body");
-        return new Response('ID introuvable', { status: 400, headers: corsHeaders });
+        return new Response('ID não encontrado', { status: 400, headers: corsHeaders });
       }
 
       const ML_ACCESS_TOKEN = Deno.env.get('ML_ACCESS_TOKEN');
@@ -31,30 +29,26 @@ serve(async (req) => {
       const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
       const SITE_URL = Deno.env.get('SITE_URL') || 'http://localhost:8080';
 
-      if (!ML_ACCESS_TOKEN) {
-        console.error("[mercadolivre-webhook] ML_ACCESS_TOKEN non configuré dans les secrets Supabase");
-        return new Response('Erreur config', { status: 500, headers: corsHeaders });
-      }
-
-      console.log(`[mercadolivre-webhook] Vérification du paiement ${paymentId}...`);
-
       const mlResponse = await fetch(`https://api.mercadolibre.com/v1/payments/${paymentId}`, {
         headers: { 'Authorization': `Bearer ${ML_ACCESS_TOKEN}` }
       });
       
       if (!mlResponse.ok) {
-        const errorText = await mlResponse.text();
-        console.error(`[mercadolivre-webhook] Erreur API ML (${mlResponse.status}): ${errorText}`);
-        return new Response('Erreur API ML', { status: 502, headers: corsHeaders });
+        return new Response('Erro API ML', { status: 502, headers: corsHeaders });
       }
 
       const payment = await mlResponse.json();
-      console.log(`[mercadolivre-webhook] Statut du paiement: ${payment.status}`);
+      const productTitle = payment.description || "";
+      
+      console.log(`[mercadolivre-webhook] Produto vendido: ${productTitle}`);
 
-      if (payment.status === 'approved') {
+      // FILTRO: Só processa se o título contiver "Convite Digital"
+      // Isso evita que seus produtos físicos gerem tokens de convite
+      const isInvitation = productTitle.toLowerCase().includes("convite digital");
+
+      if (payment.status === 'approved' && isInvitation) {
         const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
         
-        // Vérifier si on n'a pas déjà traité ce paiement
         const { data: existing } = await supabase
           .from('acessos_ml')
           .select('id')
@@ -62,24 +56,20 @@ serve(async (req) => {
           .maybeSingle();
 
         if (existing) {
-          console.log(`[mercadolivre-webhook] Paiement ${paymentId} déjà traité.`);
-          return new Response(JSON.stringify({ ok: true, message: 'Déjà traité' }), { status: 200, headers: corsHeaders });
+          return new Response(JSON.stringify({ ok: true, message: 'Já processado' }), { status: 200, headers: corsHeaders });
         }
 
         const token = crypto.randomUUID();
-        const { error: insertError } = await supabase.from('acessos_ml').insert({
+        await supabase.from('acessos_ml').insert({
           payment_id: paymentId.toString(),
           comprador_email: payment.payer.email,
           comprador_id: payment.payer.id?.toString(),
           token: token
         });
 
-        if (insertError) throw insertError;
-
-        const linkCriacao = `${SITE_URL}/criar?token=${token}`;
-        console.log(`[mercadolivre-webhook] ✅ VENTE VALIDÉE !`);
-        console.log(`[mercadolivre-webhook] Client: ${payment.payer.email}`);
-        console.log(`[mercadolivre-webhook] Lien de création: ${linkCriacao}`);
+        console.log(`[mercadolivre-webhook] ✅ Venda de convite validada para: ${payment.payer.email}`);
+      } else if (payment.status === 'approved' && !isInvitation) {
+        console.log(`[mercadolivre-webhook] ℹ️ Venda ignorada (Produto físico ou outro): ${productTitle}`);
       }
     }
 
@@ -88,10 +78,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     });
   } catch (e) {
-    console.error(`[mercadolivre-webhook] Erreur critique: ${e.message}`);
-    return new Response(JSON.stringify({ error: e.message }), { 
-      status: 500, 
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-    });
+    console.error(`[mercadolivre-webhook] Erro: ${e.message}`);
+    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders });
   }
 })
