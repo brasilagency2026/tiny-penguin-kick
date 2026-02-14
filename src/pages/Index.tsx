@@ -5,13 +5,42 @@ import {
   Heart, Sparkles, ShoppingBag, ArrowRight, Baby, GraduationCap, 
   PartyPopper, Church, Wand2, Share2, Play, Cross, CheckCircle2,
   Music, MapPin, LayoutDashboard, Download, MessageSquare, Smartphone,
-  Users, ShieldCheck, Zap, Timer
+  Users, ShieldCheck, Zap, Timer, Key, HelpCircle, ChevronDown
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const Index = () => {
   const navigate = useNavigate();
   const ML_UNIQUE_LINK = "#"; // Link único para o produto no Mercado Livre
+
+  const steps = [
+    {
+      icon: <ShoppingBag />,
+      title: "1. Compra no Mercado Livre",
+      desc: "Adquira seu acesso único através do nosso anúncio oficial com toda a segurança do Mercado Pago."
+    },
+    {
+      icon: <Key />,
+      title: "2. Receba seu Token",
+      desc: "Após a confirmação, você receberá instantaneamente via mensagem um link exclusivo com seu Token de acesso."
+    },
+    {
+      icon: <Wand2 />,
+      title: "3. Crie a Mágica",
+      desc: "Use nossa plataforma intuitiva para escolher fotos, músicas, cores e preencher os dados do seu evento."
+    },
+    {
+      icon: <Share2 />,
+      title: "4. Envie e Encante",
+      desc: "Compartilhe o link personalizado ou o PDF interativo com seus convidados via WhatsApp ou Redes Sociais."
+    },
+    {
+      icon: <LayoutDashboard />,
+      title: "5. Gerencie Tudo",
+      desc: "Acesse seu painel exclusivo para ver quem confirmou presença e ler as mensagens carinhosas recebidas."
+    }
+  ];
 
   const features = [
     {
@@ -46,6 +75,25 @@ const Index = () => {
     }
   ];
 
+  const faqs = [
+    {
+      q: "Quanto tempo o convite fica no ar?",
+      a: "Seu convite permanece ativo e disponível até 30 dias após a data do evento, garantindo que todos possam acessar as informações e você possa baixar sua lista de convidados."
+    },
+    {
+      q: "Posso alterar os dados depois de criar?",
+      a: "Sim! Com o seu link de gestão, você pode editar qualquer informação (horário, local, foto, música) a qualquer momento, e o convite dos seus convidados é atualizado instantaneamente."
+    },
+    {
+      q: "Como recebo o acesso após comprar no Mercado Livre?",
+      a: "O envio é automático. Assim que o Mercado Livre confirma o pagamento, nosso sistema envia uma mensagem privada para você com o link de criação e seu token único."
+    },
+    {
+      q: "Os convidados precisam baixar algum aplicativo?",
+      a: "Não. O convite abre diretamente no navegador de qualquer celular ou computador, como um site moderno e leve."
+    }
+  ];
+
   const backgrounds = [
     { name: "Casamento", url: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=400" },
     { name: "Nascimento", url: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80&w=400" },
@@ -63,8 +111,8 @@ const Index = () => {
         </div>
         <div className="hidden md:flex space-x-8 text-sm font-bold text-slate-500 uppercase tracking-widest">
           <a href="#recursos" className="hover:text-primary transition-colors">Recursos</a>
-          <a href="#galeria" className="hover:text-primary transition-colors">Inspiração</a>
-          <a href="#gestao" className="hover:text-primary transition-colors">Gestão</a>
+          <a href="#como-funciona" className="hover:text-primary transition-colors">Como Funciona</a>
+          <a href="#faq" className="hover:text-primary transition-colors">Dúvidas</a>
         </div>
         <div className="flex gap-4">
           <Button variant="ghost" className="rounded-full font-bold text-primary hidden sm:flex" onClick={() => navigate('/demo-gestao')}>
@@ -142,6 +190,36 @@ const Index = () => {
         </div>
       </section>
 
+      {/* How it Works Section */}
+      <section id="como-funciona" className="py-32 bg-white px-8 border-y border-slate-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-24">
+            <h2 className="text-4xl md:text-5xl font-serif mb-6">Como funciona?</h2>
+            <p className="text-lg text-slate-500">Um processo simples, rápido e totalmente automatizado para você não perder tempo.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 relative">
+            {/* Connecting Line for Desktop */}
+            <div className="hidden md:block absolute top-1/2 left-0 w-full h-[2px] bg-slate-100 -translate-y-1/2 z-0"></div>
+            
+            {steps.map((step, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="relative z-10 flex flex-col items-center text-center group"
+              >
+                <div className="w-20 h-20 bg-white border-4 border-slate-50 rounded-full flex items-center justify-center mb-6 text-primary shadow-xl group-hover:border-primary/20 transition-colors">
+                  {React.cloneElement(step.icon as React.ReactElement, { size: 32 })}
+                </div>
+                <h3 className="text-lg font-bold mb-3">{step.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Interactive Features */}
       <section id="recursos" className="py-32 bg-slate-50 px-8">
         <div className="max-w-7xl mx-auto">
@@ -167,74 +245,27 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Background Gallery */}
-      <section id="galeria" className="py-32 bg-white px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
-            <div className="max-w-2xl">
-              <h2 className="text-4xl md:text-5xl font-serif mb-6">Fundos Profissionais</h2>
-              <p className="text-lg text-slate-500">Escolha entre nossa curadoria de imagens de alta resolution ou use sua própria foto especial.</p>
+      {/* FAQ Section */}
+      <section id="faq" className="py-32 bg-white px-8">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">
+              <HelpCircle size={14} /> FAQ
             </div>
-            <Button variant="outline" className="rounded-full h-12 px-8 font-bold" onClick={() => navigate('/demo/classic')}>
-              Ver todos os fundos
-            </Button>
+            <h2 className="text-4xl font-serif">Dúvidas Frequentes</h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {backgrounds.map((bg, i) => (
-              <motion.div 
-                key={i}
-                whileHover={{ scale: 1.05 }}
-                className="relative group cursor-pointer overflow-hidden rounded-3xl h-80"
-              >
-                <img src={bg.url} alt={bg.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
-                  <p className="text-white font-bold text-lg">{bg.name}</p>
-                </div>
-              </motion.div>
+          <Accordion type="single" collapsible className="w-full space-y-4">
+            {faqs.map((faq, i) => (
+              <AccordionItem key={i} value={`item-${i}`} className="border rounded-3xl px-6 bg-slate-50/50">
+                <AccordionTrigger className="text-left font-bold text-lg hover:no-underline py-6">
+                  {faq.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-slate-500 text-base pb-6 leading-relaxed">
+                  {faq.a}
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Dashboard Section */}
-      <section id="gestao" className="py-32 bg-slate-900 text-white px-8 overflow-hidden">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          <div className="relative">
-            <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/20 rounded-full blur-[100px]"></div>
-            <img 
-              src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800" 
-              alt="Dashboard" 
-              className="relative z-10 rounded-[2.5rem] shadow-2xl border border-white/10"
-            />
-          </div>
-          <div className="space-y-8">
-            <h2 className="text-4xl md:text-5xl font-serif leading-tight">Controle total na palma da sua mão.</h2>
-            <p className="text-xl text-slate-400 leading-relaxed">
-              Esqueça as planilhas manuais. Nosso painel de gestão organiza tudo para você:
-            </p>
-            <ul className="space-y-6">
-              {[
-                "Lista de convidados exportável para Excel/CSV",
-                "Contagem automática de adultos e crianças",
-                "Visualização de mensagens deixadas no mural",
-                "Gráficos de visualizações do seu convite"
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-4 text-lg">
-                  <div className="bg-primary/20 p-1 rounded-full text-primary">
-                    <CheckCircle2 size={20} />
-                  </div>
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <Button 
-              size="lg" 
-              className="rounded-full h-16 px-12 text-xl font-bold bg-white text-slate-900 hover:bg-slate-100"
-              onClick={() => navigate('/demo-gestao')}
-            >
-              Ver Painel de Gestão Demo
-            </Button>
-          </div>
+          </Accordion>
         </div>
       </section>
 
