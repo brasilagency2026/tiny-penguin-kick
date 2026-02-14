@@ -7,16 +7,36 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // 1. Lida com pre-flight do navegador
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
+  // 2. Lida com pings de validação do Mercado Livre (GET)
+  if (req.method === 'GET') {
+    console.log("[mercadolivre-webhook] Validação GET recebida");
+    return new Response(JSON.stringify({ status: "ok" }), { 
+      status: 200, 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    });
+  }
+
   try {
-    const body = await req.json();
+    // Verifica se há corpo na requisição antes de tentar ler o JSON
+    const bodyText = await req.text();
+    if (!bodyText) {
+      return new Response(JSON.stringify({ ok: true, message: "Corpo vazio" }), { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
+    }
+
+    const body = JSON.parse(bodyText);
     console.log("[mercadolivre-webhook] Notificação recebida:", JSON.stringify(body));
     
     const { resource, topic, action } = body;
 
+    // Processa apenas notificações de pagamento
     if (topic === 'payment' || action === 'payment.created' || action === 'payment.updated') {
       const paymentId = resource ? resource.split('/').pop() : body.data?.id;
       
@@ -27,7 +47,6 @@ serve(async (req) => {
       const ML_ACCESS_TOKEN = Deno.env.get('ML_ACCESS_TOKEN');
       const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
       const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-      const SITE_URL = Deno.env.get('SITE_URL') || 'http://localhost:8080';
 
       const mlResponse = await fetch(`https://api.mercadolibre.com/v1/payments/${paymentId}`, {
         headers: { 'Authorization': `Bearer ${ML_ACCESS_TOKEN}` }
@@ -42,8 +61,7 @@ serve(async (req) => {
       
       console.log(`[mercadolivre-webhook] Produto vendido: ${productTitle}`);
 
-      // FILTRO: Só processa se o título contiver "Convite Digital"
-      // Isso evita que seus produtos físicos gerem tokens de convite
+      // Filtro para garantir que é um convite digital
       const isInvitation = productTitle.toLowerCase().includes("convite digital");
 
       if (payment.status === 'approved' && isInvitation) {
@@ -67,9 +85,7 @@ serve(async (req) => {
           token: token
         });
 
-        console.log(`[mercadolivre-webhook] ✅ Venda de convite validada para: ${payment.payer.email}`);
-      } else if (payment.status === 'approved' && !isInvitation) {
-        console.log(`[mercadolivre-webhook] ℹ️ Venda ignorada (Produto físico ou outro): ${productTitle}`);
+        console.log(`[mercadolivre-webhook] ✅ Venda validada para: ${payment.payer.email}`);
       }
     }
 
@@ -79,6 +95,7 @@ serve(async (req) => {
     });
   } catch (e) {
     console.error(`[mercadolivre-webhook] Erro: ${e.message}`);
-    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders });
+    // Retornamos 200 mesmo no erro para o ML não ficar tentando reenviar pings de teste
+    return new Response(JSON.stringify({ error: e.message }), { status: 200, headers: corsHeaders });
   }
 })
